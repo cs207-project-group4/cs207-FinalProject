@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import utils
+import autograd.utils as utils
 
 class Variable():
     def __init__(self,data, gradient=None):
