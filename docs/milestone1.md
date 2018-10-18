@@ -46,6 +46,7 @@ We are goin to consider that every function can be splitted into core components
 ![comp-graph](img/basic_function.png)
 
 * `Variable`
+
 The first core data structure is `Variable`. This object will flow through the several `Blocks`, storing the new values of the functions computed, as well as the gradient computed so far.
 
 ![comp-graph](img/Variable.png)
@@ -57,6 +58,7 @@ Note that we are not doing in-place modification of the input `Variable` in each
 If nothing is indicated by the user, the default value of `Variable.gradient` is an array of ones, meaning we are at the beginning of the computational graph
 
 * `Block` 
+
 The second core data structure is the `Block`. It is basically an atomic operation performed on `Variables`. For instance, sin, exp, addition or multiplication.
 
 ![comp-graph](img/Block.png)
@@ -79,8 +81,53 @@ y=ad.block.sin(x)
 ```
 As previously stated, the variable x has the default value for `gradient`, which is an array of ones. Then, the block sin will create a new variable y, which `data` attribute has already been explained above. The `gradient` attribute is set to `ad.block.sin.gradient_fn(3) * x.gradient = cos(3) * 1`
 
+* Branched computation graph 
+
+All the `Blocks` will create new `Variables` as output, nothing is modified in-place. This way, if we deal with a computational containing branches, the user can easily build his function as follows : 
+
+![comp-graph](img/advanced_function.png)
+
+```
+import autograd as ad
+from ad.block import block1, block2, block3, branch_block1, banch_block2
+
+def my_function(x):
+  x=ad.Variable(3)
+
+  #first block common for both paths
+  y=block1(x)
+
+  #compute the main block path
+  z=block2(y)
+
+  #compute the branch path
+  u=branch_block1(y)
+  u=branch_block2(u)
+
+  #merge branches
+  output=block3(z,u)
+  
+  return(output)
+
+```
+
+
+* No storing of the compuation graph
+
+The solution we provied is efficient in the way that we don't store the computation graph. The values of the variables are computed on the fly, data and gradient.
+
+As you can see in the previous exemple, the user only need to store in a specific variable the variable that will be used for branched paths, but besides this the intermediate variables are overriden. See : 
+```
+#compute the branch path
+  u=branch_block1(y)
+  u=branch_block2(u)
+```
+
+
+
 
 * Classes implemented
+
 As hinted before, we will have a class for the `Variable` and another class for `Block`.
 Though, each elementary function will be asigned a subclass of `Block` : we will have a set of `Block` functions hard-coded from which we expect the user to build its complicated combinaisons.
 
@@ -89,6 +136,7 @@ Exemple of this set could be : sin, cos, tan, exp, pow, sum, mean, ...
 Of course, the `autograd` package being built respecting the design patterns for good development, the user will have the possibility to build his own `Block` if he would not find a specific function among the ones we provide. The user would have to follow the `Block` interface and provide a `data_fn` as well as a `grad_fn`
 
 * external dependencies 
+
 We will build our package relying highly on numpy. So far it is the only external dependency we use
 
 
