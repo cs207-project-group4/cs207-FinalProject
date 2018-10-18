@@ -8,7 +8,7 @@ AD is able to compute an approximation of the derivative of a function, **withou
 with an **accuracy of machine precision**.
 
 AD has many applications accross Science and Engineering, the most popular one these days being Deep Neural Networks. These models 
-try to fit a function with >10M parameters to a dataset. To do so, they use Gradient Descent algorithms using gradients approximations provided
+try to fit a function with >*10M* parameters to a dataset. To do so, they use Gradient Descent algorithms using gradients approximations provided
 by AD. Famous applications include **Alpha Go**, **Self-Driving Cars** and **Image Recognition**.
 
 # Background
@@ -20,7 +20,7 @@ Essentially what the algorithm does is take a complex function and rewrite it as
 
 In other words, we will represent a function whose derivative we wish to compute by a "computational graph" which builds up some set of operations sequentially. We will pass our input value along the "trace", and by judicious application of the chain rule, we will compute the derivative of the overall function.
 
-An example of a computational graph is: ![computational graph](https://goo.gl/images/qnQcpk)
+An example of a computational graph is: ![computational graph](http://www.columbia.edu/~ahd2125/static/img/2015-12-05/Fig1.png)
 
 # How to Use AutoGrad?
 
@@ -52,7 +52,7 @@ cs207-FinalProject/
 ```
 
 This is not an exhaustive list of everything that will be contained in our project repository, but will highlight the main organization. It is broken down into a few key modules:
-- `block.py`: objects implementing the core computational units of the graph, namely `data_fn` (f(x)) and `gradient_fn` (f'(x))
+- `block.py`: objects implementing the core computational units of the graph, namely `data_fn` (*f(x)*) and `gradient_fn` (*f'(x)*)
 - `variable.py`: data structure containing the function value and gradient value
 - `utils.py`: general utility functions that are reused throughout the project
 
@@ -61,28 +61,26 @@ Of course, we will also have `tests` that contain all the tests of our codes and
 # Implementation
 The core data structures are `Variables` and `Blocks`.
 
-We are goin to consider that every function can be splitted into core components, each of which being called a `Block`. Thus, the application of a function is a mere composition of `Block` operations. The function
+We are going to consider that every function can be split into core components, each of which we will call a `Block`. Thus, the application of a function is a mere composition of `Block` operations. The function
 ![comp-graph](img/basic_function.png)
 
 * `Variable`
 
-The first core data structure is `Variable`. This object will flow through the several `Blocks`, storing the new values of the functions computed, as well as the gradient computed so far.
+The first core data structure is `Variable`. This object will flow through several `Blocks`, storing the new values of the functions computed, as well as the gradient computed so far.
 
 ![comp-graph](img/Variable.png)
 
-It contains two main attributes : data and gradient. In each block, the input Variable brings the info from the previous value functions and the previous gradients computed so far and propagates the data flow as well as the gradient flow.
-
-Note that we are not doing in-place modification of the input `Variable` in each `Block` as we may need of this `Variable` later in the computation
+It contains two main attributes : `data` and `gradient`. In each block, the input `Variable` brings the information from the previous functions and gradients computed and propagates the data and gradient flow forward.
 
 If nothing is indicated by the user, the default value of `Variable.gradient` is an array of ones, meaning we are at the beginning of the computational graph
 
 * `Block` 
 
-The second core data structure is the `Block`. It is basically an atomic operation performed on `Variables`. For instance, sin, exp, addition or multiplication.
+The second core data structure is the `Block`. It is basically an atomic operation performed on `Variable`. For instance, sin, exp, addition or multiplication.
 
 ![comp-graph](img/Block.png)
 
-It contains two major methods : ```data_fn ``` and ```gradient_fn ```. 
+The `Block` contains two major methods : ```data_fn ``` and ```gradient_fn ```. 
 
 ```data_fn ``` is used to compute the function evaluation for that block. For example we can use :
 ```python
@@ -90,7 +88,7 @@ import autograd as ad
 x=ad.Variable(3)
 y=ad.block.sin(x)
 ```
-and the new `Variable` y, will have its `data` attribute set to `ad.block.sin.data_fn(3)=sin(3)`
+and the new `Variable` y, will have its `data` attribute set to `ad.block.sin.data_fn(3)` = `sin(3)`
 
 ```gradient_fn ``` is used to compute the gradient evaluation for that block. Keeping the same example, we have : 
 ```python
@@ -130,12 +128,11 @@ def my_function(x):
 
 ```
 
-
 * No storing of the compuation graph
 
-The solution we provied is efficient in the way that we don't store the computation graph. The values of the variables are computed on the fly, data and gradient.
+The solution we provided is efficient in that we don't store the computation graph. The values of the variables are computed on the fly, both data and gradient.
 
-As you can see in the previous exemple, the user only need to store in a specific variable the variable that will be used for branched paths, but besides this the intermediate variables are overriden. See : 
+As you can see in the previous exemple, the user only needs to store the variable that will be used for branched paths, but besides this the intermediate variables are overriden. See: 
 ```python
 [...]
 #compute the branch path
@@ -145,21 +142,18 @@ As you can see in the previous exemple, the user only need to store in a specifi
 ```
 
 
-
-
 * Classes implemented
 
 As hinted before, we will have a class for the `Variable` and another class for `Block`.
-Though, each elementary function will be asigned a subclass of `Block` : we will have a set of `Block` functions hard-coded from which we expect the user to build its complicated combinaisons.
+Though each elementary function will be asigned a subclass of `Block` : we will have a set of `Block` functions hard-coded from which we expect the user to build his/her complicated combinations.
 
-Exemple of this set could be : sin, cos, tan, exp, pow, sum, mean, ...
+Example of this set could be: sin, cos, tan, exp, pow, sum, mean, ...
 
-Of course, the `autograd` package being built respecting the design patterns for good development, the user will have the possibility to build his own `Block` if he would not find a specific function among the ones we provide. The user would have to follow the `Block` interface and provide a `data_fn` as well as a `grad_fn`
+Of course, the `autograd` package is being built respecting the design patterns for good development, the user will have the possibility to build his own `Block` if he would not find a specific function among the ones we provide. The user would have to follow the `Block` interface and provide a `data_fn` as well as a `grad_fn` (leveraging *duck typing*).
 
-* external dependencies 
+* External dependencies 
 
-We will build our package relying highly on numpy. So far it is the only external dependency we use
-
+We will build our package relying highly on numpy. So far it is the only external dependency we use.
 
 
 # Additional Comments
