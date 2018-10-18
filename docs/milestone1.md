@@ -47,6 +47,7 @@ We are goin to consider that every function can be splitted into core components
 
 
 The first core data structure is `Variable`. This object will flow through the several `Blocks`, storing the new values of the functions computed, as well as the gradient computed so far.
+
 ![comp-graph](img/Variable.png)
 
 It contains two main attributes : data and gradient. In each block, the input Variable brings the info from the previous value functions and the previous gradients computed so far and propagates the data flow as well as the gradient flow.
