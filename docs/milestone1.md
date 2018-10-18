@@ -27,8 +27,17 @@ function test() {
 # Implementation
 The core data structures are `Variables` and `Blocks`.
 
-We are goin to consider that every function can be splitted into core components, each of which being called a `Block`. Thus, the application of a function is a mere composition of `Block` operations.
-
+We are goin to consider that every function can be splitted into core components, each of which being called a `Block`. Thus, the application of a function is a mere composition of `Block` operations. The function
 ![comp-graph](img/basic_function.png)
+
+
+The first core data structure is `Variable`. This object will flow through the several `Blocks`, storing the new values of the functions computed, as well as the gradient computed so far.
+![comp-graph](img/Variable.png)
+
+It contains two main attributes : data and gradient. In each block, the input Variable brings the info from the previous value functions and the previous gradients computed so far and propagates the data flow as well as the gradient flow.
+
+Note that we are not doing in-place modification of the input `Variable` in each `Block` as we may need of this `Variable` later in the computation
+
+
 
 # Additional Comments
