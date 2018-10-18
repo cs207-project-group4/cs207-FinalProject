@@ -118,9 +118,11 @@ The solution we provied is efficient in the way that we don't store the computat
 
 As you can see in the previous exemple, the user only need to store in a specific variable the variable that will be used for branched paths, but besides this the intermediate variables are overriden. See : 
 ```
+[...]
 #compute the branch path
   u=branch_block1(y)
   u=branch_block2(u)
+ [...]
 ```
 
 
