@@ -42,13 +42,24 @@ We will break up our `autograd` package into various modules. Our basic director
 ```
 cs207-FinalProject/
     autograd/
+        __init__.py
         blocks/
-          block.py
+            __init__.py
+            block.py
         tests/
+            __init__.py
+            test_basic.py
+            test_autograd.py
+            ...
         utils.py
         variable.py
     docs/
+        milestone1.md
+        milestone2.md
+        ...
     README.md
+    requirements.txt
+    setup.py
 ```
 
 This is not an exhaustive list of everything that will be contained in our project repository, but will highlight the main organization. It is broken down into a few key modules:
@@ -64,7 +75,7 @@ The core data structures are `Variables` and `Blocks`.
 We are going to consider that every function can be split into core components, each of which we will call a `Block`. Thus, the application of a function is a mere composition of `Block` operations. The function
 ![comp-graph](img/basic_function.png)
 
-* `Variable`
+### `Variable`
 
 The first core data structure is `Variable`. This object will flow through several `Blocks`, storing the new values of the functions computed, as well as the gradient computed so far.
 
@@ -74,7 +85,7 @@ It contains two main attributes : `data` and `gradient`. In each block, the inpu
 
 If nothing is indicated by the user, the default value of `Variable.gradient` is an array of ones, meaning we are at the beginning of the computational graph
 
-* `Block` 
+### `Block` 
 
 The second core data structure is the `Block`. It is basically an atomic operation performed on `Variable`. For instance, sin, exp, addition or multiplication.
 
