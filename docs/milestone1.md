@@ -20,20 +20,24 @@ Essentially what the algorithm does is take a complex function and rewrite it as
 
 One useful trick to implementing the AD algorithm is to leverage [dual numbers](https://en.wikipedia.org/wiki/Dual_number). Dual numbers are useful because if we evaluate a function using a dual number `x` then the dual number `y` that is returned by the function:
 1. contains, in the *real part* (of `y`), the value of the function evaluated at the real part of the initial dual number (`x`)
-2. the function **derivative** evaluated at the real part of the initial dual number (`x`) in the *dual part* of `y`
+2. the function **derivative** in the *dual part* of `y` evaluated at the real part of the initial dual number (`x`) 
 
 Leveraging this useful property of dual numbers is key to implementing AD elegantly and efficiently.
 
-# How to Use FancyProjectName ?
+# How to Use AutoGrad?
 
-```
-You can include code-like markdown like this : 
-function test() {
-  console.log("notice the blank line before this function?");
-}
+```python
+>>> import AutoGrad as ag
+>>> a = 2.0
+>>> x = ag(a)
+>>> f = sin(x) - 1/x + x**2
+>>> print(f.val, f.der)
+4.4092974268, 3.8338531635
 ```
 
 # Software Organization
+
+We will break up our `AutoGrad` package into various modules.
 
 # Implementation
 The core data structures are `Variables` and `Blocks`.
@@ -42,6 +46,6 @@ We are goin to consider that every function can be splitted into core components
 
 ![comp-graph](img/basic_function.png)
 
-We will implement 
-
 # Additional Comments
+
+We may additionally provide a reverse-mode implementation.
