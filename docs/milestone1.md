@@ -83,7 +83,7 @@ As previously stated, the variable x has the default value for `gradient`, which
 
 * Branched computation graph 
 
-All the `Blocks` will create new `Variables` as output, nothing is modified in-place. This way, if we deal with a computational containing branches, the user can easily build his function as follows : 
+All the `Blocks` will create new `Variables` as output, nothing is modified in-place. This way, if we deal with a computation graph containing branches, the user can easily build his function as follows : 
 
 ![comp-graph](img/advanced_function.png)
 
