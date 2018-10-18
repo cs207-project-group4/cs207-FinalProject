@@ -2,9 +2,9 @@
 
 # Introduction
 This project aims at building a software library for **Automatic Differentiation**, or **AD**.
-The goal of AD is to provide an **accurate** estimate of the derivative of a given function. It combines the advantages of
-Numerical Methods such as Finite Differences, and the Symbolic Computing that builds a symbolic expression of the derivative.
-AD is able to compute an approximation of the derivative of a function, **without computing a symbolic expression** of the derivative and
+The goal of AD is to provide an **accurate** estimate of the derivative of a given function. It combines the advantages of 
+Numerical Methods such as Finite Differences, and the Symbolic Computing that builds a symbolic expression of the derivative. 
+AD is able to compute an approximation of the derivative of a function, **without computing a symbolic expression** of the derivative and 
 with an **accuracy of machine precision**.
 
 AD has many applications accross Science and Engineering, the most popular one these days being Deep Neural Networks. These models
@@ -100,15 +100,15 @@ The second core data structure is the `Block`. It is basically an atomic operati
 It contains two major methods : ```data_fn ``` and ```gradient_fn ```.
 
 ```data_fn ``` is used to compute the function evaluation for that block. For example we can use :
-```
+```python
 import autograd as ad
 x=ad.Variable(3)
 y=ad.block.sin(x)
 ```
 and the new `Variable` y, will have its `data` attribute set to `ad.block.sin.data_fn(3)=sin(3)`
 
-```gradient_fn ``` is used to compute the gradient evaluation for that block. Keeping the same example, we have :
-```
+```gradient_fn ``` is used to compute the gradient evaluation for that block. Keeping the same example, we have : 
+```python
 import autograd as ad
 x=ad.Variable(3)
 y=ad.block.sin(x)
@@ -121,7 +121,7 @@ All the `Blocks` will create new `Variables` as output, nothing is modified in-p
 
 ![comp-graph](img/advanced_function.png)
 
-```
+```python
 import autograd as ad
 from ad.block import block1, block2, block3, branch_block1, banch_block2
 
@@ -150,8 +150,8 @@ def my_function(x):
 
 The solution we provied is efficient in the way that we don't store the computation graph. The values of the variables are computed on the fly, data and gradient.
 
-As you can see in the previous exemple, the user only need to store in a specific variable the variable that will be used for branched paths, but besides this the intermediate variables are overriden. See :
-```
+As you can see in the previous exemple, the user only need to store in a specific variable the variable that will be used for branched paths, but besides this the intermediate variables are overriden. See : 
+```python
 [...]
 #compute the branch path
   u=branch_block1(y)

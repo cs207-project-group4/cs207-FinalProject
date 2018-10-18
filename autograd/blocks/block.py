@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-\
 import numpy as np
-from variable import Variable
+from autograd.variable import Variable
 
 class Block():
     
