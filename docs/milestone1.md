@@ -18,26 +18,45 @@ The basic idea that underpins the AD algorithm is the chain rule:
 
 Essentially what the algorithm does is take a complex function and rewrite it as a composition of elementary functions. Then, using stored symbolic derivatives for these elementary functions, the algorithm "reverse expands" the chain rule by starting with the innermost function and building on it. 
 
-One useful trick to implementing the AD algorithm is to leverage [dual numbers](https://en.wikipedia.org/wiki/Dual_number). Dual numbers are useful because if we evaluate a function using a dual number `x` then the dual number `y` that is returned by the function:
-1. contains, in the *real part* (of `y`), the value of the function evaluated at the real part of the initial dual number (`x`)
-2. the function **derivative** in the *dual part* of `y` evaluated at the real part of the initial dual number (`x`) 
+In other words, we will represent a function whose derivative we wish to compute by a "computational graph" which builds up some set of operations sequentially. We will pass our input value along the "trace", and by judicious application of the chain rule, we will compute the derivative of the overall function.
 
-Leveraging this useful property of dual numbers is key to implementing AD elegantly and efficiently.
+An example of a computational graph is: ![computational graph](https://goo.gl/images/qnQcpk)
 
 # How to Use AutoGrad?
 
+Basic usage is as follows:
+
 ```python
->>> import AutoGrad as ag
->>> a = 2.0
->>> x = ag(a)
->>> f = sin(x) - 1/x + x**2
->>> print(f.val, f.der)
-4.4092974268, 3.8338531635
+>>> import autograd as ad
+>>> x1 = ad.Variable(0) # create a variable holding the value at which we will evaluate the function
+>>> x2 = ad.block.sin(x1) # add a computational block, here the `sin` function
+>>> y = x2 # y contains the final output of the computational graph
+>>> print(y.gradient) # this is the gradient of the function sin(x) evaluated at x=0
+1
 ```
 
 # Software Organization
 
-We will break up our `AutoGrad` package into various modules.
+We will break up our `autograd` package into various modules. Our basic directory structure will look as follows:
+
+```
+cs207-FinalProject/
+    autograd/
+        blocks/
+          block.py
+        tests/
+        utils.py
+        variable.py
+    docs/
+    README.md
+```
+
+This is not an exhaustive list of everything that will be contained in our project repository, but will highlight the main organization. It is broken down into a few key modules:
+- `block.py`: objects implementing the core computational units of the graph, namely `data_fn` (f(x)) and `gradient_fn` (f'(x))
+- `variable.py`: data structure containing the function value and gradient value
+- `utils.py`: general utility functions that are reused throughout the project
+
+Of course, we will also have `tests` that contain all the tests of our codes and `docs` that contains useful information about the project.
 
 # Implementation
 The core data structures are `Variables` and `Blocks`.
