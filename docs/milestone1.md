@@ -36,6 +36,11 @@ function test() {
 # Software Organization
 
 # Implementation
+The core data structures are `Variables` and `Blocks`.
+
+We are goin to consider that every function can be splitted into core components, each of which being called a `Block`. Thus, the application of a function is a mere composition of `Block` operations.
+
+![comp-graph](img/basic_function.png)
 
 We will implement 
 
