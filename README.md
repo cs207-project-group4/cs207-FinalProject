@@ -9,3 +9,5 @@
 * Dylan Randle
 * Simon Sebbagh
 
+
+*Please see `docs/milestone1.md` for useful information!
