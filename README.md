@@ -1,12 +1,10 @@
-# project-repo
+# CS207 Group 4: Final Project Repo
 
-# insert a fancy group name here
+## *AutoGrad (subject to change)*
 
-# GOUP NUMBER 4
-
-# Members
+## Members (alphabetical by last name)
+* Paxton Maeder-York
 * Adam Nitido
 * Dylan Randle
-* Paxton Maeder-York
 * Simon Sebbagh
 
