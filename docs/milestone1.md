@@ -45,7 +45,7 @@ The core data structures are `Variables` and `Blocks`.
 We are goin to consider that every function can be splitted into core components, each of which being called a `Block`. Thus, the application of a function is a mere composition of `Block` operations. The function
 ![comp-graph](img/basic_function.png)
 
-
+* `Variable`
 The first core data structure is `Variable`. This object will flow through the several `Blocks`, storing the new values of the functions computed, as well as the gradient computed so far.
 
 ![comp-graph](img/Variable.png)
@@ -54,6 +54,30 @@ It contains two main attributes : data and gradient. In each block, the input Va
 
 Note that we are not doing in-place modification of the input `Variable` in each `Block` as we may need of this `Variable` later in the computation
 
+If nothing is indicated by the user, the default value of `Variable.gradient` is an array of ones, meaning we are at the beginning of the computational graph
+
+* `Block` 
+The second core data structure is the `Block`. It is basically an atomic operation performed on `Variables`. For instance, sin, exp, addition or multiplication.
+
+![comp-graph](img/Block.png)
+
+It contains two major methods : ```data_fn ``` and ```gradient_fn ```. 
+
+```data_fn ``` is used to compute the function evaluation for that block. For example we can use :
+```
+import autograd as ad
+x=Variable(3)
+y=ad.block.sin(x)
+```
+and the new `Variable` y, will have its `data` attribute set to `ad.block.sin.data_fn(3)=sin(3)`
+
+```gradient_fn ``` is used to compute the gradient evaluation for that block. Keeping the same example, we have : 
+```
+import autograd as ad
+x=Variable(3)
+y=ad.block.sin(x)
+```
+As previously stated, the variable x has the default value for `gradient`, which is an array of ones. Then, the block sin will create a new variable y, with `gradient` attribute set to `ad.block.sin.gradient_fn(3) * x.gradient = cos(3) * 1`
 
 # Additional Comments
 
