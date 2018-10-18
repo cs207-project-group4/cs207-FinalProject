@@ -66,7 +66,7 @@ It contains two major methods : ```data_fn ``` and ```gradient_fn ```.
 ```data_fn ``` is used to compute the function evaluation for that block. For example we can use :
 ```
 import autograd as ad
-x=Variable(3)
+x=ad.Variable(3)
 y=ad.block.sin(x)
 ```
 and the new `Variable` y, will have its `data` attribute set to `ad.block.sin.data_fn(3)=sin(3)`
@@ -74,10 +74,24 @@ and the new `Variable` y, will have its `data` attribute set to `ad.block.sin.da
 ```gradient_fn ``` is used to compute the gradient evaluation for that block. Keeping the same example, we have : 
 ```
 import autograd as ad
-x=Variable(3)
+x=ad.Variable(3)
 y=ad.block.sin(x)
 ```
-As previously stated, the variable x has the default value for `gradient`, which is an array of ones. Then, the block sin will create a new variable y, with `gradient` attribute set to `ad.block.sin.gradient_fn(3) * x.gradient = cos(3) * 1`
+As previously stated, the variable x has the default value for `gradient`, which is an array of ones. Then, the block sin will create a new variable y, which `data` attribute has already been explained above. The `gradient` attribute is set to `ad.block.sin.gradient_fn(3) * x.gradient = cos(3) * 1`
+
+
+* Classes implemented
+As hinted before, we will have a class for the `Variable` and another class for `Block`.
+Though, each elementary function will be asigned a subclass of `Block` : we will have a set of `Block` functions hard-coded from which we expect the user to build its complicated combinaisons.
+
+Exemple of this set could be : sin, cos, tan, exp, pow, sum, mean, ...
+
+Of course, the `autograd` package being built respecting the design patterns for good development, the user will have the possibility to build his own `Block` if he would not find a specific function among the ones we provide. The user would have to follow the `Block` interface and provide a `data_fn` as well as a `grad_fn`
+
+* external dependencies 
+We will build our package relying highly on numpy. So far it is the only external dependency we use
+
+
 
 # Additional Comments
 
