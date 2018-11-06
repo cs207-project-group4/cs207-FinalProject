@@ -24,7 +24,8 @@ AutoGrad works with [`Python3`](https://docs.python.org/3/)
 1. Create a virtual environment
 ```
 cd my_directory
-virtualenv my_env```
+virtualenv my_env
+```
 2. Activate the virtual environment
 ```
 source my_env/bin/activate
