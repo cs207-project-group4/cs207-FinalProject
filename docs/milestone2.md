@@ -48,18 +48,20 @@ pip install -r cs207-FinalProject-master/requirements.txt
 
 ### AutoGrad Usage
 
-Example: How to differentiate `y = sin(x) + cos(x)` at x = 3
+Example: How to differentiate `y = sin(x) + cos(x)` at x = pi
 
 ```
 >>> import autograd as ag
->>> x = ag.Variable(3)
+>>> import numpy as np
+>>> x = ag.Variable(np.pi)
 >>> b1 = ag.block.sin(x)
 >>> b2 = ag.block.cos(x)
 >>> b3 = b1 + b2
->>>return(b3)
+>>> return(b3)
+-1
 ```
 
-b3 will return the derivative of `y = sin(x) + cos(x)` at x = 3
+b3 will return the derivative of `y = sin(x) + cos(x)` at x = pi
 
 # Background
 The basic idea that underpins the AD algorithm is the chain rule:
@@ -105,7 +107,7 @@ This is not an exhaustive list of everything that will be contained in our proje
 - `variable.py`: data structure containing the function value and gradient value
 - `utils.py`: general utility functions that are reused throughout the project
 
-Of course, we will also have `tests` that contain all the tests of our codes and `docs` that contains useful information about the project.
+ `tests` will contain all the tests of our codes and `docs` that contains useful information about the project.
 
 # Implementation
 The core data structures are `Variables` and `Blocks`.
