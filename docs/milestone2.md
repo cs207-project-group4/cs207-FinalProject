@@ -45,3 +45,26 @@ Install Dependencies using Pip
 ```
 pip install -r cs207-FinalProject-master/requirements.txt
 ```
+
+### AutoGrad Usage
+
+Example: How to differentiate `$$f\left(x\right) = x - \exp\left(-2\sin^{2}\left(4x\right)\right).$$`
+
+Load Package
+```
+>>> import autograd as ag
+>>> x = ag.Variable(3)
+>>> y = ag.block.sin(x)
+```
+
+
+# Background
+The basic idea that underpins the AD algorithm is the chain rule:
+
+![The chain rule](https://wikimedia.org/api/rest_v1/media/math/render/svg/fb55cd5448d4bed6da3b79283d92eec2ab9bb95d)
+
+Essentially what the algorithm does is take a complex function and rewrite it as a composition of elementary functions. Then, using stored symbolic derivatives for these elementary functions, the algorithm "reverse expands" the chain rule by starting with the innermost function and building on it.
+
+In other words, we will represent a function whose derivative we wish to compute by a "computational graph" which builds up some set of operations sequentially. We will pass our input value along the "trace", and by judicious application of the chain rule, we will compute the derivative of the overall function.
+
+An example of a computational graph is: ![computational graph](http://www.columbia.edu/~ahd2125/static/img/2015-12-05/Fig1.png)
