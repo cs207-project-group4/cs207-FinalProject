@@ -35,6 +35,11 @@ source my_env/bin/activate
 pip install AutoGrad
 ```
   2. From the source
+    1. Download Package From GutHub and Unzip
 ```
-pip install git+https://github.com/cs207-project-group4/cs207-FinalProject.git
+unzip cs207-FinalProject-master.zip
+```
+    2.  Install Dependencies
+```
+pip install -r cs207-FinalProject-master/requirements.txt
 ```
