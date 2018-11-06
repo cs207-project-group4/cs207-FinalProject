@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from autograd.blocks.trigo.sin import sin
+from autograd.blocks.trigo import sin
 from autograd.variable import Variable
 import numpy as np
 
