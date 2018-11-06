@@ -48,15 +48,18 @@ pip install -r cs207-FinalProject-master/requirements.txt
 
 ### AutoGrad Usage
 
-Example: How to differentiate `$$f\left(x\right) = x - \exp\left(-2\sin^{2}\left(4x\right)\right).$$`
+Example: How to differentiate `y = sin(x) + cos(x)` at x = 3
 
-Load Package
 ```
 >>> import autograd as ag
 >>> x = ag.Variable(3)
->>> y = ag.block.sin(x)
+>>> b1 = ag.block.sin(x)
+>>> b2 = ag.block.cos(x)
+>>> b3 = b1 + b2
+>>>return(b3)
 ```
 
+b3 will return the derivative of `y = sin(x) + cos(x)` at x = 3
 
 # Background
 The basic idea that underpins the AD algorithm is the chain rule:
@@ -68,3 +71,140 @@ Essentially what the algorithm does is take a complex function and rewrite it as
 In other words, we will represent a function whose derivative we wish to compute by a "computational graph" which builds up some set of operations sequentially. We will pass our input value along the "trace", and by judicious application of the chain rule, we will compute the derivative of the overall function.
 
 An example of a computational graph is: ![computational graph](http://www.columbia.edu/~ahd2125/static/img/2015-12-05/Fig1.png)
+
+
+# Software Organization
+
+We will break up our `autograd` package into various modules. Our basic directory structure will look as follows:
+
+```
+cs207-FinalProject/
+    autograd/
+        __init__.py
+        blocks/
+            __init__.py
+            block.py
+        tests/
+            __init__.py
+            test_basic.py
+            test_autograd.py
+            ...
+        utils.py
+        variable.py
+    docs/
+        milestone1.md
+        milestone2.md
+        ...
+    README.md
+    requirements.txt
+    setup.py
+```
+
+This is not an exhaustive list of everything that will be contained in our project repository, but will highlight the main organization. It is broken down into a few key modules:
+- `block.py`: objects implementing the core computational units of the graph, namely `data_fn` (*f(x)*) and `gradient_fn` (*f'(x)*)
+- `variable.py`: data structure containing the function value and gradient value
+- `utils.py`: general utility functions that are reused throughout the project
+
+Of course, we will also have `tests` that contain all the tests of our codes and `docs` that contains useful information about the project.
+
+# Implementation
+The core data structures are `Variables` and `Blocks`.
+
+We are going to consider that every function can be split into core components, each of which we will call a `Block`. Thus, the application of a function is a mere composition of `Block` operations. The function
+![comp-graph](img/basic_function.png)
+
+### `Variable`
+
+The first core data structure is `Variable`. This object will flow through several `Blocks`, storing the new values of the functions computed, as well as the gradient computed so far.
+
+![comp-graph](img/Variable.png)
+
+It contains two main attributes : `data` and `gradient`. In each block, the input `Variable` brings the information from the previous functions and gradients computed and propagates the data and gradient flow forward.
+
+If nothing is indicated by the user, the default value of `Variable.gradient` is an array of ones, meaning we are at the beginning of the computational graph
+
+### `Block`
+
+The second core data structure is the `Block`. It is basically an atomic operation performed on `Variable`. For instance, sin, exp, addition or multiplication.
+
+![comp-graph](img/Block.png)
+
+The `Block` contains two major methods : ```data_fn ``` and ```gradient_fn ```.
+
+```data_fn ``` is used to compute the function evaluation for that block. For example we can use :
+```python
+import autograd as ad
+x=ad.Variable(3)
+y=ad.block.sin(x)
+```
+and the new `Variable` y, will have its `data` attribute set to `ad.block.sin.data_fn(3)` = `sin(3)`
+
+```gradient_fn ``` is used to compute the gradient evaluation for that block. Keeping the same example, we have :
+```python
+import autograd as ad
+x=ad.Variable(3)
+y=ad.block.sin(x)
+```
+As previously stated, the variable x has the default value for `gradient`, which is an array of ones. Then, the block sin will create a new variable y, which `data` attribute has already been explained above. The `gradient` attribute is set to `ad.block.sin.gradient_fn(3) * x.gradient = cos(3) * 1`
+
+* Branched computation graph
+
+All the `Blocks` will create new `Variables` as output, nothing is modified in-place. This way, if we deal with a computation graph containing branches, the user can easily build his function as follows :
+
+![comp-graph](img/advanced_function.png)
+
+```python
+import autograd as ad
+from ad.block import block1, block2, block3, branch_block1, banch_block2
+
+def my_function(x):
+  x=ad.Variable(3)
+
+  #first block common for both paths
+  y=block1(x)
+
+  #compute the main block path
+  z=block2(y)
+
+  #compute the branch path
+  u=branch_block1(y)
+  u=branch_block2(u)
+
+  #merge branches
+  output=block3(z,u)
+
+  return(output)
+
+```
+
+* No storing of the compuation graph
+
+The solution we provided is efficient in that we don't store the computation graph. The values of the variables are computed on the fly, both data and gradient.
+
+As you can see in the previous exemple, the user only needs to store the variable that will be used for branched paths, but besides this the intermediate variables are overriden. See:
+```python
+[...]
+#compute the branch path
+  u=branch_block1(y)
+  u=branch_block2(u)
+ [...]
+```
+
+
+* Classes implemented
+
+As hinted before, we will have a class for the `Variable` and another class for `Block`.
+Though each elementary function will be asigned a subclass of `Block` : we will have a set of `Block` functions hard-coded from which we expect the user to build his/her complicated combinations.
+
+Example of this set could be: sin, cos, tan, exp, pow, sum, mean, ...
+
+Of course, the `autograd` package is being built respecting the design patterns for good development, the user will have the possibility to build his own `Block` if he would not find a specific function among the ones we provide. The user would have to follow the `Block` interface and provide a `data_fn` as well as a `grad_fn` (leveraging *duck typing*).
+
+* External dependencies
+
+We will build our package relying highly on numpy. So far it is the only external dependency we use.
+
+
+# Additional Comments
+
+We may additionally provide a reverse-mode implementation.
