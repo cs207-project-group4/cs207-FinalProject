@@ -11,17 +11,30 @@ AD is able to compute an approximation of the derivative of a function, **withou
 
 AD has many applications across Science and Engineering, the most popular one these days being Deep Neural Networks. These models try to fit a function with >*10M* parameters to a dataset. To do so, they use Gradient Descent algorithms using gradients approximations provided by AD. Famous applications include **Alpha Go**, **Self-Driving Cars** and **Image Recognition**.
 
+# How to use AutoGrad
 
+### Installation
 
-## Requirements
+#### Requirements
 AutoGrad works with [`Python3`](https://docs.python.org/3/)
-
-### Dependencies
+#### Dependencies
 * [`Numpy`](http://www.numpy.org/)
 
-## Installation
-1. Pip (Preferred):
+#### How to Install:
+1. Create a virtual environment
 ```
-
+cd my_directory
+virtualenv my_env```
+2. Activate the virtual environment
+```
+source my_env/bin/activate
+```
+3. Install package - there are a few ways to do this
+  1. Pip (Preferred)
+```
 pip install AutoGrad
+```
+  2. From the source
+```
+pip install git+https://github.com/cs207-project-group4/cs207-FinalProject.git
 ```
