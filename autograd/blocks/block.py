@@ -70,9 +70,7 @@ class Block():
         new_grad=self.gradient_forward(*args)
         
         
-        return(Variable(new_data, new_grad))
-        
-        
+        return(Variable(new_data, new_grad))    
         
     
 class SimpleBlock(Block):
