@@ -31,16 +31,17 @@ virtualenv my_env
 source my_env/bin/activate
 ```
 3. Install package - there are a few ways to do this
-  *1. Pip (Preferred)
+
+  1. Pip (Preferred)
 ```
 pip install AutoGrad
 ```
-  *2. From the source
+  2. From the source
 Download Package From GutHub and Unzip
 ```
 unzip cs207-FinalProject-master.zip
 ```
-Install Dependencies
+Install Dependencies using Pip
 ```
 pip install -r cs207-FinalProject-master/requirements.txt
 ```
