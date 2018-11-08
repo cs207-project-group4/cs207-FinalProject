@@ -2,7 +2,12 @@
 
 import numpy as np
 import autograd.utils as utils
-from autograd.blocks import add, substract, multiply, divide, power
+from blocks.operations import add, subtract, multiply, divide, power
+add=add()
+subtract=subtract()
+multiply=multiply()
+divide=divide()
+power=power()
 
 class Variable():
     """
@@ -99,7 +104,7 @@ class Variable():
         overload addition
         """
         if not isinstance(other, Variable):
-            self.__scalar_to_variable(other)
+            other=self.__scalar_to_variable(other)
         return add(self, other)
 
     def __radd__(self, other):
@@ -107,7 +112,7 @@ class Variable():
         overload right-addition
         """
         if not isinstance(other, Variable):
-            self.__scalar_to_variable(other)
+            other=self.__scalar_to_variable(other)
         return add(self, other)
 
     def __sub__(self, other):
@@ -115,23 +120,23 @@ class Variable():
         overload subtraction
         """
         if not isinstance(other, Variable):
-            self.__scalar_to_variable(other)
-        return substract(self, other)
+            other=self.__scalar_to_variable(other)
+        return subtract(self, other)
 
     def __rsub__(self, other):
         """
         overload right-subtraction (order matters)
         """
         if not isinstance(other, Variable):
-            self.__scalar_to_variable(other)
-        return substract(other, self)
+            other=self.__scalar_to_variable(other)
+        return subtract(other, self)
 
     def __mul__(self, other):
         """
         overload element-wise multiplication
         """
         if not isinstance(other, Variable):
-            self.__scalar_to_variable(other)
+            other=self.__scalar_to_variable(other)
         return multiply(self, other)
 
     def __rmul__(self, other):
@@ -139,7 +144,7 @@ class Variable():
         overload element-wise multiplication
         """
         if not isinstance(other, Variable):
-            self.__scalar_to_variable(other)
+            other=self.__scalar_to_variable(other)
         return multiply(other, self)
 
     def __truediv__(self, other):
@@ -147,7 +152,7 @@ class Variable():
         overload division
         """
         if not isinstance(other, Variable):
-            self.__scalar_to_variable(other)
+            other=self.__scalar_to_variable(other)
         return divide(self, other)
 
     def __rtruediv__(self, other):
@@ -155,25 +160,16 @@ class Variable():
         overload right-division (order matters)
         """
         if not isinstance(other, Variable):
-            self.__scalar_to_variable(other)
+            other=self.__scalar_to_variable(other)
         return divide(other, self)
 
     def __pow__(self, other):
         """
         overload power
         """
-        if not isinstance(other, Variable):
-            self.__scalar_to_variable(other)
+        if isinstance(other, Variable):
+            raise ValueError('Power is not supported for type Variable')
         return power(self, other)
-
-    def __rpow__(self, other):
-        """
-        overload right-power (order matters)
-        """
-        if not isinstance(other, Variable):
-            self.__scalar_to_variable(other)
-        return power(other, self)
-   
        
     
 if __name__=='__main__':
@@ -203,8 +199,8 @@ if __name__=='__main__':
     print(x-x)
     print(x*x)
     print(x/x)
-    print(x**2)
-    print(x**x) # this gives incorrect result with current implementation
+    # print(x**2)
+    # print(x**x) # this gives incorrect result with current implementation
 
 
 # =============================================================================
