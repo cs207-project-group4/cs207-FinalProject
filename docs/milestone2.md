@@ -60,16 +60,13 @@ python3 test.py
 Example: How to differentiate `f(x) = sin(x) + cos(x)` at x = pi
 
 ```
->>> from autograd import *
 >>> import numpy as np
->>> import autograd.blocks.block
->>> import autograd.variable
->>> import autograd.blocks.block
->>> import autograd.blocks.block.sin as sinBlock
->>> import ag.blocks.cos as cosBlock
->>> x = autograd.variable.Variable(np.pi)
->>> b1 = sinBlock(x)
->>> b2 = cosBlock(x)
+>>> import autograd
+>>> import autograd.variable as av
+>>> import autograd.blocks.trigo as trig
+>>> x = av.Variable(np.pi)
+>>> b1 = trig.sin(x)
+>>> b2 = trig.cos(x)
 >>> b3 = b1 + b2
 >>> print(b3.gradient)
 -1
@@ -80,18 +77,18 @@ b3 will contain the derivative of `y = sin(x) + cos(x)` at x = pi
 Example: How to differentiate `f(x)=sin(cos(x+3)) + e^(sin(x)^2)` at x = 1
 
 ```
->>> import autograd as ag
 >>> import numpy as np
->>> import ag.block.sin as sinBlock
->>> import ag.block.cos as cosBlock
->>> import ag.block.exp as expBlock
->>> x = ag.Variable(1)
+>>> import autograd
+>>> import autograd.variable as av
+>>> import autograd.blocks.trigo as trig
+>>> import autograd.blocks.operations as op
+>>> x = av.Variable(1)
 >>> b1 = x + 3
->>> b2 = sinBlock(x)
->>> b3 = cosBlock(b1)
->>> b4 = sinBlock(b3)
+>>> b2 = trig.sin(x)
+>>> b3 = trig.cos(b1)
+>>> b4 = trig.sin(b3)
 >>> b5 = b2^2
->>> b6 = expBlock(b5)
+>>> b6 = op.expBlock(b5)
 >>> b7 = b6 + b4
 >>> print(b7.gradient)
 2.44674863650247767...
