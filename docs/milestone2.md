@@ -82,7 +82,7 @@ Example: How to differentiate `f(x)=sin(cos(x+3)) + e^(sin(x)^2)` at x = 1
 >>> b6 = expBlock(b5)
 >>> b7 = b6 + b4
 >>> print(b7.gradient)
-2.44674863650247767
+2.44674863650247767...
 ```
 b7 will contain the derivative of `f(x)=sin(cos(x+3)) + e^(sin(x)^2)` at x = 1
 
@@ -95,10 +95,11 @@ The basic idea that underpins the AD algorithm is the chain rule:
 
 Essentially what the algorithm does is take a complex function and rewrite it as a composition of elementary functions. Then, using stored symbolic derivatives for these elementary functions, the algorithm "reverse expands" the chain rule by starting with the innermost function and building on it.
 
-In other words, we will represent a function whose derivative we wish to compute by a "computational graph" which builds up some set of operations sequentially. We will pass our input value along the "trace", and by judicious application of the chain rule, we will compute the derivative of the overall function.
+In other words, we will represent a function whose derivative we wish to compute by a "computational graph" which builds up some set of operations sequentially. In the computational graph, each note is a basic operation and the edges pass information through the nodes. In the computational graph, the data passed through the nodes contains the value of the original function and the gradient evaluated at some value.
 
 An example of a computational graph is: ![computational graph](http://www.columbia.edu/~ahd2125/static/img/2015-12-05/Fig1.png)
 
+In the example above, the `w1` node contains the gradient for input `x` at some value, the data from `w1` is then passed through the `cos()` operation to create `w3`. 'w3' later multiplied with `w4` to create `w5`. We will pass our input value along the "trace", and by judicious application of the chain rule, we will compute the derivative of the overall function.
 
 # Software Organization
 
