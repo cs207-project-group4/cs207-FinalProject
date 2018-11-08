@@ -1,4 +1,7 @@
 # Byte-compiled / optimized / DLL files
+.idea/
+.pytest_cache/
+.spyproject/
 __pycache__/
 *.py[cod]
 *$py.class

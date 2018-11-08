@@ -28,7 +28,7 @@ class add(Block):
         (x + y)' = x' + y'
         """
         operator_check(args)
-        new_grad = np.add ( args[0].gradient, args[1].gradient )
+        new_grad = np.add(args[0].gradient, args[1].gradient)
         return(new_grad)
 
 
@@ -50,7 +50,7 @@ class subtract(Block):
         return(new_grad)
 
 
-class multiply(Block): ### SOMETHING WRONG? CHECK DOT
+class multiply(Block): ### OK
     """
     element-wise multiplication
     """
@@ -69,13 +69,20 @@ class multiply(Block): ### SOMETHING WRONG? CHECK DOT
         second_term = np.multiply(args[0].data, args[1].gradient)
         new_grad = np.add(first_term, second_term)
         return(new_grad)
+        
 
 class divide(Block):
     """
     element-wise division
+    provided that b!=0
+    divide the first element by the second, provided that b!=0 : 
+        divide(a,b) = a/b
     """
+    
     def data_fn(self, *args):
         operator_check(args)
+        assert args[1].data.all() != 0, 'dividing by a zero element in the second input : {}'.format(args[1].data)
+        
         new_data = np.divide(args[0].data, args[1].data)
         return(new_data)
 
@@ -83,31 +90,39 @@ class divide(Block):
         """
         quotient rule: (x/y)' = (x'y - xy') / y ** 2
         """
+        assert args[1].data.all() != 0, 'dividing by a zero element in the second input : {}'.format(args[1].data)
+
         operator_check(args)
         first_term = np.multiply(args[0].gradient, args[1].data)
         second_term = np.multiply(args[0].data, args[1].gradient)
+        diff= np.subtract(first_term, second_term)
+        
         third_term = np.power(args[1].data, 2)
-        return (first_term - second_term) / third_term
+        third_term=1/third_term
+        
+        return np.multiply(diff, third_term)
 
 class power(Block):
     """
     element-wise power. second argument is value of power
     (int, float, vector) to apply to first argument
     """
-    def data_fn(self, *args):
-        operator_check(args)
-        new_data = np.power(args[0].data, args[1].data)
+    def data_fn(self, input_vector, power_integer):
+        assert power_integer > 0, 'negative power'
+        new_data = np.power(input_vector.data, power_integer)
         return(new_data)
 
-    def gradient_forward(self, *args):
+    def gradient_forward(self, input_vector, power_integer):
         """
         power & product rule: (x^n)' = nx'x^(n-1)
         """
-        operator_check(args)
-        new_grad = args[1].data * args[0].gradient * np.power(args[0].data, args[1].data - 1)
+        assert power_integer > 0, 'negative power'
+
+        #operator_check(args)
+        new_grad = np.multiply(power_integer , np.multiply(input_vector.gradient, np.power(input_vector, power_integer - 1)))
         return (new_grad)
 
-
+#NOT WORKING NOW
 class dot(Block):
     """
     dot product between two vector inputs
