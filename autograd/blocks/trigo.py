@@ -8,22 +8,34 @@ class sin(SimpleBlock):
     
     def data_fn(self, args):        
         new_data = np.sin(args.data)       
-        return(new_data)
+        return new_data
     
     
     def gradient_fn(self, args):
         grad = np.cos(args.data)
-        return(grad)
+        return grad
         
     
 class cos(SimpleBlock):
+    """
+    vectorized cosine function on vectors
+    """
+    def data_fn(self, args):
+        new_data = np.cos(args.data)
+        return new_data
+
+    def gradient_fn(self, args):
+        grad = -np.sin(args.data)
+        return grad
+
+class tan(SimpleBlock):
 	"""
-	vectorized cosine function on vectors
+	vectorized tangent function on vectors
 	"""
 	def data_fn(self, args):
-		new_data = np.cos(args.data)
-		return(new_data)
+		new_data = np.tan(args.data)
+		return new_data
 
 	def gradient_fn(self, args):
-		grad = -np.sin(args.data)
-		return(grad)
+		grad = 1/(np.sin(args.data))**2
+		return grad
