@@ -5,7 +5,7 @@ import numpy as np
 
 def test_sinh():
 # =============================================================================
-#   define the input variable
+#   define the input variablet
 # =============================================================================
     data=np.random.random(5)
     x=Variable(data)
@@ -35,3 +35,6 @@ def test_sinh():
 #   assert gradient forward pass
 # =============================================================================
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+
+
+test_sinh()

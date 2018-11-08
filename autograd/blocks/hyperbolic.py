@@ -2,8 +2,8 @@ from  autograd.blocks.block import SimpleBlock
 import numpy as np
 
 class sinh(SimpleBlock):
-    """
-	vectorized cosine function on vectors
+	"""
+	vectorized sin h function on vectors
 	"""
 	def data_fn(self, args):
 		new_data = np.sinh(args.data)
@@ -15,7 +15,7 @@ class sinh(SimpleBlock):
 
 class cosh(SimpleBlock):
 	"""
-	vectorized cosine function on vectors
+	vectorized cosine h function on vectors
 	"""
 	def data_fn(self, args):
 		new_data = np.cosh(args.data)
@@ -26,13 +26,13 @@ class cosh(SimpleBlock):
 		return(grad)
 
 class tanh(SimpleBlock):
-    """
-    vectorized cosine function on vectors
 	"""
-    def data_fn(self, args):
-        new_data = np.tanh(args.data)
-        return(new_data)
+	vectorized tan h function on vectors
+	"""
+	def data_fn(self, args):
+		new_data = np.tanh(args.data)
+		return(new_data)
 
-    def gradient_fn(self, args):
-        grad = 1 - tanh(args.data)**2
-        return(grad)
+	def gradient_fn(self, args):
+		grad = 1 - tanh(args.data)**2
+		return(grad)
