@@ -28,7 +28,7 @@ class add(Block):
         (x + y)' = x' + y'
         """
         operator_check(args)
-        new_grad = np.add ( args[0].gradient, args[1].gradient )
+        new_grad = np.add(args[0].gradient, args[1].gradient)
         return(new_grad)
 
 
