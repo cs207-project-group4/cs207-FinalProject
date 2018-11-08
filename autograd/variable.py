@@ -2,7 +2,7 @@
 
 import numpy as np
 import autograd.utils as utils
-from autograd.blocks import block as blk
+#from autograd.blocks.operations import add, substract, multiply, divide, power
 
 class Variable():
     """
@@ -93,97 +93,89 @@ class Variable():
         """        
         return('data : {} \ngrad : {}'.format(self.data, self.gradient))
     
-    def __add__(self, other):
-        """
-        overload addition
-        """
-        if not isinstance(other, Variable):
-            other=Variable(other)
-        op = blk.add()
-        return op(self,other)
-    
-    def __radd__(self, other):
-        """
-        overload right-addition
-        """
-        if not isinstance(other, Variable):
-            other=Variable(other)
-        op = blk.add()
-        return op(self, other)
-    
-    def __sub__(self, other):
-        """
-        overload subtraction
-        """
-        if not isinstance(other, Variable):
-            other=Variable(other)
-        op = blk.subtract()
-        return op(self, other)
-    
-    def __rsub__(self, other):
-        """
-        overload right-subtraction (order matters)
-        """
-        if not isinstance(other, Variable):
-            other=Variable(other)
-        op = blk.subtract()
-        return op(other, self)
-    
-    def __mul__(self, other):
-        """
-        overload multiplication
-        """
-        if not isinstance(other, Variable):
-            other=Variable(other)
-        op = blk.multiply()
-        return op(self, other)
-    
-    def __rmul__(self, other):
-        """
-        overload right-multiplication
-        """
-        if not isinstance(other, Variable):
-            other=Variable(other)
-        op = blk.multiply()
-        return op(other, self)
-    
-    def __truediv__(self, other):
-        """
-        overload division
-        """
-        if not isinstance(other, Variable):
-            other=Variable(other)
-        op = blk.divide()
-        return op(self, other)
-    
-    def __rtruediv__(self, other):
-        """
-        overload right-division (order matters)
-        """
-        if not isinstance(other, Variable):
-            other=Variable(other)
-        op = blk.divide()
-        return op(other, self)
-    
-    def __pow__(self, other):
-        """
-        overload power
-        """
-        if not isinstance(other, Variable):
-            other=Variable(other)
-        op = blk.power()
-        return op(self, other)
-    
-    def __rpow__(self, other):
-        """
-        overload right-power (order matters)
-        """
-        if not isinstance(other, Variable):
-            other=Variable(other)
-        op = blk.power()
-        return op(other, self)
-    
-        
+#    
+#    
+#    def __add__(self, other):
+#        """
+#        overload addition
+#        """
+#        if not isinstance(other, Variable):
+#            other=Variable(other)
+#        return add(self,other)
+#    
+#    def __radd__(self, other):
+#        """
+#        overload right-addition
+#        """
+#        if not isinstance(other, Variable):
+#            other=Variable(other)
+#        return add(self, other)
+#    
+#    def __sub__(self, other):
+#        """
+#        overload subtraction
+#        """
+#        if not isinstance(other, Variable):
+#            other=Variable(other)
+#        return substract(self, other)
+#    
+#    def __rsub__(self, other):
+#        """
+#        overload right-subtraction (order matters)
+#        """
+#        if not isinstance(other, Variable):
+#            other=Variable(other)
+#        return substract(other, self)
+#    
+#    def __mul__(self, other):
+#        """
+#        overload element-wise multiplication
+#        """
+#        if not isinstance(other, Variable):
+#            other=Variable(other)
+#        return multiply(self, other)
+#    
+#    def __rmul__(self, other):
+#        """
+#        overload element-wise multiplication
+#        """
+#        if not isinstance(other, Variable):
+#            other=Variable(other)
+#        return multiply(other, self)
+#    
+#    def __truediv__(self, other):
+#        """
+#        overload division
+#        """
+#        if not isinstance(other, Variable):
+#            other=Variable(other)
+#        return divide(self, other)
+#    
+#    def __rtruediv__(self, other):
+#        """
+#        overload right-division (order matters)
+#        """
+#        if not isinstance(other, Variable):
+#            other=Variable(other)
+#        return divide(other, self)
+#    
+#    def __pow__(self, other):
+#        """
+#        overload power
+#        """
+#        if not isinstance(other, Variable):
+#            other=Variable(other)
+#        return power(self, other)
+#    
+#    def __rpow__(self, other):
+#        """
+#        overload right-power (order matters)
+#        """
+#        if not isinstance(other, Variable):
+#            other=Variable(other)
+#        return power(other, self)
+#    
+#        
     
 if __name__=='__main__':
     
@@ -203,15 +195,17 @@ if __name__=='__main__':
     
     print('==== Operators ====')
     
-    print(x+3)
-    print(3-x)
-    print(x/3)
-    print(3*x)
-    print(x+x)
-    print(x-x)
-    print(x*x)
-    print(x/x)
-    print(x**2)
-    print(x**x) # this gives incorrect result with current implementation
-
-
+# =============================================================================
+#     print(x+3)
+#     print(3-x)
+#     print(x/3)
+#     print(3*x)
+#     print(x+x)
+#     print(x-x)
+#     print(x*x)
+#     print(x/x)
+#     print(x**2)
+#     print(x**x) # this gives incorrect result with current implementation
+# 
+# 
+# =============================================================================
