@@ -48,17 +48,39 @@ pip install -r cs207-FinalProject-master/requirements.txt
 
 ### AutoGrad Usage
 
-Example: How to differentiate `y = sin(x) + cos(x)` at x = pi
+Example: How to differentiate `f(x) = sin(x) + cos(x)` at x = pi
 
 ```
 >>> import autograd as ag
 >>> import numpy as np
+>>> import ag.block.sin as sinBlock
+>>> import ag.block.cos as cosBlock
 >>> x = ag.Variable(np.pi)
->>> b1 = ag.block.sin(x)
->>> b2 = ag.block.cos(x)
+>>> b1 = sinBlock(x)
+>>> b2 = cosBlock(x)
 >>> b3 = b1 + b2
->>> return(b3)
+>>> print(b3.gradient)
 -1
+```
+
+Example: How to differentiate `f(x)=sin(cos(x+3)) + e^(sin(x)^2)` at x = 1
+
+```
+>>> import autograd as ag
+>>> import numpy as np
+>>> import ag.block.sin as sinBlock
+>>> import ag.block.cos as cosBlock
+>>> import ag.block.exp as expBlock
+>>> x = ag.Variable(1)
+>>> b1 = x + 3
+>>> b2 = sinBlock(x)
+>>> b3 = cosBlock(b1)
+>>> b4 = sinBlock(b3)
+>>> b5 = b2^2
+>>> b6 = expBlock(b5)
+>>> b7 = b6 + b4
+>>> print(b7.gradient)
+2.44674863650247767
 ```
 
 b3 will return the derivative of `y = sin(x) + cos(x)` at x = pi
