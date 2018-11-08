@@ -2,7 +2,7 @@
 
 import numpy as np
 import autograd.utils as utils
-from blocks.operations import add, subtract, multiply, divide, power
+from autograd.blocks.operations import add, subtract, multiply, divide, power
 add=add()
 subtract=subtract()
 multiply=multiply()
@@ -199,7 +199,7 @@ if __name__=='__main__':
     print(x-x)
     print(x*x)
     print(x/x)
-    # print(x**2)
+   #print(x**2)
     # print(x**x) # this gives incorrect result with current implementation
 
 
