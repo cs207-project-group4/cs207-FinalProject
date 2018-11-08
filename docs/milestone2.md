@@ -45,17 +45,29 @@ Install Dependencies using Pip
 ```
 pip install -r cs207-FinalProject-master/requirements.txt
 ```
+Install AutoGrad
+```
+cd cs207-FinalProject-master
+python3 setup.py install
+```
+Test AutoGrad
+```
+python3 test.py
+```
 
 ### AutoGrad Usage
 
 Example: How to differentiate `f(x) = sin(x) + cos(x)` at x = pi
 
 ```
->>> import autograd as ag
+>>> from autograd import *
 >>> import numpy as np
->>> import ag.block.sin as sinBlock
->>> import ag.block.cos as cosBlock
->>> x = ag.Variable(np.pi)
+>>> import autograd.blocks.block
+>>> import autograd.variable
+>>> import autograd.blocks.block
+>>> import autograd.blocks.block.sin as sinBlock
+>>> import ag.blocks.cos as cosBlock
+>>> x = autograd.variable.Variable(np.pi)
 >>> b1 = sinBlock(x)
 >>> b2 = cosBlock(x)
 >>> b3 = b1 + b2
@@ -129,11 +141,9 @@ cs207-FinalProject/
 ```
 
 This is not an exhaustive list of everything that will be contained in our project repository, but will highlight the main organization. It is broken down into a few key modules:
-- `block.py`: objects implementing the core computational units of the graph, namely `data_fn` (*f(x)*) and `gradient_fn` (*f'(x)*)
+- `block.py`: objects implementing the core computational units of the graph, namely `data_fn` (*f(x)*) and `gradient_fn` (*f'(x)*).
 - `variable.py`: data structure containing the function value and gradient value
-- `utils.py`: general utility functions that are reused throughout the project
-
- `tests` will contain all the tests of our codes and `docs` that contains useful information about the project.
+- `utils.py`: general utility functions that are reused throughout the project `tests` will contain all the tests of our codes and `docs` that contains useful information about the project.
 
 # Implementation
 The core data structures are `Variables` and `Blocks`.
@@ -153,7 +163,7 @@ If nothing is indicated by the user, the default value of `Variable.gradient` is
 
 ### `Block`
 
-The second core data structure is the `Block`. It is basically an atomic operation performed on `Variable`. For instance, sin, exp, addition or multiplication.
+The second core data structure is the `Block`. It is an atomic operation performed on `Variable`. For instance, sin, exp, addition or multiplication.
 
 ![comp-graph](img/Block.png)
 
