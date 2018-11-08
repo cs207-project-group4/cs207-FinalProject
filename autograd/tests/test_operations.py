@@ -144,8 +144,7 @@ def test_power():
 # =============================================================================
     datax=np.random.random(5)
     x=Variable(datax)
-    y= 5 #np.random.randint(low=0,high=100)
-    print(x)
+    y= 5
 # =============================================================================
 #   define custom block
 # =============================================================================
@@ -160,7 +159,7 @@ def test_power():
 #   define expected output power & product rule: (x^y)' = yx'x^(y-1)
 # =============================================================================
     data_true=np.power(datax,y)
-    gradient_true = y*x.gradient*datax^(y-1)
+    gradient_true = y*x.gradient*datax**(y-1)
 # =============================================================================
 #   assert data pass
 # =============================================================================
@@ -170,5 +169,3 @@ def test_power():
 #   assert gradient forward pass
 # =============================================================================
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong div gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
-
-test_power()
