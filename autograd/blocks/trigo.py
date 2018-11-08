@@ -1,4 +1,4 @@
-from  autograd.blocks.block import SimpleBlock
+from autograd.blocks.block import SimpleBlock
 import numpy as np
 
 class sin(SimpleBlock):
@@ -17,13 +17,26 @@ class sin(SimpleBlock):
         
     
 class cos(SimpleBlock):
-	"""
-	vectorized cosine function on vectors
-	"""
-	def data_fn(self, args):
-		new_data = np.cos(args.data)
-		return(new_data)
+    """
+    vectorized cosine function on vectors
+    """
+    def data_fn(self, args):
+        new_data = np.cos(args.data)
+        return(new_data)
 
-	def gradient_fn(self, args):
-		grad = -np.sin(args.data)
-		return(grad)
+    def gradient_fn(self, args):
+        grad = -np.sin(args.data)
+        return(grad)
+
+class tan(SimpleBlock):
+    """
+    vectorized cosine function on vectors
+	"""
+    def data_fn(self, args):
+        new_data = np.tan(args.data)
+        return(new_data)
+
+    def gradient_fn(self, args):
+        grad = 1/np.cos(args.data)**2
+        return(grad)
+
