@@ -57,9 +57,11 @@ python3 test.py
 
 ### AutoGrad Usage
 
+Additional resources are available in Demo_Notebook.ipynb
+
 Example: How to differentiate `f(x) = sin(x) + cos(x)` at x = pi
 
-```
+```python
 >>> import numpy as np
 >>> import autograd
 >>> import autograd.variable as av
@@ -76,7 +78,7 @@ b3 will contain the derivative of `y = sin(x) + cos(x)` at x = pi
 
 Example: How to differentiate `f(x)=sin(cos(x+3)) + e^(sin(x)^2)` at x = 1
 
-```
+```python
 >>> import numpy as np
 >>> import autograd
 >>> import autograd.variable as av
@@ -102,7 +104,7 @@ The basic idea that underpins the AD algorithm is the chain rule:
 
 ![The chain rule](https://wikimedia.org/api/rest_v1/media/math/render/svg/fb55cd5448d4bed6da3b79283d92eec2ab9bb95d)
 
-Essentially what the algorithm does is take a complex function and rewrite it as a composition of elementary functions. Then, using stored symbolic derivatives for these elementary functions, the algorithm "reverse expands" the chain rule by starting with the innermost function and building on it.
+Essentially what the algorithm does is take a complex function and rewrite it as a composition of elementary functions. Then, using stored symbolic derivatives for these elementary functions, the algorithm "reverse expands" the chain rule by starting with the innermost function and building on it. This means that the gradient of the innermost function will be computed and passed through each other function until reaching the original function.
 
 In other words, we will represent a function whose derivative we wish to compute by a "computational graph" which builds up some set of operations sequentially. In the computational graph, each note is a basic operation and the edges pass information through the nodes. In the computational graph, the data passed through the nodes contains the value of the original function and the gradient evaluated at some value.
 
@@ -121,6 +123,10 @@ cs207-FinalProject/
         blocks/
             __init__.py
             block.py
+            expo.py
+            hyperbolic.py
+            operations.py
+            trigo.py
         tests/
             __init__.py
             test_basic.py
@@ -139,6 +145,7 @@ cs207-FinalProject/
 
 This is not an exhaustive list of everything that will be contained in our project repository, but will highlight the main organization. It is broken down into a few key modules:
 - `block.py`: objects implementing the core computational units of the graph, namely `data_fn` (*f(x)*) and `gradient_fn` (*f'(x)*).
+- Within the blocks submodule, there additional block operations - categorized by operation type.
 - `variable.py`: data structure containing the function value and gradient value
 - `utils.py`: general utility functions that are reused throughout the project `tests` will contain all the tests of our codes and `docs` that contains useful information about the project.
 
@@ -168,11 +175,12 @@ The `Block` contains two major methods : ```data_fn ``` and ```gradient_fn ```.
 
 ```data_fn ``` is used to compute the function evaluation for that block. For example we can use :
 ```python
-import autograd as ad
-x=ad.Variable(3)
-y=ad.block.sin(x)
+import autograd.variable as av
+import autograd.blocks.trigo as trig
+x=av.Variable(3)
+y=trig.sin(x)
 ```
-and the new `Variable` y, will have its `data` attribute set to `ad.block.sin.data_fn(3)` = `sin(3)`
+and the new `Variable` y, will have its `data` attribute set to `av.trig.sin.data_fn(3)` = `sin(3)`
 
 ```gradient_fn ``` is used to compute the gradient evaluation for that block. Keeping the same example, we have :
 ```python
@@ -182,54 +190,14 @@ y=ad.block.sin(x)
 ```
 As previously stated, the variable x has the default value for `gradient`, which is an array of ones. Then, the block sin will create a new variable y, which `data` attribute has already been explained above. The `gradient` attribute is set to `ad.block.sin.gradient_fn(3) * x.gradient = cos(3) * 1`
 
-* Branched computation graph
-
-All the `Blocks` will create new `Variables` as output, nothing is modified in-place. This way, if we deal with a computation graph containing branches, the user can easily build his function as follows :
-
-![comp-graph](img/advanced_function.png)
-
-```python
-import autograd as ad
-from ad.block import block1, block2, block3, branch_block1, banch_block2
-
-def my_function(x):
-  x=ad.Variable(3)
-
-  #first block common for both paths
-  y=block1(x)
-
-  #compute the main block path
-  z=block2(y)
-
-  #compute the branch path
-  u=branch_block1(y)
-  u=branch_block2(u)
-
-  #merge branches
-  output=block3(z,u)
-
-  return(output)
-
-```
-
-* No storing of the compuation graph
+* No storing of the computational graph
 
 The solution we provided is efficient in that we don't store the computation graph. The values of the variables are computed on the fly, both data and gradient.
-
-As you can see in the previous exemple, the user only needs to store the variable that will be used for branched paths, but besides this the intermediate variables are overriden. See:
-```python
-[...]
-#compute the branch path
-  u=branch_block1(y)
-  u=branch_block2(u)
- [...]
-```
-
 
 * Classes implemented
 
 As hinted before, we will have a class for the `Variable` and another class for `Block`.
-Though each elementary function will be asigned a subclass of `Block` : we will have a set of `Block` functions hard-coded from which we expect the user to build his/her complicated combinations.
+Though each elementary function will be assigned a subclass of `Block` : we will have a set of `Block` functions hard-coded from which we expect the user to build his/her complicated combinations.
 
 Example of this set could be: sin, cos, tan, exp, pow, sum, mean, ...
 
@@ -237,8 +205,7 @@ Of course, the `autograd` package is being built respecting the design patterns 
 
 * External dependencies
 
-We will build our package relying highly on numpy. So far it is the only external dependency we use.
-
+We will build our package relying highly on numpy.
 
 # Additional Comments
 
