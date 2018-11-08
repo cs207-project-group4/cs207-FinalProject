@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from autograd.blocks.trigo import sin
+from autograd.blocks.hyperbolic import sinh
 from autograd.variable import Variable
 import numpy as np
 
-def test_sin():
+def test_sinh():
 # =============================================================================
 #   define the input variable
 # =============================================================================
@@ -13,18 +13,18 @@ def test_sin():
 # =============================================================================
 #   define custom block
 # =============================================================================
-    sin_block=sin()
+    sinh_block=sinh()
 
 # =============================================================================
 #   compute output of custom block
 # =============================================================================
-    y_block=sin_block(x)
+    y_block=sinh_block(x)
 
 # =============================================================================
 #   define expected output
 # =============================================================================
-    data_true=np.sin(data)
-    gradient_true=np.diag(np.cos(data))
+    data_true=np.sinh(data)
+    gradient_true=np.diag(np.cosh(data))
 
 # =============================================================================
 #   assert data pass

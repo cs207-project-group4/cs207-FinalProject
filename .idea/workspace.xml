@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="01f905e2-dc2d-452a-a857-c2c419829961" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/autograd/tests/test_hyperbolic.py" />
-      <change beforePath="$PROJECT_DIR$/autograd/blocks/trigo.py" afterPath="$PROJECT_DIR$/autograd/blocks/trigo.py" />
+      <change beforePath="$PROJECT_DIR$/autograd/tests/test_hyperbolic.py" afterPath="$PROJECT_DIR$/autograd/tests/test_hyperbolic.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -24,11 +23,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="hyperbolic.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="hyperbolic.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/autograd/blocks/hyperbolic.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="15" column="24" lean-forward="true" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
+            <state relative-caret-position="555">
+              <caret line="37" column="20" lean-forward="true" selection-start-line="37" selection-start-column="20" selection-end-line="37" selection-end-column="20" />
               <folding>
                 <element signature="e#0#46#0" expanded="true" />
               </folding>
@@ -36,13 +35,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test_hyperbolic.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="test_hyperbolic.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/autograd/tests/test_hyperbolic.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="15" lean-forward="true" selection-start-line="5" selection-start-column="15" selection-end-line="5" selection-end-column="15" />
+            <state relative-caret-position="253">
+              <caret line="24" column="15" lean-forward="false" selection-start-line="24" selection-start-column="15" selection-end-line="24" selection-end-column="15" />
               <folding>
-                <element signature="e#24#61#0" expanded="true" />
+                <element signature="e#24#67#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -448,22 +447,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/autograd/tests/test_hyperbolic.py">
+    <entry file="file://$PROJECT_DIR$/autograd/blocks/hyperbolic.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="15" lean-forward="true" selection-start-line="5" selection-start-column="15" selection-end-line="5" selection-end-column="15" />
+        <state relative-caret-position="555">
+          <caret line="37" column="20" lean-forward="true" selection-start-line="37" selection-start-column="20" selection-end-line="37" selection-end-column="20" />
           <folding>
-            <element signature="e#24#61#0" expanded="true" />
+            <element signature="e#0#46#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/autograd/blocks/hyperbolic.py">
+    <entry file="file://$PROJECT_DIR$/autograd/tests/test_hyperbolic.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="24" lean-forward="true" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
+        <state relative-caret-position="253">
+          <caret line="24" column="15" lean-forward="false" selection-start-line="24" selection-start-column="15" selection-end-line="24" selection-end-column="15" />
           <folding>
-            <element signature="e#0#46#0" expanded="true" />
+            <element signature="e#24#67#0" expanded="true" />
           </folding>
         </state>
       </provider>
