@@ -62,6 +62,8 @@ Example: How to differentiate `f(x) = sin(x) + cos(x)` at x = pi
 >>> print(b3.gradient)
 -1
 ```
+b3 will contain the derivative of `y = sin(x) + cos(x)` at x = pi
+
 
 Example: How to differentiate `f(x)=sin(cos(x+3)) + e^(sin(x)^2)` at x = 1
 
@@ -82,8 +84,9 @@ Example: How to differentiate `f(x)=sin(cos(x+3)) + e^(sin(x)^2)` at x = 1
 >>> print(b7.gradient)
 2.44674863650247767
 ```
+b7 will contain the derivative of `f(x)=sin(cos(x+3)) + e^(sin(x)^2)` at x = 1
 
-b3 will return the derivative of `y = sin(x) + cos(x)` at x = pi
+
 
 # Background
 The basic idea that underpins the AD algorithm is the chain rule:
