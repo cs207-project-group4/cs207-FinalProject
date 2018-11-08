@@ -1,4 +1,4 @@
-from  autograd.blocks.block import SimpleBlock
+from autograd.blocks.block import SimpleBlock
 import numpy as np
 
 class sin(SimpleBlock):
