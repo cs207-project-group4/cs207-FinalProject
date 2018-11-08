@@ -10,7 +10,6 @@ setuptools.setup(
     author_email="N/A",
     description="Automatic Differentiation Library",
     long_description=long_description,
-    long_description_content_type="text/markdown",
     url="https://github.com/cs207-project-group4/cs207-FinalProject",
     packages=setuptools.find_packages(),
     classifiers=[

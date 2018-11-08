@@ -12,7 +12,7 @@ class sin(SimpleBlock):
     
     
     def gradient_fn(self, args):
-        grad =np.cos(args.data)
+        grad = np.cos(args.data)
         return(grad)
         
     
@@ -25,5 +25,5 @@ class cos(SimpleBlock):
 		return(new_data)
 
 	def gradient_fn(self, args):
-		grad=-np.sin(args.data)
+		grad = -np.sin(args.data)
 		return(grad)

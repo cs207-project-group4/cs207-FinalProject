@@ -57,7 +57,7 @@ class Block():
         for instance :
             sin.gradient_forward(x) will return grad(x) * cos(x)
             
-            dot(x,y) will return : grad(x)*y + x*grad(y)
+            multiply(x,y) will return : grad(x)*y + x*grad(y)
         """
         raise NotImplementedError
     
