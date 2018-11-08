@@ -2,7 +2,7 @@
 
 import numpy as np
 import autograd.utils as utils
-#from autograd.blocks.operations import add, substract, multiply, divide, power
+from autograd.blocks import add, substract, multiply, divide, power
 
 class Variable():
     """
@@ -64,9 +64,6 @@ class Variable():
             
             self.gradient = np.eye(lenght)
         
-        
-
-    
     def set_data(self, data):
         """
         set the data of a Variable. the new data needs to have the same shape as the previous data
@@ -92,90 +89,92 @@ class Variable():
         nice print to see what is in the variable
         """        
         return('data : {} \ngrad : {}'.format(self.data, self.gradient))
-    
-#    
-#    
-#    def __add__(self, other):
-#        """
-#        overload addition
-#        """
-#        if not isinstance(other, Variable):
-#            other=Variable(other)
-#        return add(self,other)
-#    
-#    def __radd__(self, other):
-#        """
-#        overload right-addition
-#        """
-#        if not isinstance(other, Variable):
-#            other=Variable(other)
-#        return add(self, other)
-#    
-#    def __sub__(self, other):
-#        """
-#        overload subtraction
-#        """
-#        if not isinstance(other, Variable):
-#            other=Variable(other)
-#        return substract(self, other)
-#    
-#    def __rsub__(self, other):
-#        """
-#        overload right-subtraction (order matters)
-#        """
-#        if not isinstance(other, Variable):
-#            other=Variable(other)
-#        return substract(other, self)
-#    
-#    def __mul__(self, other):
-#        """
-#        overload element-wise multiplication
-#        """
-#        if not isinstance(other, Variable):
-#            other=Variable(other)
-#        return multiply(self, other)
-#    
-#    def __rmul__(self, other):
-#        """
-#        overload element-wise multiplication
-#        """
-#        if not isinstance(other, Variable):
-#            other=Variable(other)
-#        return multiply(other, self)
-#    
-#    def __truediv__(self, other):
-#        """
-#        overload division
-#        """
-#        if not isinstance(other, Variable):
-#            other=Variable(other)
-#        return divide(self, other)
-#    
-#    def __rtruediv__(self, other):
-#        """
-#        overload right-division (order matters)
-#        """
-#        if not isinstance(other, Variable):
-#            other=Variable(other)
-#        return divide(other, self)
-#    
-#    def __pow__(self, other):
-#        """
-#        overload power
-#        """
-#        if not isinstance(other, Variable):
-#            other=Variable(other)
-#        return power(self, other)
-#    
-#    def __rpow__(self, other):
-#        """
-#        overload right-power (order matters)
-#        """
-#        if not isinstance(other, Variable):
-#            other=Variable(other)
-#        return power(other, self)
-#    
-#        
+       
+    def __scalar_to_variable(self, other):
+        const_vec = [other]*self.data.shape[0]
+        return Variable(const_vec, gradient=np.zeros(self.data.shape))
+   
+    def __add__(self, other):
+        """
+        overload addition
+        """
+        if not isinstance(other, Variable):
+            self.__scalar_to_variable(other)
+        return add(self, other)
+
+    def __radd__(self, other):
+        """
+        overload right-addition
+        """
+        if not isinstance(other, Variable):
+            self.__scalar_to_variable(other)
+        return add(self, other)
+
+    def __sub__(self, other):
+        """
+        overload subtraction
+        """
+        if not isinstance(other, Variable):
+            self.__scalar_to_variable(other)
+        return substract(self, other)
+
+    def __rsub__(self, other):
+        """
+        overload right-subtraction (order matters)
+        """
+        if not isinstance(other, Variable):
+            self.__scalar_to_variable(other)
+        return substract(other, self)
+
+    def __mul__(self, other):
+        """
+        overload element-wise multiplication
+        """
+        if not isinstance(other, Variable):
+            self.__scalar_to_variable(other)
+        return multiply(self, other)
+
+    def __rmul__(self, other):
+        """
+        overload element-wise multiplication
+        """
+        if not isinstance(other, Variable):
+            self.__scalar_to_variable(other)
+        return multiply(other, self)
+
+    def __truediv__(self, other):
+        """
+        overload division
+        """
+        if not isinstance(other, Variable):
+            self.__scalar_to_variable(other)
+        return divide(self, other)
+
+    def __rtruediv__(self, other):
+        """
+        overload right-division (order matters)
+        """
+        if not isinstance(other, Variable):
+            self.__scalar_to_variable(other)
+        return divide(other, self)
+
+    def __pow__(self, other):
+        """
+        overload power
+        """
+        if not isinstance(other, Variable):
+            self.__scalar_to_variable(other)
+        return power(self, other)
+
+    def __rpow__(self, other):
+        """
+        overload right-power (order matters)
+        """
+        if not isinstance(other, Variable):
+            self.__scalar_to_variable(other)
+        return power(other, self)
+   
+       
     
 if __name__=='__main__':
     
@@ -196,16 +195,16 @@ if __name__=='__main__':
     print('==== Operators ====')
     
 # =============================================================================
-#     print(x+3)
-#     print(3-x)
-#     print(x/3)
-#     print(3*x)
-#     print(x+x)
-#     print(x-x)
-#     print(x*x)
-#     print(x/x)
-#     print(x**2)
-#     print(x**x) # this gives incorrect result with current implementation
-# 
-# 
+    print(x+3)
+    print(3-x)
+    print(x/3)
+    print(3*x)
+    print(x+x)
+    print(x-x)
+    print(x*x)
+    print(x/x)
+    print(x**2)
+    print(x**x) # this gives incorrect result with current implementation
+
+
 # =============================================================================

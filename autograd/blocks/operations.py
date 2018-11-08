@@ -121,19 +121,3 @@ class power(Block):
         #operator_check(args)
         new_grad = np.multiply(power_integer , np.multiply(input_vector.gradient, np.power(input_vector, power_integer - 1)))
         return (new_grad)
-
-#NOT WORKING NOW
-class dot(Block):
-    """
-    dot product between two vector inputs
-    """
-    def data_fn(self, *args):
-        operator_check(args)
-        new_data = np.dot(args[0].data, args[1].data)
-        return(new_data)
-
-    def gradient_forward(self, *args):
-        """
-        dot product returns a scalar
-        """
-        raise NotImplementedError
