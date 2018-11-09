@@ -34,7 +34,7 @@ def test_add():
 #   assert overloading
 # =============================================================================
     y_overloaded = x+y
-    assert np.equal(y_overloaded, y_block).all()
+    assert np.equal(y_overloaded, y_block).all(), 'add overloading failed'
 
 # =============================================================================
 #   assert data pass
@@ -76,7 +76,7 @@ def test_subtract():
 #   assert overloading
 # =============================================================================
     y_overloaded = x-y
-    assert np.equal(y_overloaded, y_block).all()
+    assert np.equal(y_overloaded, y_block).all(), 'sub overloading failed'
 
 # =============================================================================
 #   assert data pass
@@ -116,7 +116,7 @@ def test_multiply():
 #   assert overloading
 # =============================================================================
     y_overloaded = x*y
-    assert np.equal(y_overloaded, y_block).all()
+    assert np.equal(y_overloaded, y_block).all(), 'mul overloading failed'
 
 # =============================================================================
 #   assert data pass
@@ -156,7 +156,7 @@ def test_divide():
 #   assert overloading
 # =============================================================================
     y_overloaded = x/y
-    assert np.equal(y_overloaded, y_block).all()
+    assert np.equal(y_overloaded, y_block).all(), 'div overloading failed'
 
 # =============================================================================
 #   assert data pass
@@ -196,7 +196,7 @@ def test_power():
 #   assert overloading
 # =============================================================================
     y_overloaded = x**y
-    assert np.equal(y_overloaded, y_block).all()
+    assert np.equal(y_overloaded, y_block).all(), 'power overloading failed'
 
 # =============================================================================
 #   assert data pass
