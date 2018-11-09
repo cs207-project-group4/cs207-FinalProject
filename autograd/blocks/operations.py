@@ -108,7 +108,6 @@ class power(Block):
     (int, float, vector) to apply to first argument
     """
     def data_fn(self, input_vector, power_exponent):
-        print('power integer : ', power_exponent)
         new_data = np.float_power(input_vector.data, power_exponent)
         return(new_data)
 

@@ -174,11 +174,9 @@ def test_power():
 #   define the input variable
 # =============================================================================
     datax = np.random.random(5)
-    datay = 4
     x = Variable(datax)
     y = int(4)
 
-    print(x)
 # =============================================================================
 #   define custom block
 # =============================================================================
@@ -209,5 +207,3 @@ def test_power():
 #   assert gradient forward pass
 # =============================================================================
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong div gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
-
-test_power()
