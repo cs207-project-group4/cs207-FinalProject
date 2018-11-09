@@ -121,3 +121,23 @@ class power(Block):
         gradient_term=np.multiply(input_vector.gradient, simple_term)
         new_grad = np.multiply(power_exponent , gradient_term)
         return (new_grad)
+    
+
+class sum_elts(Block):
+    """
+    sum the elements of the vector
+    """
+    def data_fn(self, input_vector):
+        new_data = np.sum(input_vector.data)
+        return(new_data)
+
+    def gradient_forward(self, input_vector):        
+
+        #operator_check(args)        
+        shape=input_vector.data.shape[0]
+        jacobian = np.ones((1,shape))
+        
+        
+        
+        new_grad = np.dot(jacobian, input_vector.gradient)
+        return (new_grad)

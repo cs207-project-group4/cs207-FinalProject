@@ -3,6 +3,7 @@ from autograd.blocks.operations import subtract
 from autograd.blocks.operations import multiply
 from autograd.blocks.operations import divide
 from autograd.blocks.operations import power
+from autograd.blocks.operations import sum_elts
 
 from autograd.variable import Variable
 import numpy as np
@@ -262,3 +263,39 @@ def test_power():
 #   assert gradient forward pass
 # =============================================================================
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong div gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+
+
+
+def test_sum_elts():
+# =============================================================================
+#   define the input variablet
+# =============================================================================
+    data=np.random.random(5)
+    x=Variable(data)
+
+# =============================================================================
+#   define custom block
+# =============================================================================
+    sum_block=sum_elts()
+
+# =============================================================================
+#   compute output of custom block
+# =============================================================================
+    y_block=sum_block(x)
+
+# =============================================================================
+#   define expected output
+# =============================================================================
+    data_true=np.sum(data)
+    gradient_true=np.ones((1,5))
+
+# =============================================================================
+#   assert data pass
+# =============================================================================
+    assert np.equal(data_true, y_block.data).all(), 'wrong sinh data pass. expected {}, given{}'.format(data_true, y_block.data)
+
+# =============================================================================
+#   assert gradient forward pass
+# =============================================================================
+    assert np.equal(gradient_true, y_block.gradient).all(), 'wrong sinh gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+
