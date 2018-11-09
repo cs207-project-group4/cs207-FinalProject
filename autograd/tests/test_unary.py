@@ -19,5 +19,3 @@ def test_neg():
     #   assert gradient forward pass
     # =============================================================================
     assert np.equal(x.gradient,y.gradient).all(),'Gradient failed'
-
-test_neg()
