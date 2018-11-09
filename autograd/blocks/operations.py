@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-
-from block import Block
+from autograd.blocks.block import Block
 
 import numpy as np
 # ======================
