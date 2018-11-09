@@ -142,6 +142,16 @@ def test_multiply():
     assert np.equal(y_overloaded.gradient, y_block.gradient).all(), 'mul overloading failed'
 
 # =============================================================================
+#   assert scalar overloading
+# =============================================================================
+    scalar = Variable(5)
+
+    y_scale = multiply_block(scalar,x)
+    y_scale_overloaded = 5*x
+    assert np.equal(y_scale.data, y_scale_overloaded.data).all(), 'mult scalar overloading failed'
+    assert np.equal(y_overloaded.gradient, y_block.gradient).all(), 'mult overloading failed'
+
+# =============================================================================
 #   assert data pass
 # =============================================================================
     assert np.equal(data_true, y_block.data).all(), 'wrong mult data pass. expected {}, given{}'.format(data_true, y_block.data)
@@ -180,6 +190,16 @@ def test_divide():
 # =============================================================================
     y_overloaded = x/y
     assert np.equal(y_overloaded.data, y_block.data).all(), 'div overloading failed'
+    assert np.equal(y_overloaded.gradient, y_block.gradient).all(), 'div overloading failed'
+
+# =============================================================================
+#   assert scalar overloading
+# =============================================================================
+    scalar = Variable(5)
+
+    y_scale = divide_block(scalar,x)
+    y_scale_overloaded = 5/x
+    assert np.equal(y_scale.data, y_scale_overloaded.data).all(), 'div scalar overloading failed'
     assert np.equal(y_overloaded.gradient, y_block.gradient).all(), 'div overloading failed'
 
 # =============================================================================
@@ -224,6 +244,16 @@ def test_power():
     assert np.equal(y_overloaded.gradient, y_block.gradient).all(), 'power overloading failed'
 
 # =============================================================================
+#   assert scalar overloading
+# =============================================================================
+    scalar = 5
+
+    y_scale = power_block(x,scalar)
+    y_scale_overloaded = x**5
+    assert np.equal(y_scale.data, y_scale_overloaded.data).all(), 'power scalar overloading failed'
+    assert np.equal(y_overloaded.gradient, y_block.gradient).all(), 'power overloading failed'
+
+# =============================================================================
 #   assert data pass
 # =============================================================================
     assert np.equal(data_true, y_block.data).all(), 'wrong div data pass. expected {}, given{}'.format(data_true, y_block.data)
@@ -232,6 +262,3 @@ def test_power():
 #   assert gradient forward pass
 # =============================================================================
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong div gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
-
-
-test_power()
