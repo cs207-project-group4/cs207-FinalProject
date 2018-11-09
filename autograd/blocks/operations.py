@@ -107,18 +107,16 @@ class power(Block):
     element-wise power. second argument is value of power
     (int, float, vector) to apply to first argument
     """
-    def data_fn(self, input_vector, power_integer):
-        print('power integer : ', power_integer)
-        assert power_integer > 1, 'negative power for the derivative'
-        new_data = np.power(input_vector.data, power_integer)
+    def data_fn(self, input_vector, power_exponent):
+        print('power integer : ', power_exponent)
+        new_data = np.float_power(input_vector.data, power_exponent)
         return(new_data)
 
-    def gradient_forward(self, input_vector, power_integer):
+    def gradient_forward(self, input_vector, power_exponent):
         """
         power & product rule: (x^n)' = nx'x^(n-1)
         """
-        assert power_integer > 1, 'negative power for the derivative'
 
         #operator_check(args)
-        new_grad = np.multiply(power_integer , np.multiply(input_vector.gradient, np.power(input_vector, power_integer - 1)))
+        new_grad = np.multiply(power_exponent , np.multiply(input_vector.gradient, np.float_power(input_vector, power_exponent - 1)))
         return (new_grad)
