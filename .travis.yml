@@ -4,7 +4,10 @@ python:
 before_install:
     - pip install pytest pytest-cov
     - pip install coveralls
+    
+install:
+  - python setup.py install
 script:
-    - py.test
+    - pytest
 after_success:
     - coveralls
