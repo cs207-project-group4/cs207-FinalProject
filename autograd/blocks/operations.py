@@ -141,3 +141,5 @@ class sum_elts(Block):
         
         new_grad = np.dot(jacobian, input_vector.gradient)
         return (new_grad)
+    
+

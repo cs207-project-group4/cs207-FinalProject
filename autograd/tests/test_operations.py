@@ -299,3 +299,63 @@ def test_sum_elts():
 # =============================================================================
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong sinh gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
 
+
+def test_extract_intger():
+# =============================================================================
+#   define the input variablet
+# =============================================================================
+    data=np.random.random(5)
+    x=Variable(data)
+
+# =============================================================================
+#   compute output of operation
+# =============================================================================
+    y_block=x[2]
+
+# =============================================================================
+#   define expected output
+# =============================================================================
+    data_true=data[2]
+    gradient_true=np.array([0,0,1,0,0])
+
+# =============================================================================
+#   assert data pass
+# =============================================================================
+    assert np.equal(data_true, y_block.data).all(), 'wrong sinh data pass. expected {}, given{}'.format(data_true, y_block.data)
+
+# =============================================================================
+#   assert gradient forward pass
+# =============================================================================
+    assert np.equal(gradient_true, y_block.gradient).all(), 'wrong sinh gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+
+
+
+def test_extract_slice():
+# =============================================================================
+#   define the input variablet
+# =============================================================================
+    data=np.random.random(5)
+    x=Variable(data)
+
+# =============================================================================
+#   compute output of operation
+# =============================================================================
+    y_block=x[1:3]
+
+# =============================================================================
+#   define expected output
+# =============================================================================
+    data_true=data[1:3]
+    gradient_true=np.array([[0,1,0,0,0],
+                            [0,0,1,0,0]])
+
+# =============================================================================
+#   assert data pass
+# =============================================================================
+    assert np.equal(data_true, y_block.data).all(), 'wrong sinh data pass. expected {}, given{}'.format(data_true, y_block.data)
+
+# =============================================================================
+#   assert gradient forward pass
+# =============================================================================
+    assert np.equal(gradient_true, y_block.gradient).all(), 'wrong sinh gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+
