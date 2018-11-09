@@ -34,7 +34,7 @@ def test_add():
 #   assert overloading
 # =============================================================================
     y_overloaded = x+y
-    assert np.equal(y_overloaded, y_block).all(), 'add overloading failed'
+    assert np.equal(y_overloaded.data, y_block.data).all(), 'add overloading failed'
 
 # =============================================================================
 #   assert data pass
@@ -76,7 +76,7 @@ def test_subtract():
 #   assert overloading
 # =============================================================================
     y_overloaded = x-y
-    assert np.equal(y_overloaded, y_block).all(), 'sub overloading failed'
+    assert np.equal(y_overloaded.data, y_block.data).all(), 'sub overloading failed'
 
 # =============================================================================
 #   assert data pass
@@ -116,7 +116,7 @@ def test_multiply():
 #   assert overloading
 # =============================================================================
     y_overloaded = x*y
-    assert np.equal(y_overloaded, y_block).all(), 'mul overloading failed'
+    assert np.equal(y_overloaded.data, y_block.data).all(), 'mul overloading failed'
 
 # =============================================================================
 #   assert data pass
@@ -156,7 +156,7 @@ def test_divide():
 #   assert overloading
 # =============================================================================
     y_overloaded = x/y
-    assert np.equal(y_overloaded, y_block).all(), 'div overloading failed'
+    assert np.equal(y_overloaded.data, y_block.data).all(), 'div overloading failed'
 
 # =============================================================================
 #   assert data pass
@@ -173,19 +173,21 @@ def test_power():
 # =============================================================================
 #   define the input variable
 # =============================================================================
-    datax=np.random.random(5)
-    x=Variable(datax)
-    y= 5
+    datax = np.random.random(5)
+    datay = 4
+    x = Variable(datax)
+    y = int(4)
+
+    print(x)
 # =============================================================================
 #   define custom block
 # =============================================================================
-    power_block=power()
+    power_block = power()
 
 # =============================================================================
 #   compute output of custom block
 # =============================================================================
     y_block=power_block(x,y)
-
 # =============================================================================
 #   define expected output power & product rule: (x^y)' = yx'x^(y-1)
 # =============================================================================
@@ -196,7 +198,7 @@ def test_power():
 #   assert overloading
 # =============================================================================
     y_overloaded = x**y
-    assert np.equal(y_overloaded, y_block).all(), 'power overloading failed'
+    assert np.equal(y_overloaded.data, y_block.data).all(), 'power overloading failed'
 
 # =============================================================================
 #   assert data pass
@@ -207,3 +209,5 @@ def test_power():
 #   assert gradient forward pass
 # =============================================================================
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong div gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+
+test_power()
