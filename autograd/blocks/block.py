@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-\
 import numpy as np
-from autograd.variable import Variable
 
 # =============================================================================
 # IMPORTANT (MATHEMATICAL) NOTE
@@ -79,7 +78,9 @@ class Block():
         new_data=self.data_fn(*args)
         new_grad=self.gradient_forward(*args)
         
-        
+        if not 'Variable' in dir():
+            from autograd.variable import Variable
+
         return(Variable(new_data, new_grad))    
         
     

@@ -98,7 +98,7 @@ class Variable():
         """
         
         if not 'add' in dir():
-            from blocks.operations import add
+            from autograd.blocks.operations import add
             add=add()
         
         if not isinstance(other, Variable):
@@ -111,7 +111,7 @@ class Variable():
         """
         
         if not 'add' in dir():
-            from blocks.operations import add
+            from autograd.blocks.operations import add
             add=add()
             
             
@@ -125,7 +125,7 @@ class Variable():
         """
         
         if not 'substract' in dir():
-            from blocks.operations import subtract
+            from autograd.blocks.operations import subtract
             subtract=subtract()
             
             
@@ -139,7 +139,7 @@ class Variable():
         """
         
         if not 'substract' in dir():
-            from blocks.operations import subtract
+            from autograd.blocks.operations import subtract
             subtract=subtract()
             
             
@@ -153,7 +153,7 @@ class Variable():
         """
         
         if not 'multiply' in dir():
-            from blocks.operations import multiply
+            from autograd.blocks.operations import multiply
             multiply=multiply()
             
             
@@ -166,7 +166,7 @@ class Variable():
         overload element-wise multiplication
         """
         if not 'multiply' in dir():
-            from blocks.operations import multiply
+            from autograd.blocks.operations import multiply
             multiply=multiply()
             
         if not isinstance(other, Variable):
@@ -179,7 +179,7 @@ class Variable():
         """
         
         if not 'divide' in dir():
-            from blocks.operations import divide
+            from autograd.blocks.operations import divide
             divide=divide()
             
             
@@ -192,7 +192,7 @@ class Variable():
         overload right-division (order matters)
         """
         if not 'divide' in dir():
-            from blocks.operations import divide
+            from autograd.blocks.operations import divide
             divide=divide()
             
         if not isinstance(other, Variable):
@@ -205,7 +205,7 @@ class Variable():
         """
         
         if not 'power' in dir():
-            from blocks.operations import power
+            from autograd.blocks.operations import power
             power=power()
             
             
