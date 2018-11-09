@@ -7,7 +7,7 @@ from autograd.blocks.operations import power
 from autograd.variable import Variable
 import numpy as np
 
-def test_add():
+def test_add_over():
 # =============================================================================
 #   define the input variable
 # =============================================================================
@@ -35,7 +35,7 @@ def test_add():
 # =============================================================================
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
 
-def test_subtract():
+def test_subtract_over():
 # =============================================================================
 #   define the input variable
 # =============================================================================
@@ -67,7 +67,7 @@ def test_subtract():
 # =============================================================================
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong sub gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
 
-def test_multiply():
+def test_multiply_over():
 # =============================================================================
 #   define the input variable
 # =============================================================================
@@ -100,7 +100,7 @@ def test_multiply():
 # =============================================================================
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong mult gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
 
-def test_divide():
+def test_divide_over():
 # =============================================================================
 #   define the input variable
 # =============================================================================
@@ -134,7 +134,7 @@ def test_divide():
     assert np.allclose(gradient_true, y_block.gradient, rtol = .001), 'wrong div gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
 
 
-def test_power():
+def test_power_over():
 # =============================================================================
 #   define the input variable
 # =============================================================================
