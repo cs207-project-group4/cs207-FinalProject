@@ -213,6 +213,12 @@ class Variable():
             raise ValueError('Power is not supported for type Variable')
         return power(self, other)
        
+        
+    def __neg__(self):
+        """
+        implementing the - unary overloading
+        """        
+        return Variable(-self.data, -self.gradient)
     
 if __name__=='__main__':
     
