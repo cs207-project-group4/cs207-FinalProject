@@ -14,3 +14,4 @@ class exp(SimpleBlock):
     def gradient_fn(self, args):
         grad = np.exp(args.data)
         return (grad)
+
