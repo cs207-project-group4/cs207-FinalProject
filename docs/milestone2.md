@@ -220,11 +220,7 @@ We will build our package relying highly on numpy. The Demo_Notebook uses matplo
 
 # Future Work
 
-<<<<<<< HEAD
-* We intend to implement back-propigation and reverse mode.
-=======
-* We intend to provide a reverse-mode implementation as well as a backprop implementation
->>>>>>> 7a1fc882539f61d9288b3a6480d9116a7a0e25a2
+* We intend to implement back-propagation and reverse mode.
 * We will perform even more extensive testing, specifically on edge cases
 * We will improve documentation, integrating Read the Docs
 * We will distribute our package on PyPI
