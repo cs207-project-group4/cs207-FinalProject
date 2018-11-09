@@ -156,9 +156,11 @@ The first core data structure is `Variable`. This object will flow through sever
 
 ![comp-graph](img/Variable.png)
 
-It contains two main attributes : `data` and `gradient`. In each block, the input `Variable` brings the information from the previous functions and gradients computed and propagates the data and gradient flow forward.
+It contains two main attributes : `data` and `gradient`. In each block, the input `Variable` brings the information from the previous functions and gradients computed and propagates the data and gradient flow forward. Note that because our package deals with vector functions, the `gradient` attribute is actually a `Jacobian` matrix.
 
-If nothing is indicated by the user, the default value of `Variable.gradient` is an array of ones, meaning we are at the beginning of the computational graph
+If nothing is indicated by the user, the default value of `Variable.gradient` is an Identity matrix, meaning we are at the beginning of the computational graph.
+
+For now, the constants are managed as Variables with a initial `Jacobian` as a matrix of 0. It is not efficient in the way that we still use this matrix of 0 for the gradient flow, we will probably optimize it at the next iteration.
 
 ### `Block`
 
@@ -190,6 +192,15 @@ y=sin(x)
 ```
 As previously stated, the variable x has the default value for `gradient`, which is an array of ones. Then, the block sin will create a new variable y, which `data` attribute has already been explained above. The `gradient` attribute is set to `ad.block.sin.gradient_fn(3) * x.gradient = cos(3) * 1`
 
+Note that for more complex functions, the `gradient_fn` is combined with the method `gradient_forward`. For the multiplication for instance, we will use `gradient_forward` to push forward the gradient flow, same for the addition, and other basic operations.
+
+The way to see `gradient_forward` is the following : 
+Let's consider a computational graph which transforms : x_0 --> x_1 --> x_2 --> x_3 --> y
+
+let's call the output of the last block y, then the output of gradient_forward(x_3), will contain the jacobian of the function x_0 --> y. More generally, the output of gradient_forward(x_i) will contain the Jacobian matrix of the function : x_0 --> x_i
+
+this function is in charge of pushing the gradients forward, it will combine the previously computed gradients to the derivative of this block_function
+
 * No storing of the computational graph
 
 The solution we provided is efficient in that we don't store the computation graph. The values of the variables are computed on the fly, both data and gradient.
@@ -209,7 +220,7 @@ We will build our package relying highly on numpy. The Demo_Notebook uses matplo
 
 # Future Work
 
-* We intend to provide a reverse-mode implementation.
+* We intend to provide a reverse-mode implementation as well as a backprop implementation
 * We will perform even more extensive testing, specifically on edge cases
 * We will improve documentation, integrating Read the Docs
 * We will distribute our package on PyPI
