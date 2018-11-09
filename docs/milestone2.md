@@ -30,14 +30,8 @@ virtualenv my_env
 ```
 source my_env/bin/activate
 ```
-3. Install package - there are a few ways to do this
-
-  1. Pip (Preferred)
-```
-pip install AutoGrad
-```
-  2. From the source
-Download Package From GutHub and Unzip
+3. Install package
+Download Package from GutHub (or clone) and Unzip
 ```
 unzip cs207-FinalProject-master.zip
 ```
@@ -45,19 +39,15 @@ Install Dependencies using Pip
 ```
 pip install -r cs207-FinalProject-master/requirements.txt
 ```
-Install AutoGrad
+Install AutoGrad -- this step is **Very Important**
 ```
 cd cs207-FinalProject-master
 python3 setup.py install
 ```
-Test AutoGrad
-```
-python3 test.py
-```
 
 ### AutoGrad Usage
 
-Additional resources are available in Demo_Notebook.ipynb
+Additional resources are available in Demo_Notebook.ipynb - make sure to have matplotlib installed if you want to run the Demo_Notebook
 
 Example: How to differentiate `f(x) = sin(x) + cos(x)` at x = pi
 
@@ -67,13 +57,15 @@ Example: How to differentiate `f(x) = sin(x) + cos(x)` at x = pi
 >>> import autograd.variable as av
 >>> import autograd.blocks.trigo as trig
 >>> x = av.Variable(np.pi)
->>> b1 = trig.sin(x)
->>> b2 = trig.cos(x)
+>>> sin = trig.sin()
+>>> b1 = sin(x)
+>>> cos = trig.cos()
+>>> b2 = cos(x)
 >>> b3 = b1 + b2
 >>> print(b3.gradient)
 -1
 ```
-b3 will contain the derivative of `y = sin(x) + cos(x)` at x = pi
+b3 will contain the gradient of `y = sin(x) + cos(x)` at x = pi
 
 
 Example: How to differentiate `f(x)=sin(cos(x+3)) + e^(sin(x)^2)` at x = 1
@@ -83,20 +75,22 @@ Example: How to differentiate `f(x)=sin(cos(x+3)) + e^(sin(x)^2)` at x = 1
 >>> import autograd
 >>> import autograd.variable as av
 >>> import autograd.blocks.trigo as trig
->>> import autograd.blocks.operations as op
+>>> import autograd.blocks.expo as expo
+>>> sin = trig.sin()
+>>> cos = trig.cos()
+>>> exp = expo.exp()
 >>> x = av.Variable(1)
 >>> b1 = x + 3
->>> b2 = trig.sin(x)
->>> b3 = trig.cos(b1)
->>> b4 = trig.sin(b3)
->>> b5 = b2^2
->>> b6 = op.expBlock(b5)
+>>> b2 = sin(x)
+>>> b3 = cos(b1)
+>>> b4 = sin(b3)
+>>> b5 = b2*b2
+>>> b6 = exp(b5)
 >>> b7 = b6 + b4
 >>> print(b7.gradient)
-2.44674863650247767...
+2.44674864
 ```
-b7 will contain the derivative of `f(x)=sin(cos(x+3)) + e^(sin(x)^2)` at x = 1
-
+b7 will contain the gradient of `f(x)=sin(cos(x+3)) + e^(sin(x)^2)` at x = 1
 
 
 # Background
@@ -104,13 +98,13 @@ The basic idea that underpins the AD algorithm is the chain rule:
 
 ![The chain rule](https://wikimedia.org/api/rest_v1/media/math/render/svg/fb55cd5448d4bed6da3b79283d92eec2ab9bb95d)
 
-Essentially what the algorithm does is take a complex function and rewrite it as a composition of elementary functions. Then, using stored symbolic derivatives for these elementary functions, the algorithm "reverse expands" the chain rule by starting with the innermost function and building on it. This means that the gradient of the innermost function will be computed and passed through each other function until reaching the original function.
+Essentially what the algorithm does is take a complex function and rewrite it as a composition of elementary functions. Then, using stored symbolic derivatives for these elementary functions, the algorithm "reverse expands" the chain rule by starting with the innermost function and building on it. This means that the gradient of the innermost function will be computed and passed through and computed in each other function until reaching the original function.
 
 In other words, we will represent a function whose derivative we wish to compute by a "computational graph" which builds up some set of operations sequentially. In the computational graph, each note is a basic operation and the edges pass information through the nodes. In the computational graph, the data passed through the nodes contains the value of the original function and the gradient evaluated at some value.
 
 An example of a computational graph is: ![computational graph](http://www.columbia.edu/~ahd2125/static/img/2015-12-05/Fig1.png)
 
-In the example above, the `w1` node contains the gradient for input `x` at some value, the data from `w1` is then passed through the `cos()` operation to create `w3`. 'w3' later multiplied with `w4` to create `w5`. We will pass our input value along the "trace", and by judicious application of the chain rule, we will compute the derivative of the overall function.
+In the example above, the `w1` node contains the gradient for input `x` at some value, the data from `w1` is then passed through the `cos()` operation to create `w3`. 'w3' later multiplied with `w4` to create `w5`, and so on. We will pass our input value along the "trace", and by judicious application of the chain rule, we will compute the derivative of the overall function. The traces can be through of as the ordered set of operations that the data undergoes.
 
 # Software Organization
 
@@ -141,6 +135,7 @@ cs207-FinalProject/
     README.md
     requirements.txt
     setup.py
+    Demo_Notebook.ipynb
 ```
 
 This is not an exhaustive list of everything that will be contained in our project repository, but will highlight the main organization. It is broken down into a few key modules:
@@ -161,9 +156,11 @@ The first core data structure is `Variable`. This object will flow through sever
 
 ![comp-graph](img/Variable.png)
 
-It contains two main attributes : `data` and `gradient`. In each block, the input `Variable` brings the information from the previous functions and gradients computed and propagates the data and gradient flow forward.
+It contains two main attributes : `data` and `gradient`. In each block, the input `Variable` brings the information from the previous functions and gradients computed and propagates the data and gradient flow forward. Note that because our package deals with vector functions, the `gradient` attribute is actually a `Jacobian` matrix.
 
-If nothing is indicated by the user, the default value of `Variable.gradient` is an array of ones, meaning we are at the beginning of the computational graph
+If nothing is indicated by the user, the default value of `Variable.gradient` is an Identity matrix, meaning we are at the beginning of the computational graph.
+
+For now, the constants are managed as Variables with a initial `Jacobian` as a matrix of 0. It is not efficient in the way that we still use this matrix of 0 for the gradient flow, we will probably optimize it at the next iteration.
 
 ### `Block`
 
@@ -177,18 +174,32 @@ The `Block` contains two major methods : ```data_fn ``` and ```gradient_fn ```.
 ```python
 import autograd.variable as av
 import autograd.blocks.trigo as trig
+#instantiate a block
+sin = trig.sin()
 x=av.Variable(3)
-y=trig.sin(x)
+y=sin(x)
 ```
 and the new `Variable` y, will have its `data` attribute set to `av.trig.sin.data_fn(3)` = `sin(3)`
 
 ```gradient_fn ``` is used to compute the gradient evaluation for that block. Keeping the same example, we have :
 ```python
-import autograd as ad
-x=ad.Variable(3)
-y=ad.block.sin(x)
+import autograd.variable as av
+import autograd.blocks.trigo as trig
+#instantiate a block
+sin = trig.sin()
+x=av.Variable(3)
+y=sin(x)
 ```
 As previously stated, the variable x has the default value for `gradient`, which is an array of ones. Then, the block sin will create a new variable y, which `data` attribute has already been explained above. The `gradient` attribute is set to `ad.block.sin.gradient_fn(3) * x.gradient = cos(3) * 1`
+
+Note that for more complex functions, the `gradient_fn` is combined with the method `gradient_forward`. For the multiplication for instance, we will use `gradient_forward` to push forward the gradient flow, same for the addition, and other basic operations.
+
+The way to see `gradient_forward` is the following : 
+Let's consider a computational graph which transforms : x_0 --> x_1 --> x_2 --> x_3 --> y
+
+let's call the output of the last block y, then the output of gradient_forward(x_3), will contain the jacobian of the function x_0 --> y. More generally, the output of gradient_forward(x_i) will contain the Jacobian matrix of the function : x_0 --> x_i
+
+this function is in charge of pushing the gradients forward, it will combine the previously computed gradients to the derivative of this block_function
 
 * No storing of the computational graph
 
@@ -205,8 +216,11 @@ Of course, the `autograd` package is being built respecting the design patterns 
 
 * External dependencies
 
-We will build our package relying highly on numpy.
+We will build our package relying highly on numpy. The Demo_Notebook uses matplotlib, but this is not required for the package to funciton.
 
-# Additional Comments
+# Future Work
 
-We may additionally provide a reverse-mode implementation.
+* We intend to implement back-propagation and reverse mode.
+* We will perform even more extensive testing, specifically on edge cases
+* We will improve documentation, integrating Read the Docs
+* We will distribute our package on PyPI

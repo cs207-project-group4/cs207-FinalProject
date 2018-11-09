@@ -220,6 +220,22 @@ class Variable():
         """        
         return Variable(-self.data, -self.gradient)
     
+
+    def __getitem__(self, key):
+        """
+        overload extracting elements from a vector
+        works for both integer and slice
+        """
+        new_data=self.data[key]       
+        number_of_dimensions_in_this_variable = self.gradient.shape[1]        
+        new_grad=self.gradient[key,:].reshape(-1,number_of_dimensions_in_this_variable)
+       
+            
+            
+        
+        
+        return (Variable(new_data, new_grad))
+    
 if __name__=='__main__':
     
     #small local test, should be put in a dedicated file in the test folder
