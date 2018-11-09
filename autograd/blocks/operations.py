@@ -118,5 +118,7 @@ class power(Block):
         """
 
         #operator_check(args)
-        new_grad = np.multiply(power_exponent , np.multiply(input_vector.gradient, np.float_power(input_vector, power_exponent - 1)))
+        simple_term=np.float_power(input_vector.data, power_exponent - 1)
+        gradient_term=np.multiply(input_vector.gradient, simple_term)
+        new_grad = np.multiply(power_exponent , gradient_term)
         return (new_grad)

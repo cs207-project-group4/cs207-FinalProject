@@ -241,8 +241,7 @@ if __name__=='__main__':
     print(x-x)
     print(x*x)
     print(x/x)
-   #print(x**2)
-    # print(x**x) # this gives incorrect result with current implementation
+    print(x**2)
 
 
 # =============================================================================
