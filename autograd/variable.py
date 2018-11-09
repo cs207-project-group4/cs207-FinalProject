@@ -2,13 +2,6 @@
 
 import numpy as np
 import autograd.utils as utils
-from autograd.blocks.operations import add, subtract, multiply, divide, power
-add=add()
-subtract=subtract()
-multiply=multiply()
-divide=divide()
-power=power()
-
 class Variable():
     """
     The variable class is the main class that will cary the information flow : data and gradient
@@ -103,6 +96,11 @@ class Variable():
         """
         overload addition
         """
+        
+        if not 'add' in dir():
+            from blocks.operations import add
+            add=add()
+        
         if not isinstance(other, Variable):
             other=self.__scalar_to_variable(other)
         return add(self, other)
@@ -111,6 +109,12 @@ class Variable():
         """
         overload right-addition
         """
+        
+        if not 'add' in dir():
+            from blocks.operations import add
+            add=add()
+            
+            
         if not isinstance(other, Variable):
             other=self.__scalar_to_variable(other)
         return add(self, other)
@@ -119,6 +123,12 @@ class Variable():
         """
         overload subtraction
         """
+        
+        if not 'substract' in dir():
+            from blocks.operations import subtract
+            subtract=subtract()
+            
+            
         if not isinstance(other, Variable):
             other=self.__scalar_to_variable(other)
         return subtract(self, other)
@@ -127,6 +137,12 @@ class Variable():
         """
         overload right-subtraction (order matters)
         """
+        
+        if not 'substract' in dir():
+            from blocks.operations import subtract
+            subtract=subtract()
+            
+            
         if not isinstance(other, Variable):
             other=self.__scalar_to_variable(other)
         return subtract(other, self)
@@ -135,6 +151,12 @@ class Variable():
         """
         overload element-wise multiplication
         """
+        
+        if not 'multiply' in dir():
+            from blocks.operations import multiply
+            multiply=multiply()
+            
+            
         if not isinstance(other, Variable):
             other=self.__scalar_to_variable(other)
         return multiply(self, other)
@@ -143,6 +165,10 @@ class Variable():
         """
         overload element-wise multiplication
         """
+        if not 'multiply' in dir():
+            from blocks.operations import multiply
+            multiply=multiply()
+            
         if not isinstance(other, Variable):
             other=self.__scalar_to_variable(other)
         return multiply(other, self)
@@ -151,6 +177,12 @@ class Variable():
         """
         overload division
         """
+        
+        if not 'divide' in dir():
+            from blocks.operations import divide
+            divide=divide()
+            
+            
         if not isinstance(other, Variable):
             other=self.__scalar_to_variable(other)
         return divide(self, other)
@@ -159,6 +191,10 @@ class Variable():
         """
         overload right-division (order matters)
         """
+        if not 'divide' in dir():
+            from blocks.operations import divide
+            divide=divide()
+            
         if not isinstance(other, Variable):
             other=self.__scalar_to_variable(other)
         return divide(other, self)
@@ -167,6 +203,12 @@ class Variable():
         """
         overload power
         """
+        
+        if not 'power' in dir():
+            from blocks.operations import power
+            power=power()
+            
+            
         if isinstance(other, Variable):
             raise ValueError('Power is not supported for type Variable')
         return power(self, other)
