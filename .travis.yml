@@ -10,5 +10,4 @@ install:
 script:
     - py.test
 after_success:
-    - cd autograd
     - coveralls
