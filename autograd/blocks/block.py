@@ -42,7 +42,7 @@ class Block():
     
     def gradient_fn(self, *args):
         """
-        function implementing the gradient of data_fn.
+        function implementing the gradient of data_fn, when it is easy to express
         for instance : 
             sin.gradient_fn(x) will return cos(x)
         """
@@ -51,6 +51,17 @@ class Block():
     def gradient_forward(self, *args):
         """
         function implementing the forward pass of the gradient.
+        
+        Let's consider a computational graph which transforms
+        x_0 --> x_1 --> x_2 --> x_3 --> y
+        let's call the output of that block y, then the output of 
+        gradient_forward(x3), will contain the jacobian of the function x_0 --> y
+    
+        this function is in charge of pushing the gradients forward, it will combine the
+        previously computed gradients to the derivative of this block_function
+        
+        
+        
         this function will depend on wether this is a simple block or a double block.
         for instance :
             sin.gradient_forward(x) will return grad(x) * cos(x)

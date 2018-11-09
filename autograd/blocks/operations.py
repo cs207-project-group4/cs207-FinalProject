@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from  autograd.blocks.block import Block
+from block import Block
+
 import numpy as np
 # ======================
 #      Operators
@@ -108,7 +109,8 @@ class power(Block):
     (int, float, vector) to apply to first argument
     """
     def data_fn(self, input_vector, power_integer):
-        assert power_integer > 0, 'negative power'
+        print('power integer : ', power_integer)
+        assert power_integer > 1, 'negative power for the derivative'
         new_data = np.power(input_vector.data, power_integer)
         return(new_data)
 
@@ -116,7 +118,7 @@ class power(Block):
         """
         power & product rule: (x^n)' = nx'x^(n-1)
         """
-        assert power_integer > 0, 'negative power'
+        assert power_integer > 1, 'negative power for the derivative'
 
         #operator_check(args)
         new_grad = np.multiply(power_integer , np.multiply(input_vector.gradient, np.power(input_vector, power_integer - 1)))
