@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 # =============================================================================
 # Contains optimization functions for the AD package
 # =============================================================================
@@ -56,11 +56,12 @@ class GD(Optimize):
 
 
     """
-    def __init__(self,params,lr,tolerance,n_steps):
+    def __init__(self,params,lr,tolerance,max_iter = 10000):
         self.params = params
         self.lr  = lr
         self.tolerance = tolerance
-        self.n_steps = n_steps
+        self.max_iter = max_iter
+        self.delta = 0
 
 
     def step(self,function):
@@ -69,16 +70,24 @@ class GD(Optimize):
         #find the gradient of the function
         block = function(self.params)
 
+        #compute the delta
+        self.delta = self.lr * block.gradient
+
         #upate the params
-        new_params = self.params - (self.lr * block.gradient)
+        new_params = self.params - self.delta
         self.params = new_params[0]
 
 
     def solve(self,function):
 
-        #perform n number of steps
-        for i in range(self.n_steps):
+        #loop until tolerance or max number of iters is met
+        count = 0
+        while count < self.max_iter:
             self.step(function)
+            if all(abs(i) <= self.tolerance for i in self.delta[0]):
+            #if abs(self.delta) < self.tolerance:
+                break
+            count += 1
 
-        #return most updated parameters
+        #return final updated parameters
         return(self.params)
