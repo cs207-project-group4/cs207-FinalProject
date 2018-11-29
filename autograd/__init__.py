@@ -13,7 +13,7 @@ call them in the following fashion:
 """
 
 from autograd.blocks.hyperbolic import sinh, cosh, tanh
-from autograd.blocks.operations import add, subtract, multiply, divide, power
+from autograd.blocks.operations import add, subtract, multiply, divide, power, sum_elts
 from autograd.blocks.trigo import sin, cos, tan
 from autograd.blocks.expo import exp, log
 
@@ -30,6 +30,7 @@ subtract_=subtract()
 multiply_=multiply()
 divide_=divide()
 power_=power()
+sum_elts_=sum_elts()
 
 # ================
 #    FUNCTIONS
@@ -77,3 +78,6 @@ def divide(x, y):
 
 def power(x, y):
 	return power_(x, y)
+
+def sum_elts(x):
+	return sum_elts_(x)

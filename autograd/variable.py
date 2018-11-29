@@ -229,13 +229,28 @@ class Variable():
         new_data=self.data[key]       
         number_of_dimensions_in_this_variable = self.gradient.shape[1]        
         new_grad=self.gradient[key,:].reshape(-1,number_of_dimensions_in_this_variable)
-       
-            
-            
-        
         
         return (Variable(new_data, new_grad))
-    
+
+    def __eq__(self,other):
+        """
+        overload equals dunder method
+        """
+        if self.data == other.data and self.gradient == other.gradient:
+            return True
+        else:
+            return False
+
+    def __ne__(self,other):
+        """
+        overload not equal dunder method
+        """
+        if self.data != other.data or self.gradient != other.gradient:
+            return True
+        else:
+            return False
+
+        
 if __name__=='__main__':
     
     #small local test, should be put in a dedicated file in the test folder
