@@ -46,13 +46,11 @@ class GD(Optimize):
     >>> from autograd.optimize import GD
     >>> def function(x_0):
     >>>     x = Variable(x_0)
-    >>>     b1 = ad.sin(x)
-    >>>     b2 = ad.cos(x)
-    >>>     b3 = b1 + b2
-    >>>     return(b3)
-    >>> optimize_GD = GD(params = [1], lr = 0.01,tolerance=1,n_steps = 1000)
+    >>>     b1 = (x+5)**2
+    >>>     return(b1)
+    >>> optimize_GD = GD(params = [1], lr = 0.01,tolerance=0.00001,max_iter = 10000)
     >>> optimize_GD.solve(function)
-    array([-2.3561913])
+    array([-4.99951078])
 
 
     """
