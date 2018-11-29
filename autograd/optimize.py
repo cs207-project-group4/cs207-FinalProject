@@ -31,15 +31,14 @@ class GD(Optimize):
     """
     Gradient Descent Optimizer
 
-    Arguments:
-
-    function (block class): this is the final
-
-    params (iterable): a dictionary of initialization parameters - dictionary keys should match
-
+    Init Arguments:
+    params (array): an array of initialization parameters - these should correspond to the parameters of the function, parameters are position specific
     lr (float): leaning rate
+    tolerance (float): gradient descent tolerance
+    max_iter (int): maximumer number of steps the gradient descent solver will run
 
 
+    Example:
     >>> import numpy as np
     >>> import autograd as ad
     >>> from autograd.variable import Variable
@@ -51,8 +50,6 @@ class GD(Optimize):
     >>> optimize_GD = GD(params = [1], lr = 0.01,tolerance=0.00001,max_iter = 10000)
     >>> optimize_GD.solve(function)
     array([-4.99951078])
-
-
     """
     def __init__(self,params,lr,tolerance,max_iter = 10000):
         self.params = params
@@ -77,8 +74,7 @@ class GD(Optimize):
 
 
     def solve(self,function):
-
-        #loop until tolerance or max number of iters is met
+        #loop until tolerance is met or max number of iters is met
         count = 0
         while count < self.max_iter:
             self.step(function)
@@ -89,3 +85,8 @@ class GD(Optimize):
 
         #return final updated parameters
         return(self.params)
+
+
+class SGD(Optimizer):
+
+    def __init__(self,)
