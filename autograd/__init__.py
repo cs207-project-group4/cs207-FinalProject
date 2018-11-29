@@ -79,5 +79,5 @@ def divide(x, y):
 def power(x, y):
 	return power_(x, y)
 
-def sum_elts(x, y):
-	return sum_elts_(x, y)
+def sum_elts(x):
+	return sum_elts_(x)
