@@ -24,6 +24,20 @@ class Optimize():
         """
         raise NotImplementedError
 
+    def solve(self,function):
+        #loop until tolerance is met or max number of iters is met
+        count = 0
+        while count < self.max_iter:
+            self.step(function)
+            if all(abs(i) <= self.tolerance for i in self.delta[0]):
+            #if abs(self.delta) < self.tolerance:
+                break
+            count += 1
+
+        #return final updated parameters
+        return(self.params)
+
+
 
 
 class GD(Optimize):
@@ -73,20 +87,8 @@ class GD(Optimize):
         self.params = new_params[0]
 
 
-    def solve(self,function):
-        #loop until tolerance is met or max number of iters is met
-        count = 0
-        while count < self.max_iter:
-            self.step(function)
-            if all(abs(i) <= self.tolerance for i in self.delta[0]):
-            #if abs(self.delta) < self.tolerance:
-                break
-            count += 1
 
-        #return final updated parameters
-        return(self.params)
+class SGD(Optimize):
 
-
-class SGD(Optimizer):
-
-    def __init__(self,)
+    def __init__(self):
+        pass
