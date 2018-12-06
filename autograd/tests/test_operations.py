@@ -41,7 +41,7 @@ def test_add():
 # =============================================================================
 #   assert scalar overloading
 # =============================================================================
-    scalar = Variable(1)
+    scalar = Variable([1]*x.data.shape[0])
     y_scale = add_block(scalar,x)
     y_scale_overloaded = 1+x
     assert np.equal(y_scale.data, y_scale_overloaded.data).all(), 'add scalar overloading failed'
@@ -94,6 +94,7 @@ def test_subtract():
 #   assert scalar overloading
 # =============================================================================
     scalar = Variable(1)
+    scalar = Variable([1]*x.data.shape[0])
 
     y_scale = subtract_block(scalar,x)
     y_scale_overloaded = 1-x
@@ -146,6 +147,8 @@ def test_multiply():
 #   assert scalar overloading
 # =============================================================================
     scalar = Variable(5)
+    scalar = Variable([5]*x.data.shape[0])
+
 
     y_scale = multiply_block(scalar,x)
     y_scale_overloaded = 5*x
@@ -197,6 +200,7 @@ def test_divide():
 #   assert scalar overloading
 # =============================================================================
     scalar = Variable(5)
+    scalar = Variable([5]*x.data.shape[0])
 
     y_scale = divide_block(scalar,x)
     y_scale_overloaded = 5/x
@@ -206,12 +210,12 @@ def test_divide():
 # =============================================================================
 #   assert data pass
 # =============================================================================
-    assert np.equal(data_true, y_block.data).all(), 'wrong div data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(data_true, y_block.data).all(), 'wrong div data pass. expected \n{}\n, given\n{}'.format(data_true, y_block.data)
 
 # =============================================================================
 #   assert gradient forward pass, use allclose because division create small differences.  Outputs look same though!
 # =============================================================================
-    assert np.allclose(gradient_true, y_block.gradient, rtol = .001), 'wrong div gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+    assert np.allclose(gradient_true, y_block.gradient, rtol = .001), 'wrong div gradient forward pass. expected \n{}\n, given\n{}'.format(gradient_true,y_block.gradient)
 
 
 def test_power():
@@ -230,7 +234,7 @@ def test_power():
 # =============================================================================
 #   compute output of custom block
 # =============================================================================
-    y_block=power_block(x,y)
+    y_block=power_block(x,power_exponent = y)
 # =============================================================================
 #   define expected output power & product rule: (x^y)' = yx'x^(y-1)
 # =============================================================================
@@ -249,7 +253,7 @@ def test_power():
 # =============================================================================
     scalar = 5
 
-    y_scale = power_block(x,scalar)
+    y_scale = power_block(x,power_exponent =scalar)
     y_scale_overloaded = x**5
     assert np.equal(y_scale.data, y_scale_overloaded.data).all(), 'power scalar overloading failed'
     assert np.equal(y_overloaded.gradient, y_block.gradient).all(), 'power overloading failed'

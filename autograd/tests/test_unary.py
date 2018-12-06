@@ -8,7 +8,8 @@ def test_neg():
     # =============================================================================
     data = np.random.random(5)
     x = Variable(data)
-    y = Variable(-data)
+    
+    y = Variable(-data, -x.gradient)
 
     # =============================================================================
     #   assert data pass
@@ -18,4 +19,4 @@ def test_neg():
     # =============================================================================
     #   assert gradient forward pass
     # =============================================================================
-    assert np.equal(x.gradient,y.gradient).all(),'Gradient failed'
+    assert np.equal(-x.gradient,y.gradient).all(),'Gradient failed'

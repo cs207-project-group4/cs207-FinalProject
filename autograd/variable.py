@@ -90,7 +90,7 @@ class Variable():
        
     def __scalar_to_variable(self, other):
         const_vec = [other]*self.data.shape[0]
-        return Variable(const_vec, gradient=np.zeros(self.data.shape))
+        return Variable(const_vec, gradient=np.zeros(self.gradient.shape))
    
     def __add__(self, other):
         """
@@ -211,14 +211,14 @@ class Variable():
             
         if isinstance(other, Variable):
             raise ValueError('Power is not supported for type Variable')
-        return power(self, other)
+        return power(self,power_exponent =other)
        
         
     def __neg__(self):
         """
         implementing the - unary overloading
         """        
-        return Variable(-self.data, -self.gradient)
+        return ((-1)*self)
     
 
     def __getitem__(self, key):
@@ -226,11 +226,11 @@ class Variable():
         overload extracting elements from a vector
         works for both integer and slice
         """
-        new_data=self.data[key]       
-        number_of_dimensions_in_this_variable = self.gradient.shape[1]        
-        new_grad=self.gradient[key,:].reshape(-1,number_of_dimensions_in_this_variable)
-        
-        return (Variable(new_data, new_grad))
+        if not 'extract' in dir():
+            from autograd.blocks.operations import extract
+            extract=extract()
+            
+        return (extract(self, key=key))
 
     def __eq__(self,other):
         """

@@ -32,23 +32,23 @@ class Block():
 
     
     
-    def data_fn(self,*args):
+    def data_fn(self,*args, **kwargs):
         """
         function to apply to the input Variable.
         for instance :
             sin.data_fn(x) will return sin(x)
         """
         raise NotImplementedError
-    
-    def gradient_fn(self, *args):
+        
+    def get_jacobian(self, *args, **kwargs):
         """
-        function implementing the gradient of data_fn, when it is easy to express
-        for instance : 
-            sin.gradient_fn(x) will return cos(x)
+        get the jacobian of the current block, evaluated at the input.data point
         """
         raise NotImplementedError
+    
+
         
-    def gradient_forward(self, *args):
+    def gradient_forward(self, *args, **kwargs):
         """
         function implementing the forward pass of the gradient.
         
@@ -68,15 +68,25 @@ class Block():
             
             multiply(x,y) will return : grad(x)*y + x*grad(y)
         """
-        raise NotImplementedError
+        """
+        (x + y)' = x' + y'
+        """
+        #operator_check(args)
+        
+       
+        input_grad = np.concatenate([var.gradient for var in args], axis=0)
+        jacobian = self.get_jacobian(*args, **kwargs)
+       
+        new_grad = np.matmul(jacobian, input_grad)
+        return(new_grad)
     
-    def __call__(self, *args):
+    def __call__(self, *args, **kwargs):
         """ 
         applies the forward pass of the data and the gradient.
         returns a new variable with the updated information on data and gradient.
         """ 
-        new_data=self.data_fn(*args)
-        new_grad=self.gradient_forward(*args)
+        new_data=self.data_fn(*args, **kwargs)
+        new_grad=self.gradient_forward(*args, **kwargs)
         
         if not 'Variable' in dir():
             from autograd.variable import Variable
@@ -92,17 +102,23 @@ class SimpleBlock(Block):
     For this, these functions are functions from Rn to Rn and they have a Jacobian which is
     a square matrix, with elements only on the diagonal
     """
-    def gradient_forward(self, *args):
+    def gradient_fn(self, *args, **kwargs):
+        """
+        function implementing the gradient of data_fn, when it is easy to express
+        for instance : 
+            sin.gradient_fn(x) will return cos(x)
+        """
+        raise NotImplementedError
         
-        assert len(args)==1, 'This type of block takes only one input, {} were given'.format(len(args))
         
-        simpleInput=args[0]
-        
+    def get_jacobian(self, *args, **kwargs):
+        """
+        get the Jacobian matrix of the simple block. It is a diagonal matrix easy to build from the
+        derivative function of the simpleBlock
+        """
         #get the elements of the diagonal
-        elts = self.gradient_fn(simpleInput)
+        elts = self.gradient_fn(*args, **kwargs)
         jacobian = np.diag(elts)
-        new_grad = np.dot(jacobian, simpleInput.gradient)
+        return(jacobian)
         
-        return(new_grad)
-
-
+   
