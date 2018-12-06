@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-\
 import numpy as np
+import autograd as ad
 
 # =============================================================================
 # IMPORTANT (MATHEMATICAL) NOTE
@@ -40,9 +41,12 @@ class Block():
         """
         raise NotImplementedError
         
-    def get_jacobian(self, *args, **kwargs):
+    def get_jacobians(self, *args, **kwargs):
         """
-        get the jacobian of the current block, evaluated at the input.data point
+        get the jacobians of the current block, evaluated at the input.data point
+        
+        we specify jacobianS as we want to have the jacobian of the ouput of the block with respect
+        to each of the inputs
         """
         raise NotImplementedError
     
@@ -73,9 +77,12 @@ class Block():
         """
         #operator_check(args)
         
-       
+        #concatenate the input gradients
         input_grad = np.concatenate([var.gradient for var in args], axis=0)
-        jacobian = self.get_jacobian(*args, **kwargs)
+        
+        #concatenate the jacobians
+        jacobians = self.get_jacobians(*args, **kwargs)
+        jacobian = np.concatenate([jacob for jacob in jacobians], axis=1)
        
         new_grad = np.matmul(jacobian, input_grad)
         return(new_grad)
@@ -86,12 +93,30 @@ class Block():
         returns a new variable with the updated information on data and gradient.
         """ 
         new_data=self.data_fn(*args, **kwargs)
-        new_grad=self.gradient_forward(*args, **kwargs)
         
+        #in forward mode, we force the flow of gradients with the dats
+        if ad.mode=='forward':
+            new_grad=self.gradient_forward(*args, **kwargs)
+            
+            
+        else:
+            children_nodes = [var.node for var in args]
+            children_jacs = self.get_jacobians(*args, **kwargs)
+            
+        
+        
+        
+        #python circular import fix 
         if not 'Variable' in dir():
             from autograd.variable import Variable
 
-        return(Variable(new_data, new_grad))    
+        #in forward mode, we return a full Variable, with gradients
+        if ad.mode=='forward':
+            return(Variable(new_data, new_grad))    
+            
+        #in reverse mode, the Variable does not store the gradients
+        else:
+            return(Variable(new_data))
         
     
 class SimpleBlock(Block):
@@ -111,7 +136,7 @@ class SimpleBlock(Block):
         raise NotImplementedError
         
         
-    def get_jacobian(self, *args, **kwargs):
+    def get_jacobians(self, *args, **kwargs):
         """
         get the Jacobian matrix of the simple block. It is a diagonal matrix easy to build from the
         derivative function of the simpleBlock
@@ -119,6 +144,6 @@ class SimpleBlock(Block):
         #get the elements of the diagonal
         elts = self.gradient_fn(*args, **kwargs)
         jacobian = np.diag(elts)
-        return(jacobian)
+        return([jacobian])
         
    

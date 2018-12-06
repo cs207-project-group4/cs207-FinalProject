@@ -2,6 +2,12 @@
 
 import numpy as np
 import autograd.utils as utils
+
+import autograd as ad
+from autograd.node import Node 
+
+
+
 class Variable():
     """
     The variable class is the main class that will cary the information flow : data and gradient
@@ -37,30 +43,48 @@ class Variable():
         data_shape=utils.get_shape(data)
         
         
-        #check if a gradient is provided, or if we initialize a Variable from scratch
-        if type(gradient) != type(None):
-            self.gradient=utils.data_2_numpy(gradient)    
         
-        else:
-            #default value for the gradient
+        if ad.mode == 'forward':
             
-            # for now we only handle AD on scalar values and 1-D vectors
-            if len(data_shape)>2:
-                print('dealing with high order tensors as input. not handled yet')
-                raise NotImplementedError
+            #check if a gradient is provided, or if we initialize a Variable from scratch
+            if type(gradient) != type(None):
+                self.gradient=utils.data_2_numpy(gradient)    
             
-            if len(data_shape) == 2 :
-                if data_shape[0]!=data_shape[1]:
-                    print('dealing with non square matrices, not handled yet')
+            else:      
+                #default value for the gradient
+                
+                # for now we only handle AD on scalar values and 1-D vectors
+                if len(data_shape)>2:
+                    print('dealing with high order tensors as input. not handled yet')
                     raise NotImplementedError
-                    
-            #get the number of dimensions
-            lenght=data_shape[0]
+                
+                if len(data_shape) == 2 :
+                    if data_shape[0]!=data_shape[1]:
+                        print('dealing with non square matrices, not handled yet')
+                        raise NotImplementedError
+                        
+                #get the number of dimensions
+                lenght=data_shape[0]
+                
+                #default value for the gradient, which is actually a Jacobian because we deal with 
+                #vectorial functions
+                
+                self.gradient = np.eye(lenght)
+              
+        #reverse mode, the gradients are stored in the nodes
+        else:
+            self.gradient=None
             
-            #default value for the gradient, which is actually a Jacobian because we deal with 
-            #vectorial functions
+            #each variable has an associated node in the Computational Graph
+            # we use this doubled framework (Variable + Node) in order to be consistent with an 
+            # user who would do the following operations
+            # y=f1(x)
+            # y=f2(y) 
+            # y=f3(y)
+            # in that case, the variable is overwritten, but the nodes keep being created and stored
             
-            self.gradient = np.eye(lenght)
+            self.node = Node() 
+           
         
     def set_data(self, data):
         """
@@ -90,7 +114,7 @@ class Variable():
        
     def __scalar_to_variable(self, other):
         const_vec = [other]*self.data.shape[0]
-        return Variable(const_vec, gradient=np.zeros(self.gradient.shape))
+        return Constant(const_vec, gradient=np.zeros(self.gradient.shape))
    
     def __add__(self, other):
         """
@@ -249,6 +273,15 @@ class Variable():
             return True
         else:
             return False
+
+
+class Constant(Variable):
+    """
+    clean way to embed scalar values, or constants.
+    """
+    def __init__(self,data, gradient=None):
+        super().__init__(data, gradient)
+
 
         
 if __name__=='__main__':

@@ -24,13 +24,12 @@ class add(Block):
         new_data = np.add(args[0].data, args[1].data)
         return(new_data)
         
-    def get_jacobian(self, *args):
+    def get_jacobians(self, *args):
         shape=args[0].data.shape[0]
         first_term = np.eye(shape)
         second_term = np.eye(shape)
-        jacobian = np.concatenate([first_term, second_term], axis=1)
         
-        return(jacobian)
+        return([first_term, second_term])
 
 
 class subtract(Block):
@@ -42,13 +41,12 @@ class subtract(Block):
         new_data=np.subtract(args[0].data, args[1].data)
         return(new_data)
         
-    def get_jacobian(self, *args):
+    def get_jacobians(self, *args):
         shape=args[0].data.shape[0]
         first_term = np.eye(shape)
         second_term = -np.eye(shape)
-        jacobian = np.concatenate([first_term, second_term], axis=1)
         
-        return(jacobian)
+        return([first_term, second_term])
 
 
 class multiply(Block): ### OK
@@ -60,12 +58,11 @@ class multiply(Block): ### OK
         new_data = np.multiply(args[0].data, args[1].data)
         return(new_data)
         
-    def get_jacobian(self, *args):
+    def get_jacobians(self, *args):
         first_term = np.diag(args[0].data)
         second_term = np.diag(args[1].data)
-        jacobian = np.concatenate([first_term, second_term], axis=1)
         
-        return(jacobian)
+        return([first_term, second_term])
 
         
 
@@ -84,7 +81,7 @@ class divide(Block):
         new_data = np.divide(args[0].data, args[1].data)
         return(new_data)
         
-    def get_jacobian(self, *args):
+    def get_jacobians(self, *args):
                 
         assert args[1].data.all() != 0, 'dividing by a zero element in the second input : {}'.format(args[1].data)
 
@@ -94,9 +91,8 @@ class divide(Block):
         first_term = np.diag(y_inv)
         second_term = -np.diag(np.multiply(args[0].data, np.power(y_inv,2)))
         
-        jacobian = np.concatenate([first_term, second_term], axis=1)
         
-        return(jacobian)
+        return([first_term, second_term])
 
 
 
@@ -124,11 +120,11 @@ class sum_elts(Block):
         return(new_data)
 
 
-    def get_jacobian(self, *args):
+    def get_jacobians(self, *args):
         shape = args[0].data.shape[0]
         jacobian=np.ones((1, shape))
         
-        return(jacobian)
+        return([jacobian])
         
         
 class extract(Block):
@@ -138,7 +134,7 @@ class extract(Block):
         return(new_data)
 
 
-    def get_jacobian(self, input_var, key):
+    def get_jacobians(self, input_var, key):
         shape_of_data = input_var.data.shape[0]
         
         if type(key)==slice:
@@ -157,7 +153,7 @@ class extract(Block):
             
                 
         
-        return(jacobian)
+        return([jacobian])
         
         
        

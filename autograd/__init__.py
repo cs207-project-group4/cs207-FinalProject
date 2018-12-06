@@ -17,6 +17,13 @@ from autograd.blocks.operations import add, subtract, multiply, divide, power, s
 from autograd.blocks.trigo import sin, cos, tan
 from autograd.blocks.expo import exp, log
 
+
+#default mode for computing gradients
+mode='forward'
+
+#ids used for the nodes in the computational graph
+ids=[]
+
 sin_=sin()
 cos_=cos()
 tan_=tan()
