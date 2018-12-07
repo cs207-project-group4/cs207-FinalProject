@@ -24,6 +24,10 @@ mode='forward'
 #ids used for the nodes in the computational graph
 ids=[]
 
+
+
+
+
 sin_=sin()
 cos_=cos()
 tan_=tan()

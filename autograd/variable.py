@@ -33,7 +33,7 @@ class Variable():
         z.gradient is the square matrix with diagonal elements of (2*cos(1)*1, 2*cos(2)*1, 2*cos(-12)*1)
         the *1 term corresponds to the gradient of the variable x
     """
-    def __init__(self,data, gradient=None):
+    def __init__(self,data, gradient=None, constant=False):
     
              
         #converts list or float to numpy array
@@ -82,8 +82,8 @@ class Variable():
             # y=f2(y) 
             # y=f3(y)
             # in that case, the variable is overwritten, but the nodes keep being created and stored
-            
-            self.node = Node() 
+            if constant==False:
+                self.node = Node(output_dim = self.data.shape[0]) 
            
         
     def set_data(self, data):
@@ -114,7 +114,27 @@ class Variable():
        
     def __scalar_to_variable(self, other):
         const_vec = [other]*self.data.shape[0]
-        return Constant(const_vec, gradient=np.zeros(self.gradient.shape))
+        
+        if ad.mode=='forward':
+            return Constant(const_vec, gradient=np.zeros(self.gradient.shape))
+        else:
+            return Constant(const_vec)
+        
+        
+        
+    def backward(self):
+        """
+        implement reverse AD, return the gradient of current variable w.r. input Variables
+        input variables are the ones who don't have any childrens
+        
+        we are referencing the function here sot hat the user can do var.backward()
+        instead of var.node.backward()
+        """
+        
+        gradients = self.node.backward()
+        return(gradients)
+                
+        
    
     def __add__(self, other):
         """
@@ -279,8 +299,9 @@ class Constant(Variable):
     """
     clean way to embed scalar values, or constants.
     """
-    def __init__(self,data, gradient=None):
-        super().__init__(data, gradient)
+    def __init__(self,data, gradient=None, constant=True):
+        super().__init__(data, gradient, constant)
+        
 
 
         
