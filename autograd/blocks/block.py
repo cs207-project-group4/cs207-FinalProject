@@ -92,31 +92,53 @@ class Block():
         applies the forward pass of the data and the gradient.
         returns a new variable with the updated information on data and gradient.
         """ 
+        #python circular import fix 
+        if not 'Variable' in dir():
+            from autograd.variable import Variable
+            
+            
         new_data=self.data_fn(*args, **kwargs)
         
         #in forward mode, we force the flow of gradients with the dats
         if ad.mode=='forward':
+            print(ad.mode)
             new_grad=self.gradient_forward(*args, **kwargs)
             
+            #in forward mode, we return a full Variable, with gradients
+            return(Variable(new_data, new_grad))    
+
+            
             
         else:
-            children_nodes = [var.node for var in args]
+            #reverse mode, we will make a forward pass on the data but will store the jacobians
+            # we pay attention not to include the Constants in the computational graph
+            input_variables =[]
+            variables_indexes=[]
+            for index, arg in enumerate(args):
+                if type(arg)==Variable:
+                    input_variables+=[arg]
+                    variables_indexes+=[index]
+            
+            children_nodes = [var.node for var in input_variables]
             children_jacs = self.get_jacobians(*args, **kwargs)
             
-        
-        
-        
-        #python circular import fix 
-        if not 'Variable' in dir():
-            from autograd.variable import Variable
-
-        #in forward mode, we return a full Variable, with gradients
-        if ad.mode=='forward':
-            return(Variable(new_data, new_grad))    
+            #in reverse mode, the Variable does not store the gradients
+            outputVariable = Variable(new_data)
             
-        #in reverse mode, the Variable does not store the gradients
-        else:
-            return(Variable(new_data))
+            
+            for i in variables_indexes:
+                outputVariable.node.childrens+=[{'node':children_nodes[i], 'jacobian':children_jacs[i]}]
+                
+                #increase the counter
+                children_nodes[i].times_used +=1
+            
+            return(outputVariable)
+
+            
+                
+            
+        
+    
         
     
 class SimpleBlock(Block):
