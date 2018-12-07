@@ -4,19 +4,20 @@
 # =============================================================================
 
 
-class Optimize():
+class Optimizer():
     """
 
     Optimizer Base Class
 
     """
-    def __init__(self,learning_rate, loss_function):
-        self.learning_rate = learning_rate
-        self.loss_function = loss_function
+    def __init__(self, loss_func, params, lr=0.01, max_iter=100000, tol=1e-14):
+        self.loss_func = loss_func
+        self.params = params
+        self.lr = lr
+        self.max_iter = max_iter
+        self.tol = tol
 
-
-
-    def step(self, **args):
+    def step(self):
         """
 
         Performs a single step of the optimizaiton
@@ -24,23 +25,23 @@ class Optimize():
         """
         raise NotImplementedError
 
-    def solve(self,function):
-        #loop until tolerance is met or max number of iters is met
+    def solve(self):
+        #loop until tolerance is met (convergence) or max number of iters is met
         count = 0
         while count < self.max_iter:
-            self.step(function)
-            if all(abs(i) <= self.tolerance for i in self.delta[0]):
-            #if abs(self.delta) < self.tolerance:
+            prev_loss = self.loss_func(self.params)
+            self.step()
+            if abs(prev_loss - self.loss_func(self.params)) < self.tol:
                 break
             count += 1
 
-        #return final updated parameters
+        #return final params
         return(self.params)
 
 
 
 
-class GD(Optimize):
+class GD(Optimizer):
 
     """
     Gradient Descent Optimizer
@@ -65,30 +66,18 @@ class GD(Optimize):
     >>> optimize_GD.solve(function)
     array([-4.99951078])
     """
-    def __init__(self,params,lr,tolerance,max_iter = 10000):
-        self.params = params
-        self.lr  = lr
-        self.tolerance = tolerance
-        self.max_iter = max_iter
-        self.delta = 0
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def step(self):
+        # pass current params into loss_func
+        loss = self.loss_func(self.params)
+
+        # update params with a gradient step
+        self.params = self.params - self.lr * loss.gradient
 
 
-    def step(self,function):
-        #return one step in the block
-
-        #find the gradient of the function
-        block = function(self.params)
-
-        #compute the delta
-        self.delta = self.lr * block.gradient
-
-        #upate the params
-        new_params = self.params - self.delta
-        self.params = new_params[0]
-
-
-
-class SGD(Optimize):
+class SGD(Optimizer):
 
     def __init__(self):
         pass
