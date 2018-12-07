@@ -44,9 +44,6 @@ def test_sin_forward():
 
 
 
-
-
-
 def test_cos():
 # =============================================================================
 #   define the input variable
