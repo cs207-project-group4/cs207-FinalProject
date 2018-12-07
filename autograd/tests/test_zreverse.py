@@ -11,21 +11,21 @@ import autograd as ad
 
 
 
-ad.mode = 'reverse'
-x=Variable([1,2,3])
-block=sin()
-y=block(x)
-
-ab=add()
-
-z=ab(x,y)
-
-u=z+1
-
-sm=sum_elts()
-g=sm(u)
-
-g.backward()
+#ad.mode = 'reverse'
+#x=Variable([1,2,3])
+#block=sin()
+#y=block(x)
+#
+#ab=add()
+#
+#z=ab(x,y)
+#
+#u=z+1
+#
+#sm=sum_elts()
+#g=sm(u)
+#
+#g.backward()
 
 
 
@@ -42,7 +42,7 @@ g.backward()
 
 
 def test_sin_reverse():
-    ad.mode='reverse'
+    #ad.mode='reverse'
 # =============================================================================
 #   define the input variable
 # =============================================================================
