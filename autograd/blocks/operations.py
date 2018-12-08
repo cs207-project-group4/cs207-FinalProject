@@ -23,12 +23,12 @@ class add(Block):
         operator_check(args)
         new_data = np.add(args[0].data, args[1].data)
         return(new_data)
-        
+
     def get_jacobians(self, *args):
         shape=args[0].data.shape[0]
         first_term = np.eye(shape)
         second_term = np.eye(shape)
-        
+
         return([first_term, second_term])
 
 
@@ -40,12 +40,12 @@ class subtract(Block):
         operator_check(args)
         new_data=np.subtract(args[0].data, args[1].data)
         return(new_data)
-        
+
     def get_jacobians(self, *args):
         shape=args[0].data.shape[0]
         first_term = np.eye(shape)
         second_term = -np.eye(shape)
-        
+
         return([first_term, second_term])
 
 
@@ -57,41 +57,41 @@ class multiply(Block): ### OK
         operator_check(args)
         new_data = np.multiply(args[0].data, args[1].data)
         return(new_data)
-        
+
     def get_jacobians(self, *args):
         first_term = np.diag(args[0].data)
         second_term = np.diag(args[1].data)
-        
+
         return([first_term, second_term])
 
-        
+
 
 class divide(Block):
     """
     element-wise division
     provided that b!=0
-    divide the first element by the second, provided that b!=0 : 
+    divide the first element by the second, provided that b!=0 :
         divide(a,b) = a/b
     """
-    
+
     def data_fn(self, *args):
         operator_check(args)
         assert args[1].data.all() != 0, 'dividing by a zero element in the second input : {}'.format(args[1].data)
-        
+
         new_data = np.divide(args[0].data, args[1].data)
         return(new_data)
-        
+
     def get_jacobians(self, *args):
-                
+
         assert args[1].data.all() != 0, 'dividing by a zero element in the second input : {}'.format(args[1].data)
 
-        
+
         y_inv = np.float_power(args[1].data,-1)
-        
+
         first_term = np.diag(y_inv)
         second_term = -np.diag(np.multiply(args[0].data, np.power(y_inv,2)))
-        
-        
+
+
         return([first_term, second_term])
 
 
@@ -104,12 +104,12 @@ class power(SimpleBlock):
     def data_fn(self, input_var, power_exponent):
         new_data = np.float_power(input_var.data, power_exponent)
         return(new_data)
-        
+
     def gradient_fn(self, input_var, power_exponent):
         new_grad = power_exponent*input_var.data**(power_exponent-1)
-        
+
         return(new_grad)
-        
+
 
 class sum_elts(Block):
     """
@@ -123,10 +123,10 @@ class sum_elts(Block):
     def get_jacobians(self, *args):
         shape = args[0].data.shape[0]
         jacobian=np.ones((1, shape))
-        
+
         return([jacobian])
-        
-        
+
+
 class extract(Block):
     def data_fn(self, input_var, key):
 
@@ -136,24 +136,35 @@ class extract(Block):
 
     def get_jacobians(self, input_var, key):
         shape_of_data = input_var.data.shape[0]
-        
+
         if type(key)==slice:
             #slice extraction
-            number_of_lines_to_take = key.stop - key.start  
+            number_of_lines_to_take = key.stop - key.start
             jacobian=np.zeros((number_of_lines_to_take, shape_of_data))
             row=0
             for i in range(key.start, key.stop):
                 jacobian[row, i]=1
                 row+=1
-            
+
         else:
             #element extraction
             jacobian=np.zeros((1,shape_of_data))
             jacobian[0,key]=1
-            
-                
-        
+
+
+
         return([jacobian])
-        
-        
-       
+
+
+class ln(SimpleBlock):
+    """
+    vectorized natural log function on vectors
+    """
+
+    def data_fn(self, args):
+        new_data = np.log(args.data)
+        return(new_data)
+
+    def gradient_fn(self, args):
+        grad = 1/(args.data)
+        return(grad)
