@@ -4,6 +4,7 @@ from autograd.variable import Variable
 import numpy as np
 
 def test_comp():
+    
 # =============================================================================
 #   define the input variable
 # =============================================================================
