@@ -2,7 +2,7 @@
 # =============================================================================
 # Contains optimization functions for the AD package
 # =============================================================================
-
+import numpy as np
 
 class Optimizer():
     """
@@ -27,17 +27,13 @@ class Optimizer():
 
     def step(self):
         """
-
         Performs a single step of the optimizaiton
-
         """
         raise NotImplementedError
 
     def solve(self):
         """
-
-        loop until tolerance is met (convergence) or for max number of iters
-
+        Loop until convergence criteria is met or for max_iters
         """
         count = 0
         while count < self.max_iter:
@@ -54,7 +50,6 @@ class Optimizer():
 
 
 class GD(Optimizer):
-
     """
     Gradient Descent Optimizer
 
@@ -86,7 +81,36 @@ class GD(Optimizer):
         self.params = self.params - self.lr * grad
 
 
-class SGD(Optimizer):
+class Adam(Optimizer):
+    """
+    Implements Adam Optimizer (`Adam: A Method for Stochastic Optimization`)
+    """
 
-    def __init__(self):
-        pass
+    def __init__(self, *args, beta1=0.9, beta2=0.999, eps=1e-8, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.beta1=beta1
+        self.beta2=beta2
+        self.eps=eps
+        self.exp_avg=np.zeros_like(self.params)
+        self.exp_avg_sq=np.zeros_like(self.params)
+        self.step_count=0
+
+    def step(self):
+        # increment step count
+        self.step_count += 1
+
+        # get current loss
+        loss, grad = self.loss_func(self.params)
+        grad = grad[0]
+
+        # calculate moving averages
+        self.exp_avg = self.exp_avg*self.beta1 + (1-self.beta1)*grad
+        self.exp_avg_sq = self.exp_avg_sq*self.beta2 + (1-self.beta2)*(grad**2)
+
+        # perform bias correction
+        bias_correction1 = self.exp_avg / (1 - self.beta1 ** self.step_count)
+        bias_correction2 = self.exp_avg_sq / (1 - self.beta2 ** self.step_count)
+
+        # calculate step size and perform step
+        step_size = self.lr * bias_correction1 / (np.sqrt(bias_correction2) + self.eps)
+        self.params = self.params - step_size
