@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="AutoGrad",
-    version="0.0.1",
+    version="1.0",
     author="cs207-project-group4",
     author_email="N/A",
     description="Automatic Differentiation Library",
