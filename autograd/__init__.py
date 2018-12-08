@@ -11,7 +11,7 @@ call them in the following fashion:
 >>> y = ad.sinh(x)
 
 """
-
+import numpy as np
 from autograd.blocks.hyperbolic import sinh, cosh, tanh
 from autograd.blocks.operations import add, subtract, multiply, divide, power, sum_elts
 from autograd.blocks.trigo import sin, cos, tan
@@ -59,8 +59,8 @@ def tan(x):
 def exp(x):
 	return exp_(x)
 
-def log(x):
-	return log_(x)
+def log(x, base=np.e):
+	return log_(x, base=base)
 
 def sinh(x):
 	return sinh_(x)
