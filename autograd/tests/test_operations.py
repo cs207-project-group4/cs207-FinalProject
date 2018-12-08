@@ -4,6 +4,7 @@ from autograd.blocks.operations import multiply
 from autograd.blocks.operations import divide
 from autograd.blocks.operations import power
 from autograd.blocks.operations import sum_elts
+from autograd.blocks.operations import ln
 
 from autograd.variable import Variable
 import numpy as np
@@ -363,3 +364,25 @@ def test_extract_slice():
 # =============================================================================
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong sinh gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
 
+
+def test_ln():
+# =============================================================================
+#   define the input variable
+# =============================================================================
+    data=np.random.random(5)
+    x=Variable(data)
+# =============================================================================
+#   define custom block
+# =============================================================================
+    ln_block=ln()
+
+# =============================================================================
+#   compute output of custom block
+# =============================================================================
+    y_block=ln_block(x)
+
+# =============================================================================
+#   define expected output
+# =============================================================================
+    data_true=np.log(data)
+    gradient_true=np.diag(1/data)
