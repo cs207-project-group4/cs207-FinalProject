@@ -28,6 +28,6 @@ def test_adam():
         return (l.data, l.gradient)
 
     x_init = [10, 4]
-    adam = Adam(loss, x_init, lr=0.001, max_iter=100000, tol=1e-18)
+    adam = Adam(loss, x_init, lr=0.01, max_iter=10000, tol=1e-18)
     sol = adam.solve()
     assert round(sol[0]) == -5 and round(sol[1]) == -3
