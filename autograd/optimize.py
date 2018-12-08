@@ -2,93 +2,115 @@
 # =============================================================================
 # Contains optimization functions for the AD package
 # =============================================================================
+import numpy as np
 
-
-class Optimize():
+class Optimizer():
     """
 
     Optimizer Base Class
 
+    == Args ==
+
+    loss_func (function): a function accepting a list of `params` (see below) and returning a tuple (data, gradient)
+    params (array): an array of initialization parameters - these should correspond to the parameters of the loss_func
+    lr (float): leaning rate for steps
+    tol (float): tolerance for determining loss function convergence
+    max_iter (int): maximumer number of steps the optimizer will run
+
     """
-    def __init__(self,learning_rate, loss_function):
-        self.learning_rate = learning_rate
-        self.loss_function = loss_function
+    def __init__(self, loss_func, params, lr=0.01, max_iter=100000, tol=1e-14):
+        self.loss_func = loss_func
+        self.params = params
+        self.lr = lr
+        self.max_iter = max_iter
+        self.tol = tol
 
-
-
-    def step(self, **args):
+    def step(self):
         """
-
         Performs a single step of the optimizaiton
-
         """
         raise NotImplementedError
 
-    def solve(self,function):
-        #loop until tolerance is met or max number of iters is met
+    def solve(self):
+        """
+        Loop until convergence criteria is met or for max_iters
+        """
         count = 0
         while count < self.max_iter:
-            self.step(function)
-            if all(abs(i) <= self.tolerance for i in self.delta[0]):
-            #if abs(self.delta) < self.tolerance:
+
+            prev_loss, prev_grad = self.loss_func(self.params)
+            self.step()
+            new_loss, new_grad = self.loss_func(self.params)
+
+            if abs(prev_loss - new_loss) < self.tol:
                 break
             count += 1
 
-        #return final updated parameters
         return(self.params)
 
 
-
-
-class GD(Optimize):
-
+class GD(Optimizer):
     """
     Gradient Descent Optimizer
-
-    Init Arguments:
-    params (array): an array of initialization parameters - these should correspond to the parameters of the function, parameters are position specific
-    lr (float): leaning rate
-    tolerance (float): gradient descent tolerance
-    max_iter (int): maximumer number of steps the gradient descent solver will run
-
 
     Example:
     >>> import numpy as np
     >>> import autograd as ad
     >>> from autograd.variable import Variable
     >>> from autograd.optimize import GD
-    >>> def function(x_0):
-    >>>     x = Variable(x_0)
-    >>>     b1 = (x+5)**2
-    >>>     return(b1)
-    >>> optimize_GD = GD(params = [1], lr = 0.01,tolerance=0.00001,max_iter = 10000)
-    >>> optimize_GD.solve(function)
-    array([-4.99951078])
+    >>> def loss(params):
+    >>>     var = Variable(params)
+    >>>     x = var[0]
+    >>>     y = var[1]
+    >>>     l = (x+5)**2 + (y+3)**2
+    >>>     return (l.data, l.gradient)
+    >>> x_init = [10, 4]
+    >>> optimize_GD = GD(loss, x_init, lr=0.01, max_iter=100000, tol=1e-18)
+    >>> optimize_GD.solve()
+    >>> array([-5. -3.])
     """
-    def __init__(self,params,lr,tolerance,max_iter = 10000):
-        self.params = params
-        self.lr  = lr
-        self.tolerance = tolerance
-        self.max_iter = max_iter
-        self.delta = 0
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def step(self):
+        # pass current params into loss_func
+        loss, grad = self.loss_func(self.params)
+        grad = grad[0]
+
+        # update params with a gradient step
+        self.params = self.params - self.lr * grad
 
 
-    def step(self,function):
-        #return one step in the block
+class Adam(Optimizer):
+    """
+    Implements Adam Optimizer (`Adam: A Method for Stochastic Optimization`)
+    """
 
-        #find the gradient of the function
-        block = function(self.params)
+    def __init__(self, *args, beta1=0.9, beta2=0.999, eps=1e-8, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.beta1=beta1
+        self.beta2=beta2
+        self.eps=eps
+        self.exp_avg=np.zeros_like(self.params)
+        self.exp_avg_sq=np.zeros_like(self.params)
+        self.step_count=0
 
-        #compute the delta
-        self.delta = self.lr * block.gradient
+    def step(self):
+        # increment step count
+        self.step_count += 1
 
-        #upate the params
-        new_params = self.params - self.delta
-        self.params = new_params[0]
+        # get current loss
+        loss, grad = self.loss_func(self.params)
+        grad = grad[0]
 
+        # calculate moving averages
+        self.exp_avg = self.exp_avg*self.beta1 + (1-self.beta1)*grad
+        self.exp_avg_sq = self.exp_avg_sq*self.beta2 + (1-self.beta2)*(grad**2)
 
+        # perform bias correction
+        bias_correction1 = self.exp_avg / (1 - self.beta1 ** self.step_count)
+        bias_correction2 = self.exp_avg_sq / (1 - self.beta2 ** self.step_count)
 
-class SGD(Optimize):
-
-    def __init__(self):
-        pass
+        # calculate step size and perform step
+        step_size = self.lr * bias_correction1 / (np.sqrt(bias_correction2) + self.eps)
+        self.params = self.params - step_size
