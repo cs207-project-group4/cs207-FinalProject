@@ -4,7 +4,7 @@ import numpy as np
 
 class exp(SimpleBlock):
     """
-    vectorized sinus function on vectors
+    exponential function on vectors
     """
     def data_fn(self, args):
         new_data = np.exp(args.data)
@@ -16,7 +16,7 @@ class exp(SimpleBlock):
 
 class log(SimpleBlock):
     """
-    vectorized sinus function on vectors
+    log function on vectors
     """
     def __init__(self, base=np.e):
         super().__init__()
@@ -36,4 +36,16 @@ class log(SimpleBlock):
 
     def gradient_fn(self, args):
         grad = 1/args.data
+        return (grad)
+
+class sqrt(SimpleBlock):
+    """
+    square root function on vectors
+    """
+    def data_fn(self, args):
+        new_data = np.sqrt(args.data)
+        return (new_data)
+
+    def gradient_fn(self, args):
+        grad = 1/(2*np.sqrt(args.data))
         return (grad)

@@ -15,7 +15,7 @@ import numpy as np
 from autograd.blocks.hyperbolic import sinh, cosh, tanh
 from autograd.blocks.operations import add, subtract, multiply, divide, power, sum_elts
 from autograd.blocks.trigo import sin, cos, tan, arcsin, arccos, arctan
-from autograd.blocks.expo import exp, log
+from autograd.blocks.expo import exp, log, sqrt
 
 
 #default mode for computing gradients
@@ -33,6 +33,7 @@ cos_=cos()
 tan_=tan()
 exp_=exp()
 log_=log()
+sqrt_=sqrt()
 sinh_=sinh()
 cosh_=cosh()
 tanh_=tanh()
@@ -64,6 +65,9 @@ def exp(x):
 
 def log(x, base=np.e):
 	return log_(x, base=base)
+
+def sqrt(x):
+	return sqrt(x)
 
 def sinh(x):
 	return sinh_(x)
