@@ -14,7 +14,7 @@ call them in the following fashion:
 import numpy as np
 from autograd.blocks.hyperbolic import sinh, cosh, tanh
 from autograd.blocks.operations import add, subtract, multiply, divide, power, sum_elts
-from autograd.blocks.trigo import sin, cos, tan
+from autograd.blocks.trigo import sin, cos, tan, arcsin, arccos, arctan
 from autograd.blocks.expo import exp, log
 
 
@@ -36,6 +36,9 @@ log_=log()
 sinh_=sinh()
 cosh_=cosh()
 tanh_=tanh()
+arcsin_=arcsin()
+arccos_=arccos()
+arctan_=arctan()
 add_=add()
 subtract_=subtract()
 multiply_=multiply()
@@ -70,6 +73,15 @@ def cosh(x):
 
 def tanh(x):
 	return tanh_(x)
+
+def arcsin(x):
+	return arcsin_(x)
+
+def arccos(x):
+	return arccos_(x)
+
+def arctan(x):
+	return arctan_(x)
 
 # ================
 #	 OPERATORS
