@@ -154,17 +154,3 @@ class extract(Block):
 
 
         return([jacobian])
-
-
-class ln(SimpleBlock):
-    """
-    vectorized natural log function on vectors
-    """
-
-    def data_fn(self, args):
-        new_data = np.log(args.data)
-        return(new_data)
-
-    def gradient_fn(self, args):
-        grad = 1/(args.data)
-        return(grad)
