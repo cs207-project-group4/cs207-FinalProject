@@ -114,7 +114,7 @@ class Node():
         #print('')
         
         #print('node {} grad {}'.format(self.id, self.gradient))
-        print('node {} times visited : {}/{}'.format(self.id, self.times_visited, self.times_used))
+        #print('node {} times visited : {}/{}'.format(self.id, self.times_visited, self.times_used))
 
         if self.gradient is None:
             self.gradient=np.eye(self.output_dim)
