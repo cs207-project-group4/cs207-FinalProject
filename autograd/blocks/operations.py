@@ -59,8 +59,8 @@ class multiply(Block): ### OK
         return(new_data)
 
     def get_jacobians(self, *args):
-        first_term = np.diag(args[0].data)
-        second_term = np.diag(args[1].data)
+        first_term = np.diag(args[1].data)
+        second_term = np.diag(args[0].data)
 
         return([first_term, second_term])
 

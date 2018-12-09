@@ -129,7 +129,7 @@ class Block():
                 outputVariable.node.childrens+=[{'node':children_nodes[i], 'jacobian':children_jacs[i]}]
 
                 #increase the counter
-                children_nodes[i].times_used +=1
+                #children_nodes[i].times_used +=1
 
             return(outputVariable)
 

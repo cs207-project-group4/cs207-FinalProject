@@ -1,19 +1,74 @@
 # -*- coding: utf-8 -*-
 import autograd as ad
 import numpy as np
+from autograd import config
+
+class C_graph():
+    """
+    aggregating class for the nodes in the computational graph
+    """
+    
+    def __init__(self, nodes=[]):
+        self.ids=[]
+        self.nodes=nodes
+        self.input_node=None
+        self.output_node=None
+        
+    def reset_graph(self):
+        
+        #ad.ids=[]
+        
+       
+        
+        #print('start cleaning')
+       
+        for node in config.list_of_nodes:    
+            
+            #remove all info from these nodes
+            node.gradient=None
+            node.times_visited=0
+            node.times_used=0
+            #_variable_.node.childrens={}
+            
+            #if _variable_.node.childrens!=[]:
+                #this is not the root node
+            #    _variable_.node.id=
+                    
+    def define_path(self, node):
+        """
+        make a first backward pass without doing any computation
+        It is just meant to check which variables are involved in the computation of the node given
+        """ 
+        if node.childrens!=[]:
+           for child in node.childrens:
+                node_child = child['node']
+                node_child.times_used+=1
+                self.define_path(node_child)
+                
+        
+        
+    
+        
+    
+        
+        
+        
 
 class Node():
+    """
+    basic element of the computational graph
+    """
     def __init__(self, output_dim=None):
         
         #ID of the node
-        if ad.ids==[]:
+        if ad.c_graph.ids==[]:
             #first node we create
             self.id=0
-            ad.ids+=[0]
+            ad.c_graph.ids+=[0]
             
         else:
-            self.id=ad.ids[-1]+1
-            ad.ids+=[self.id]
+            self.id=ad.c_graph.ids[-1]+1
+            ad.c_graph.ids+=[self.id]
             
             
         #dimension of the current variable associated to this node
@@ -56,7 +111,9 @@ class Node():
         input variables are the ones who don't have any childrens
         """
         #initiate the gradients
-        print('node {} grad {}'.format(self.id, self.gradient))
+        #print('')
+        
+        #print('node {} grad {}'.format(self.id, self.gradient))
         print('node {} times visited : {}/{}'.format(self.id, self.times_visited, self.times_used))
 
         if self.gradient is None:
@@ -68,16 +125,18 @@ class Node():
             if self.childrens==[]:
                 return(self.gradient)
             else:
-                return(self.backward())
+                self.backward()
             
         else:            
             if self.childrens!=[]:
                 #we can still going deeper in backprop
-                
+                #print(len(self.childrens), ' childrens', str([self.childrens[i]['node'].id for i in range(len(self.childrens))]))
                 for child in self.childrens:
                     node,jacobian=child['node'], child['jacobian']
                     
                     new_grad = np.dot(self.gradient, jacobian)
+                    #print(node.gradient)
+                    #print(new_grad)
                     
                     if node.gradient is None:
                         node.gradient = new_grad
@@ -85,16 +144,20 @@ class Node():
                         node.gradient += new_grad
                         
                     node.times_visited+=1
+                    #print('looking at node {} \ngradient {}'.format(node.id, node.gradient))
+
                         
-                    if node.times_used ==node.times_visited:                       
-                        return(node.backward())                
+                    if node.times_used ==node.times_visited:     
+                        #print(node.gradient)
+                        node.backward()          
                     else:
+                        #still some computations to perform upwards before going deeped
+                        #print('node {} visits : {}/{}'.format(node.id, node.times_visited, node.times_used))
                         pass
-                    
             else:
-                #terminal case, we return the gradients w.r. the input variable
+                #terminal case, we store the gradients in the c_graph
+                ad.c_graph.input_node=self
                 
-                return(self.gradient)
             
             
             

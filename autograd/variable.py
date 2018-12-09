@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import autograd.utils as utils
+from autograd import utils
 
 import autograd as ad
 from autograd.node import Node 
-
+from autograd import config
 
 
 class Variable():
@@ -34,6 +34,7 @@ class Variable():
         the *1 term corresponds to the gradient of the variable x
     """
     def __init__(self,data, gradient=None, constant=False):
+        
     
              
         #converts list or float to numpy array
@@ -84,7 +85,15 @@ class Variable():
             # in that case, the variable is overwritten, but the nodes keep being created and stored
             if constant==False:
                 self.node = Node(output_dim = self.data.shape[0]) 
-           
+                
+                #save all the nodes in the config file in reverse mode
+                #this is used to clean the computational graph after backward()
+                #print('before', config.list_of_vars)
+                config.list_of_nodes+=[self.node]
+                #print('after', config.list_of_vars)
+     
+        
+    
         
     def set_data(self, data):
         """
@@ -102,7 +111,13 @@ class Variable():
         gradient stored in this variable
         """
         new_shape= utils.get_shape(gradient)
-        assert new_shape==self.gradient.shape, 'trying to set data with inconsistent shapes! previous shape : {} -- shape provided {}'.format(self.gradient.shape, new_shape)
+        if ad.mode=='forward':
+            assert new_shape==self.gradient.shape, 'trying to set data with inconsistent shapes! previous shape : {} -- shape provided {}'.format(self.gradient.shape, new_shape)
+        else:
+            print('in reverse mode, you cannot modify in place the gradients of the variables')
+                
+        
+        
         
         self.gradient=gradient
     
@@ -130,9 +145,13 @@ class Variable():
         we are referencing the function here sot hat the user can do var.backward()
         instead of var.node.backward()
         """
+        ad.c_graph.output_node=self.node
         
-        gradients = self.node.backward()
-        return(gradients)
+        ad.c_graph.define_path(self.node)
+        
+        self.node.backward()
+        self.gradient=ad.c_graph.input_node.gradient
+        return(self.gradient)
                 
         
    
@@ -215,7 +234,7 @@ class Variable():
             
         if not isinstance(other, Variable):
             other=self.__scalar_to_variable(other)
-        return multiply(other, self)
+        return multiply(self, other)
 
     def __truediv__(self, other):
         """

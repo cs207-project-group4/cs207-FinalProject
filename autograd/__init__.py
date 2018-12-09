@@ -16,17 +16,44 @@ from autograd.blocks.hyperbolic import sinh, cosh, tanh
 from autograd.blocks.operations import add, subtract, multiply, divide, power, sum_elts
 from autograd.blocks.trigo import sin, cos, tan, arcsin, arccos, arctan
 from autograd.blocks.expo import exp, log, sqrt
-
+from autograd.node import C_graph
+from autograd import config
 
 #default mode for computing gradients
 mode='forward'
 
-#ids used for the nodes in the computational graph
-ids=[]
+
+#computational graph for reverse mode
+c_graph=C_graph()
+
+def reset_graph():
+    c_graph.reset_graph()
+    
+
+
+def set_mode(new_mode):
+    global mode, c_graph
+    mode=new_mode
+    
+    if new_mode=='reverse':
+        reset_graph()
+    
+    
+
+
+        
+    
 
 
 
 
+
+
+
+
+# =============================================================================
+# shortcuts for better user interface
+# =============================================================================
 
 sin_=sin()
 cos_=cos()
