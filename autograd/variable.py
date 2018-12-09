@@ -313,6 +313,42 @@ class Variable():
         else:
             return False
 
+    def __lt__(self,other):
+        """
+        overload not equal dunder method
+        """
+        if self.data < other.data and self.gradient < other.gradient:
+            return True
+        else:
+            return False
+
+    def __le__(self,other):
+        """
+        overload not equal dunder method
+        """
+        if self.data <= other.data and self.gradient <= other.gradient:
+            return True
+        else:
+            return False
+
+    def __gt__(self, other):
+        """
+        overload not equal dunder method
+        """
+        if self.data > other.data and self.gradient > other.gradient:
+            return True
+        else:
+            return False
+
+    def __ge__(self, other):
+        """
+        overload not equal dunder method
+        """
+        if self.data >= other.data and self.gradient >= other.gradient:
+            return True
+        else:
+            return False
+
 
 class Constant(Variable):
     """
@@ -320,8 +356,6 @@ class Constant(Variable):
     """
     def __init__(self,data, gradient=None, constant=True):
         super().__init__(data, gradient, constant)
-        
-
 
         
 if __name__=='__main__':

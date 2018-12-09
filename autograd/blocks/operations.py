@@ -65,7 +65,6 @@ class multiply(Block): ### OK
         return([first_term, second_term])
 
 
-
 class divide(Block):
     """
     element-wise division
@@ -150,7 +149,4 @@ class extract(Block):
             #element extraction
             jacobian=np.zeros((1,shape_of_data))
             jacobian[0,key]=1
-
-
-
         return([jacobian])
