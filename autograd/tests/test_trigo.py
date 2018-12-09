@@ -66,7 +66,7 @@ def test_sin_reverse():
 #   Compute gradient backwards
 # =============================================================================
     y_block.backward()
-    
+
 # =============================================================================
 #   define expected output
 # =============================================================================
@@ -83,7 +83,7 @@ def test_sin_reverse():
 # =============================================================================
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong sin gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
 
-   
+
 
 
 def test_cos_forward():
@@ -357,7 +357,7 @@ def test_arccos_reverse():
 # =============================================================================
 #   compute output of custom block
 # =============================================================================
-    y_block=arccos_block(x) 
+    y_block=arccos_block(x)
     y_block.backward()
 # =============================================================================
 #   define expected output
@@ -446,3 +446,4 @@ def test_arctan_reverse():
 #   assert gradient forward pass
 # =============================================================================
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong arctan gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+    ad.set_mode('forward')
