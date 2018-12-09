@@ -315,7 +315,7 @@ class Variable():
 
     def __lt__(self,other):
         """
-        overload not equal dunder method
+        overload less than dunder method
         """
         if self.data < other.data and self.gradient < other.gradient:
             return True
@@ -324,7 +324,7 @@ class Variable():
 
     def __le__(self,other):
         """
-        overload not equal dunder method
+        overload less than or equal dunder method
         """
         if self.data <= other.data and self.gradient <= other.gradient:
             return True
@@ -333,7 +333,7 @@ class Variable():
 
     def __gt__(self, other):
         """
-        overload not equal dunder method
+        overload greater than dunder method
         """
         if self.data > other.data and self.gradient > other.gradient:
             return True
@@ -342,7 +342,7 @@ class Variable():
 
     def __ge__(self, other):
         """
-        overload not equal dunder method
+        overload greater than or equal dunder method
         """
         if self.data >= other.data and self.gradient >= other.gradient:
             return True
