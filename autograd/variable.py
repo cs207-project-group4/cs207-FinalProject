@@ -10,7 +10,7 @@ from autograd import config
 
 class Variable():
     """
-    The variable class is the main class that will cary the information flow : data and gradient
+    The variable class is the main class that will carry the information flow : data and gradient
     A variable has a data attribute, and a gradient one
     The data attribute is the data contained is this variable, for instance:
         x=Variable(1)

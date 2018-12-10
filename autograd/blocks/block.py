@@ -174,3 +174,5 @@ class SimpleBlock(Block):
         elts = self.gradient_fn(*args, **kwargs)
         jacobian = np.diag(elts)
         return([jacobian])
+
+
