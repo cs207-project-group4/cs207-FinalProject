@@ -709,8 +709,8 @@ def test_power_forward():
 # =============================================================================
     y_overloaded = x**n
     y_overloaded.compute_gradients()
-    assert np.equal(data_true, y_block.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
-    assert np.equal(gradient_true, y_block.gradient).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true, y_overloaded.gradient).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
 
 
 
@@ -756,8 +756,8 @@ def test_power_reverse():
     ad.reset_graph()
     y_overloaded = x**n
     y_overloaded.compute_gradients()
-    assert np.equal(data_true, y_block.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
-    assert np.equal(gradient_true, y_block.gradient).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true, y_overloaded.gradient).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
 
 
 

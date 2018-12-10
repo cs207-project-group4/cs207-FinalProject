@@ -379,6 +379,7 @@ class Variable():
         if isinstance(other, Variable):
             raise ValueError('Power is not supported for type Variable')
        
+        return(power(self, power_exponent=other))
         
     def __neg__(self):
         """
