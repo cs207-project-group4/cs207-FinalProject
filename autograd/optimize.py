@@ -12,7 +12,7 @@ class Optimizer():
     == Args ==
 
     loss_func (function): a function accepting a list of `params` (see below) and returning a tuple (data, gradient)
-    params (array): an array of initialization parameters - these should correspond to the parameters of the loss_func
+    params (array): a list of initialization parameters - these should correspond to the parameters of the loss_func
     lr (float): leaning rate for steps
     tol (float): tolerance for determining loss function convergence
     max_iter (int): maximumer number of steps the optimizer will run
@@ -31,22 +31,28 @@ class Optimizer():
         """
         raise NotImplementedError
 
-    def solve(self):
+    def solve(self, return_steps=False):
         """
         Loop until convergence criteria is met or for max_iters
         """
+        steps=[]
         count = 0
         while count < self.max_iter:
 
             prev_loss, prev_grad = self.loss_func(self.params)
             self.step()
             new_loss, new_grad = self.loss_func(self.params)
+            if return_steps:
+                steps.append(self.params)
 
             if abs(prev_loss - new_loss) < self.tol:
                 break
             count += 1
 
-        return(self.params)
+        if return_steps:
+            return (self.params, steps)
+        else:
+            return (self.params)
 
 
 class GD(Optimizer):
