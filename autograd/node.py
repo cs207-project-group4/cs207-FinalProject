@@ -11,20 +11,18 @@ class C_graph():
     def __init__(self, nodes=[]):
         self.ids=[]
         self.nodes=nodes
-        self.input_node=None
+        self.input_node=[]
         self.output_node=None
+        self.input_shapes=[]
         
-    def reset_graph(self):
-        
-        #ad.ids=[]
-        
-       
-        
+    def reset_graph(self):    
         #print('start cleaning')
+        #self.input_node=[]
+        #self.input_shapes=[]
        
-        for node in config.list_of_nodes:    
-            
+        for node in config.list_of_nodes:          
             #remove all info from these nodes
+            
             node.gradient=None
             node.times_visited=0
             node.times_used=0
@@ -44,6 +42,14 @@ class C_graph():
                 node_child = child['node']
                 node_child.times_used+=1
                 self.define_path(node_child)
+        
+        
+        #take care of not used nodes, set their gradient to 0
+        for node in self.input_node:
+            if node.times_used==0:
+                node.gradient=np.zeros((node.output_dim, self.output_node.output_dim))
+            
+        
                 
         
         
@@ -154,9 +160,7 @@ class Node():
                         #still some computations to perform upwards before going deeped
                         #print('node {} visits : {}/{}'.format(node.id, node.times_visited, node.times_used))
                         pass
-            else:
-                #terminal case, we store the gradients in the c_graph
-                ad.c_graph.input_node=self
+            
                 
             
             

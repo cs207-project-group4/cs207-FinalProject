@@ -22,7 +22,7 @@ def test_exp_forward():
 #   compute output of custom block
 # =============================================================================
     y_block=exp_block(x)
-
+    y_block.compute_gradients()
 # =============================================================================
 #   define expected output
 # =============================================================================
@@ -38,6 +38,7 @@ def test_exp_forward():
 #   assert gradient forward pass
 # =============================================================================
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong exp gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+
 
 def test_exp_reverse():
     ad.set_mode('reverse')
@@ -56,7 +57,7 @@ def test_exp_reverse():
 #   compute output of custom block
 # =============================================================================
     y_block=exp_block(x)
-    y_block.backward()
+    y_block.compute_gradients()
 
 # =============================================================================
 #   define expected output
@@ -75,6 +76,7 @@ def test_exp_reverse():
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong exp gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
     ad.set_mode('forward')
 
+
 def test_log_forward():
     ad.set_mode('forward')
 # =============================================================================
@@ -92,7 +94,7 @@ def test_log_forward():
 #   compute output of custom block
 # =============================================================================
     y_block=log_block(x)
-
+    y_block.compute_gradients()
 # =============================================================================
 #   define expected output
 # =============================================================================
@@ -108,6 +110,8 @@ def test_log_forward():
 #   assert gradient forward pass
 # =============================================================================
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong log gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+
+
 
 def test_log_reverse():
     ad.set_mode('reverse')
@@ -126,7 +130,7 @@ def test_log_reverse():
 #   compute output of custom block
 # =============================================================================
     y_block=log_block(x)
-    y_block.backward()
+    y_block.compute_gradients()
 
 # =============================================================================
 #   define expected output
@@ -143,74 +147,4 @@ def test_log_reverse():
 #   assert gradient forward pass
 # =============================================================================
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong log gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
-    ad.set_mode('forward')
-
-def test_exp_forward():
-    ad.set_mode('forward')
-# =============================================================================
-#   define the input variable
-# =============================================================================
-    data=np.random.random(5)
-    x=Variable(data)
-
-# =============================================================================
-#   define custom block
-# =============================================================================
-    sqrt_block=sqrt()
-
-# =============================================================================
-#   compute output of custom block
-# =============================================================================
-    y_block=sqrt_block(x)
-
-# =============================================================================
-#   define expected output
-# =============================================================================
-    data_true=np.sqrt(data)
-    gradient_true=np.diag(1/(2*np.sqrt(data)))
-
-# =============================================================================
-#   assert data pass
-# =============================================================================
-    assert np.equal(data_true, y_block.data).all(), 'wrong sqrt data pass. expected {}, given{}'.format(data_true, y_block.data)
-
-# =============================================================================
-#   assert gradient forward pass
-# =============================================================================
-    assert np.equal(gradient_true, y_block.gradient).all(), 'wrong sqrt gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
-
-def test_exp_reverse():
-    ad.set_mode('reverse')
-# =============================================================================
-#   define the input variable
-# =============================================================================
-    data=np.random.random(5)
-    x=Variable(data)
-
-# =============================================================================
-#   define custom block
-# =============================================================================
-    sqrt_block=sqrt()
-
-# =============================================================================
-#   compute output of custom block
-# =============================================================================
-    y_block=sqrt_block(x)
-    y_block.backward()
-
-# =============================================================================
-#   define expected output
-# =============================================================================
-    data_true=np.sqrt(data)
-    gradient_true=np.diag(1/(2*np.sqrt(data)))
-
-# =============================================================================
-#   assert data pass
-# =============================================================================
-    assert np.equal(data_true, y_block.data).all(), 'wrong sqrt data pass. expected {}, given{}'.format(data_true, y_block.data)
-
-# =============================================================================
-#   assert gradient forward pass
-# =============================================================================
-    assert np.equal(gradient_true, y_block.gradient).all(), 'wrong sqrt gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
     ad.set_mode('forward')

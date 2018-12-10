@@ -7,8 +7,10 @@ from autograd.blocks.operations import sum_elts
 
 from autograd.variable import Variable
 import numpy as np
+import autograd as ad
 
-def test_add():
+def test_add_forward():
+    ad.set_mode('forward')
 # =============================================================================
 #   define the input variable
 # =============================================================================
@@ -17,8 +19,7 @@ def test_add():
     
     
     
-    x=Variable(datax)
-    y=Variable(datay)
+    x,y =Variable.multi_variables(datax, datay)
 # =============================================================================
 #   define custom block
 # =============================================================================
@@ -28,252 +29,741 @@ def test_add():
 #   compute output of custom block
 # =============================================================================
     y_block=add_block(x,y)
+    y_block.compute_gradients()
 # =============================================================================
 #   define expected output
 # =============================================================================
     data_true=np.add(datax,datay)
-    gradient_true=2*np.identity(5)
+    
+    
+    gradient_true_x=np.identity(5)
+    gradient_true_y=np.identity(5)
+    
+# =============================================================================
+#   assert forward pass
+# =============================================================================
+    assert np.equal(data_true, y_block.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_block.gradient[0]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.equal(gradient_true_y, y_block.gradient[1]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
+
+
 
 # =============================================================================
 #   assert overloading
 # =============================================================================
     y_overloaded = x+y
-    assert np.equal(y_overloaded.data, y_block.data).all(), 'add overloading failed'
-    assert np.equal(y_overloaded.gradient, y_block.gradient).all(), 'add overloading failed'
+    y_overloaded.compute_gradients()
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
+
 
 # =============================================================================
 #   assert scalar overloading
 # =============================================================================
-    scalar = Variable([1]*x.data.shape[0])
-    y_scale = add_block(scalar,x)
-    y_scale_overloaded = 1+x
-    assert np.equal(y_scale.data, y_scale_overloaded.data).all(), 'add scalar overloading failed'
-    assert np.equal(y_overloaded.gradient, y_block.gradient).all(), 'add overloading failed'
+    y_overloaded = x+1
+    y_overloaded.compute_gradients()
+    
+    data_true=np.add(datax,1)   
+    gradient_true_x=np.identity(5)
+    gradient_true_y=np.zeros((5,5))
+    
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
+
 
 # =============================================================================
-#   assert data pass
+#   assert scalar overloading
 # =============================================================================
-    assert np.equal(data_true, y_block.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    y_overloaded = 1+x
+    y_overloaded.compute_gradients()
+    
+    data_true=np.add(datax,1)   
+    gradient_true_x=np.identity(5)
+    gradient_true_y=np.zeros((5,5))
+    
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass for x . expected {}, given{}'.format(gradient_true_x,y_overloaded.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass for y . expected {}, given{}'.format(gradient_true_y,y_overloaded.gradient[1])
 
-# =============================================================================
-#   assert gradient forward pass
-# =============================================================================
-    assert np.equal(gradient_true, y_block.gradient).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
 
 
 
 
-def test_subtract():
+
+def test_add_reverse():
+    ad.set_mode('reverse')
 # =============================================================================
 #   define the input variable
 # =============================================================================
     datax=np.random.random(5)
     datay=np.random.random(5)
-    x=Variable(datax)
-    y=Variable(datay)
+    
+    
+    
+    x,y =Variable.multi_variables(datax, datay)
 # =============================================================================
 #   define custom block
 # =============================================================================
-    subtract_block=subtract()
+    add_block=add()
 
 # =============================================================================
 #   compute output of custom block
 # =============================================================================
-    y_block=subtract_block(x,y)
+    y_block=add_block(x,y)
+    y_block.compute_gradients()
+# =============================================================================
+#   define expected output
+# =============================================================================
+    data_true=np.add(datax,datay)
+    
+    
+    gradient_true_x=np.identity(5)
+    gradient_true_y=np.identity(5)
+    
+# =============================================================================
+#   assert forward pass
+# =============================================================================
+    assert np.equal(data_true, y_block.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_block.gradient[0]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.equal(gradient_true_y, y_block.gradient[1]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
+
+
+
+# =============================================================================
+#   assert overloading
+# =============================================================================
+    ad.reset_graph()
+    y_overloaded = x+y
+    y_overloaded.compute_gradients()
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_overloaded.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_overloaded.gradient[1])
+
+
+# =============================================================================
+#   assert scalar overloading
+# =============================================================================
+    ad.reset_graph()
+    y_overloaded = x+1
+    y_overloaded.compute_gradients()
+    
+    data_true=np.add(datax,1)   
+    gradient_true_x=np.identity(5)
+    gradient_true_y=np.zeros((5,5))
+    
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass for x . expected {}, given{}'.format(gradient_true_x,y_overloaded.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass for y . expected {}, given{}'.format(gradient_true_y,y_overloaded.gradient[1])
+
+
+
+# =============================================================================
+#   assert scalar overloading
+# =============================================================================
+    ad.reset_graph()
+    y_overloaded = 1+x
+    y_overloaded.compute_gradients()
+    
+    data_true=np.add(datax,1)   
+    gradient_true_x=np.identity(5)
+    gradient_true_y=np.zeros((5,5))
+    
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass for x . expected {}, given{}'.format(gradient_true_x,y_overloaded.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass for y . expected {}, given{}'.format(gradient_true_y,y_overloaded.gradient[1])
+
+
+
+
+
+def test_subtract_forward():
+    ad.set_mode('forward')
+# =============================================================================
+#   define the input variable
+# =============================================================================
+    datax=np.random.random(5)
+    datay=np.random.random(5)
+    
+    
+    
+    x,y =Variable.multi_variables(datax, datay)
+# =============================================================================
+#   define custom block
+# =============================================================================
+    sub_block=subtract()
+
+# =============================================================================
+#   compute output of custom block
+# =============================================================================
+    y_block=sub_block(x,y)
+    y_block.compute_gradients()
 # =============================================================================
 #   define expected output
 # =============================================================================
     data_true=np.subtract(datax,datay)
-    gradient_true=np.zeros((5,5))
+    
+    
+    gradient_true_x=np.identity(5)
+    gradient_true_y=-np.identity(5)
+    
+# =============================================================================
+#   assert forward pass
+# =============================================================================
+    assert np.equal(data_true, y_block.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_block.gradient[0]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.equal(gradient_true_y, y_block.gradient[1]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
+
+
 
 # =============================================================================
 #   assert overloading
 # =============================================================================
     y_overloaded = x-y
-    assert np.equal(y_overloaded.data, y_block.data).all(), 'sub overloading failed'
-    assert np.equal(y_overloaded.gradient, y_block.gradient).all(), 'sub overloading failed'
+    y_overloaded.compute_gradients()
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
+
 
 # =============================================================================
 #   assert scalar overloading
 # =============================================================================
-    scalar = Variable(1)
-    scalar = Variable([1]*x.data.shape[0])
+    y_overloaded = x-1
+    y_overloaded.compute_gradients()
+    
+    data_true=np.subtract(datax,1)   
+    gradient_true_x=np.identity(5)
+    gradient_true_y=np.zeros((5,5))
+    
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
 
-    y_scale = subtract_block(scalar,x)
-    y_scale_overloaded = 1-x
-    assert np.equal(y_scale.data, y_scale_overloaded.data).all(), 'sub scalar overloading failed'
-    assert np.equal(y_overloaded.gradient, y_block.gradient).all(), 'sub overloading failed'
-
-
-# =============================================================================
-#   assert data pass
-# =============================================================================
-    assert np.equal(data_true, y_block.data).all(), 'wrong sub data pass. expected {}, given{}'.format(data_true, y_block.data)
 
 # =============================================================================
-#   assert gradient forward pass
+#   assert scalar overloading
 # =============================================================================
-    assert np.equal(gradient_true, y_block.gradient).all(), 'wrong sub gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+    y_overloaded = 1-x
+    y_overloaded.compute_gradients()
+    
+    data_true=np.subtract(1, datax)   
+    gradient_true_x=-np.identity(5)
+    gradient_true_y=np.zeros((5,5))
+    
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass for x . expected {}, given{}'.format(gradient_true_x,y_overloaded.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass for y . expected {}, given{}'.format(gradient_true_y,y_overloaded.gradient[1])
 
-def test_multiply():
+
+
+
+def test_subtract_reverse():
+    ad.set_mode('reverse')
 # =============================================================================
 #   define the input variable
 # =============================================================================
     datax=np.random.random(5)
     datay=np.random.random(5)
-    x=Variable(datax)
-    y=Variable(datay)
+    
+    
+    
+    x,y =Variable.multi_variables(datax, datay)
 # =============================================================================
 #   define custom block
 # =============================================================================
-    multiply_block=multiply()
+    sub_block=subtract()
 
 # =============================================================================
 #   compute output of custom block
 # =============================================================================
-    y_block=multiply_block(x,y)
+    y_block=sub_block(x,y)
+    y_block.compute_gradients()
+# =============================================================================
+#   define expected output
+# =============================================================================
+    data_true=np.subtract(datax,datay)   
+    gradient_true_x=np.identity(5)
+    gradient_true_y=-np.identity(5)
+    
+# =============================================================================
+#   assert forward pass
+# =============================================================================
+    assert np.equal(data_true, y_block.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_block.gradient[0]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.equal(gradient_true_y, y_block.gradient[1]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
 
+
+
+# =============================================================================
+#   assert overloading
+# =============================================================================
+    ad.reset_graph()
+    y_overloaded = x-y
+    y_overloaded.compute_gradients()
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_overloaded.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_overloaded.gradient[1])
+
+
+# =============================================================================
+#   assert scalar overloading
+# =============================================================================
+    ad.reset_graph()
+    y_overloaded = x-1
+    y_overloaded.compute_gradients()
+    
+    data_true=np.subtract(datax,1)   
+    gradient_true_x=np.identity(5)
+    gradient_true_y=np.zeros((5,5))
+    
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass for x . expected {}, given{}'.format(gradient_true_x,y_overloaded.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass for y . expected {}, given{}'.format(gradient_true_y,y_overloaded.gradient[1])
+
+
+
+# =============================================================================
+#   assert scalar overloading
+# =============================================================================
+    ad.reset_graph()
+    y_overloaded = 1-x
+    y_overloaded.compute_gradients()
+    
+    data_true=np.subtract(1, datax)   
+    gradient_true_x=-np.identity(5)
+    gradient_true_y=np.zeros((5,5))
+    
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass for x . expected {}, given{}'.format(gradient_true_x,y_overloaded.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass for y . expected {}, given{}'.format(gradient_true_y,y_overloaded.gradient[1])
+
+
+def test_multiply_reverse():
+    ad.set_mode('reverse')
+# =============================================================================
+#   define the input variable
+# =============================================================================
+    datax=np.random.random(5)
+    datay=np.random.random(5)
+    
+    
+    
+    x,y =Variable.multi_variables(datax, datay)
+# =============================================================================
+#   define custom block
+# =============================================================================
+    mul_block=multiply()
+
+# =============================================================================
+#   compute output of custom block
+# =============================================================================
+    y_block=mul_block(x,y)
+    y_block.compute_gradients()
 # =============================================================================
 #   define expected output
 # =============================================================================
     data_true=np.multiply(datax,datay)
-    gradient_true=np.identity(5)*y.data + np.identity(5)*x.data
+    
+    
+    gradient_true_x=np.diag(y.data)
+    gradient_true_y=np.diag(x.data)
+    
+# =============================================================================
+#   assert forward pass
+# =============================================================================
+    assert np.equal(data_true, y_block.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_block.gradient[0]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.equal(gradient_true_y, y_block.gradient[1]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
+
+
+
+# =============================================================================
+#   assert overloading
+# =============================================================================
+    ad.reset_graph()
+    y_overloaded = x*y
+    y_overloaded.compute_gradients()
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
+
+
+# =============================================================================
+#   assert scalar overloading
+# =============================================================================
+    ad.reset_graph()
+    y_overloaded = x*4
+    y_overloaded.compute_gradients()
+    
+    data_true=np.multiply(datax,4)   
+    gradient_true_x=np.identity(5)*4
+    gradient_true_y=np.zeros((5,5))
+    
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
+
+
+# =============================================================================
+#   assert scalar overloading
+# =============================================================================
+    ad.reset_graph()
+    y_overloaded = 4*x
+    y_overloaded.compute_gradients()
+    
+    data_true=np.multiply(4, datax)   
+    gradient_true_x=4*np.identity(5)
+    gradient_true_y=np.zeros((5,5))
+    
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass for x . expected {}, given{}'.format(gradient_true_x,y_overloaded.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass for y . expected {}, given{}'.format(gradient_true_y,y_overloaded.gradient[1])
+
+
+
+def test_multiply_forward():
+    ad.set_mode('forward')
+# =============================================================================
+#   define the input variable
+# =============================================================================
+    datax=np.random.random(5)
+    datay=np.random.random(5)
+    
+    
+    
+    x,y =Variable.multi_variables(datax, datay)
+# =============================================================================
+#   define custom block
+# =============================================================================
+    mul_block=multiply()
+
+# =============================================================================
+#   compute output of custom block
+# =============================================================================
+    print(ad.mode)
+    y_block=mul_block(x,y)
+    y_block.compute_gradients()
+# =============================================================================
+#   define expected output
+# =============================================================================
+    data_true=np.multiply(datax,datay)
+    
+    
+    gradient_true_x=np.diag(y.data)
+    gradient_true_y=np.diag(x.data)
+    
+# =============================================================================
+#   assert forward pass
+# =============================================================================
+    assert np.equal(data_true, y_block.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_block.gradient[0]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.equal(gradient_true_y, y_block.gradient[1]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
+
+
 
 # =============================================================================
 #   assert overloading
 # =============================================================================
     y_overloaded = x*y
-    assert np.equal(y_overloaded.data, y_block.data).all(), 'mul overloading failed'
-    assert np.equal(y_overloaded.gradient, y_block.gradient).all(), 'mul overloading failed'
+    y_overloaded.compute_gradients()
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
+
 
 # =============================================================================
 #   assert scalar overloading
 # =============================================================================
-    scalar = Variable(5)
-    scalar = Variable([5]*x.data.shape[0])
+    y_overloaded = x*4
+    y_overloaded.compute_gradients()
+    
+    data_true=np.multiply(datax,4)   
+    gradient_true_x=np.identity(5)*4
+    gradient_true_y=np.zeros((5,5))
+    
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
 
-
-    y_scale = multiply_block(scalar,x)
-    y_scale_overloaded = 5*x
-    assert np.equal(y_scale.data, y_scale_overloaded.data).all(), 'mult scalar overloading failed'
-    assert np.equal(y_overloaded.gradient, y_block.gradient).all(), 'mult overloading failed'
 
 # =============================================================================
-#   assert data pass
+#   assert scalar overloading
 # =============================================================================
-    assert np.equal(data_true, y_block.data).all(), 'wrong mult data pass. expected {}, given{}'.format(data_true, y_block.data)
+    y_overloaded = 4*x
+    y_overloaded.compute_gradients()
+    
+    data_true=np.multiply(4, datax)   
+    gradient_true_x=4*np.identity(5)
+    gradient_true_y=np.zeros((5,5))
+    
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass for x . expected {}, given{}'.format(gradient_true_x,y_overloaded.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass for y . expected {}, given{}'.format(gradient_true_y,y_overloaded.gradient[1])
 
-# =============================================================================
-#   assert gradient forward pass
-# =============================================================================
-    assert np.equal(gradient_true, y_block.gradient).all(), 'wrong mult gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
 
-def test_divide():
+
+def test_divide_forward():
+    ad.set_mode('forward')
 # =============================================================================
 #   define the input variable
 # =============================================================================
     datax=np.random.random(5)
     datay=np.random.random(5)
-    x=Variable(datax)
-    y=Variable(datay)
+    
+    
+    
+    x,y =Variable.multi_variables(datax, datay)
 # =============================================================================
 #   define custom block
 # =============================================================================
-    divide_block=divide()
+    div_block=divide()
 
 # =============================================================================
 #   compute output of custom block
 # =============================================================================
-    y_block=divide_block(x, y)
+    y_block=div_block(x,y)
+    y_block.compute_gradients()
 # =============================================================================
 #   define expected output
 # =============================================================================
-    data_true =np.divide(datax,datay)
+    data_true=np.divide(datax,datay)
+    
+    
+    gradient_true_x=np.diag(1/y.data)
+    gradient_true_y=-np.diag(x.data/(y.data**2))
+    
+# =============================================================================
+#   assert forward pass
+# =============================================================================
+    assert np.equal(data_true, y_block.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.allclose(gradient_true_x, y_block.gradient[0]), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.allclose(gradient_true_y, y_block.gradient[1]), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
 
-    gradient_true = (x.gradient*y.data-x.data*y.gradient)/y.data**2
+
 
 # =============================================================================
 #   assert overloading
 # =============================================================================
     y_overloaded = x/y
-    assert np.equal(y_overloaded.data, y_block.data).all(), 'div overloading failed'
-    assert np.equal(y_overloaded.gradient, y_block.gradient).all(), 'div overloading failed'
+    y_overloaded.compute_gradients()
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.allclose(gradient_true_x, y_overloaded.gradient[0]), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.allclose(gradient_true_y, y_overloaded.gradient[1]), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
+
 
 # =============================================================================
 #   assert scalar overloading
 # =============================================================================
-    scalar = Variable(5)
-    scalar = Variable([5]*x.data.shape[0])
+    y_overloaded = x/4
+    y_overloaded.compute_gradients()
+    
+    data_true=np.divide(datax,4)   
+    gradient_true_x=np.identity(5)/4
+    gradient_true_y=np.zeros((5,5))
+    
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
 
-    y_scale = divide_block(scalar,x)
-    y_scale_overloaded = 5/x
-    assert np.equal(y_scale.data, y_scale_overloaded.data).all(), 'div scalar overloading failed'
-    assert np.equal(y_overloaded.gradient, y_block.gradient).all(), 'div overloading failed'
 
 # =============================================================================
-#   assert data pass
+#   assert scalar overloading
 # =============================================================================
-    assert np.equal(data_true, y_block.data).all(), 'wrong div data pass. expected \n{}\n, given\n{}'.format(data_true, y_block.data)
+    y_overloaded = 4/x
+    y_overloaded.compute_gradients()
+    
+    data_true=np.divide(4, datax)   
+    gradient_true_x=-4*np.diag(1/(x.data**2))
+    gradient_true_y=np.zeros((5,5))
+    
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.allclose(gradient_true_x, y_overloaded.gradient[0]), 'wrong add gradient forward pass for x . expected {}, given{}'.format(gradient_true_x,y_overloaded.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass for y . expected {}, given{}'.format(gradient_true_y,y_overloaded.gradient[1])
 
-# =============================================================================
-#   assert gradient forward pass, use allclose because division create small differences.  Outputs look same though!
-# =============================================================================
-    assert np.allclose(gradient_true, y_block.gradient, rtol = .001), 'wrong div gradient forward pass. expected \n{}\n, given\n{}'.format(gradient_true,y_block.gradient)
 
-
-def test_power():
+def test_divide_reverse():
+    ad.set_mode('reverse')
 # =============================================================================
 #   define the input variable
 # =============================================================================
-    datax = np.random.random(5)
-    x = Variable(datax)
-    y = int(4)
-
+    datax=np.random.random(5)
+    datay=np.random.random(5)
+    
+    
+    
+    x,y =Variable.multi_variables(datax, datay)
 # =============================================================================
 #   define custom block
 # =============================================================================
-    power_block = power()
+    div_block=divide()
 
 # =============================================================================
 #   compute output of custom block
 # =============================================================================
-    y_block=power_block(x,power_exponent = y)
+    y_block=div_block(x,y)
+    y_block.compute_gradients()
 # =============================================================================
-#   define expected output power & product rule: (x^y)' = yx'x^(y-1)
+#   define expected output
 # =============================================================================
-    data_true=np.power(datax,y)
-    gradient_true = y*x.gradient*datax**(y-1)
+    data_true=np.divide(datax,datay)
+    
+    
+    gradient_true_x=np.diag(1/y.data)
+    gradient_true_y=-np.diag(x.data/(y.data**2))
+    
+# =============================================================================
+#   assert forward pass
+# =============================================================================
+    assert np.equal(data_true, y_block.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.allclose(gradient_true_x, y_block.gradient[0]), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.allclose(gradient_true_y, y_block.gradient[1]), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
+
+
 
 # =============================================================================
 #   assert overloading
 # =============================================================================
-    y_overloaded = x**y
-    assert np.equal(y_overloaded.data, y_block.data).all(), 'power overloading failed'
-    assert np.equal(y_overloaded.gradient, y_block.gradient).all(), 'power overloading failed'
+    ad.reset_graph()
+    y_overloaded = x/y
+    y_overloaded.compute_gradients()
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.allclose(gradient_true_x, y_overloaded.gradient[0]), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.allclose(gradient_true_y, y_overloaded.gradient[1]), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
+
 
 # =============================================================================
 #   assert scalar overloading
 # =============================================================================
-    scalar = 5
+    ad.reset_graph()
+    y_overloaded = x/4
+    y_overloaded.compute_gradients()
+    
+    data_true=np.divide(datax,4)   
+    gradient_true_x=np.identity(5)/4
+    gradient_true_y=np.zeros((5,5))
+    
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true_x, y_overloaded.gradient[0]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_x,y_block.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true_y,y_block.gradient[1])
 
-    y_scale = power_block(x,power_exponent =scalar)
-    y_scale_overloaded = x**5
-    assert np.equal(y_scale.data, y_scale_overloaded.data).all(), 'power scalar overloading failed'
-    assert np.equal(y_overloaded.gradient, y_block.gradient).all(), 'power overloading failed'
 
 # =============================================================================
-#   assert data pass
+#   assert scalar overloading
 # =============================================================================
-    assert np.equal(data_true, y_block.data).all(), 'wrong div data pass. expected {}, given{}'.format(data_true, y_block.data)
+    ad.reset_graph()
+    y_overloaded = 4/x
+    y_overloaded.compute_gradients()
+    
+    data_true=np.divide(4, datax)   
+    gradient_true_x=-4*np.diag(1/(x.data**2))
+    gradient_true_y=np.zeros((5,5))
+    
+    assert np.equal(data_true, y_overloaded.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.allclose(gradient_true_x, y_overloaded.gradient[0]), 'wrong add gradient forward pass for x . expected {}, given{}'.format(gradient_true_x,y_overloaded.gradient[0])
+    assert np.equal(gradient_true_y, y_overloaded.gradient[1]).all(), 'wrong add gradient forward pass for y . expected {}, given{}'.format(gradient_true_y,y_overloaded.gradient[1])
+
+
+
+
+
+def test_power_forward():
+    ad.set_mode('forward')
+# =============================================================================
+#   define the input variable
+# =============================================================================
+    datax=np.random.random(5)
+    x =Variable(datax)
+    n=4
+    
+    
+# =============================================================================
+#   define custom block
+# =============================================================================
+    power_block=power()
 
 # =============================================================================
-#   assert gradient forward pass
+#   compute output of custom block
 # =============================================================================
-    assert np.equal(gradient_true, y_block.gradient).all(), 'wrong div gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+    y_block=power_block(x,power_exponent=n)
+    y_block.compute_gradients()
+# =============================================================================
+#   define expected output
+# =============================================================================
+    data_true=np.power(datax,n)
+    
+    
+    gradient_true=np.diag(n*x.data**(n-1))
+    
+# =============================================================================
+#   assert forward pass
+# =============================================================================
+    assert np.equal(data_true, y_block.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true, y_block.gradient).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
 
 
 
-def test_sum_elts():
+# =============================================================================
+#   assert overloading
+# =============================================================================
+    y_overloaded = x**n
+    y_overloaded.compute_gradients()
+    assert np.equal(data_true, y_block.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true, y_block.gradient).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+
+
+
+def test_power_reverse():
+    ad.set_mode('reverse')
+# =============================================================================
+#   define the input variable
+# =============================================================================
+    datax=np.random.random(5)
+    x =Variable(datax)
+    n=4
+    
+    
+# =============================================================================
+#   define custom block
+# =============================================================================
+    power_block=power()
+
+# =============================================================================
+#   compute output of custom block
+# =============================================================================
+    y_block=power_block(x,power_exponent=n)
+    y_block.compute_gradients()
+# =============================================================================
+#   define expected output
+# =============================================================================
+    data_true=np.power(datax,n)
+    
+    
+    gradient_true=np.diag(n*x.data**(n-1))
+    
+# =============================================================================
+#   assert forward pass
+# =============================================================================
+    assert np.equal(data_true, y_block.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true, y_block.gradient).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+
+
+
+# =============================================================================
+#   assert overloading
+# =============================================================================
+    ad.reset_graph()
+    y_overloaded = x**n
+    y_overloaded.compute_gradients()
+    assert np.equal(data_true, y_block.data).all(), 'wrong add data pass. expected {}, given{}'.format(data_true, y_block.data)
+    assert np.equal(gradient_true, y_block.gradient).all(), 'wrong add gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+
+
+
+
+def test_sum_elts_forward():
+    ad.set_mode('forward')
 # =============================================================================
 #   define the input variablet
 # =============================================================================
@@ -289,7 +779,7 @@ def test_sum_elts():
 #   compute output of custom block
 # =============================================================================
     y_block=sum_block(x)
-
+    y_block.compute_gradients()
 # =============================================================================
 #   define expected output
 # =============================================================================
@@ -307,7 +797,46 @@ def test_sum_elts():
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong sinh gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
 
 
-def test_extract_intger():
+def test_sum_elts_reverse():
+    ad.set_mode('reverse')
+# =============================================================================
+#   define the input variablet
+# =============================================================================
+    data=np.random.random(5)
+    x=Variable(data)
+
+# =============================================================================
+#   define custom block
+# =============================================================================
+    sum_block=sum_elts()
+
+# =============================================================================
+#   compute output of custom block
+# =============================================================================
+    y_block=sum_block(x)
+    y_block.compute_gradients()
+# =============================================================================
+#   define expected output
+# =============================================================================
+    data_true=np.sum(data)
+    gradient_true=np.ones((1,5))
+
+# =============================================================================
+#   assert data pass
+# =============================================================================
+    assert np.equal(data_true, y_block.data).all(), 'wrong sinh data pass. expected {}, given{}'.format(data_true, y_block.data)
+
+# =============================================================================
+#   assert gradient forward pass
+# =============================================================================
+    assert np.equal(gradient_true, y_block.gradient).all(), 'wrong sinh gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+
+
+
+
+
+def test_extract_intger_forward():
+    ad.set_mode('forward')
 # =============================================================================
 #   define the input variablet
 # =============================================================================
@@ -318,7 +847,7 @@ def test_extract_intger():
 #   compute output of operation
 # =============================================================================
     y_block=x[2]
-
+    y_block.compute_gradients()
 # =============================================================================
 #   define expected output
 # =============================================================================
@@ -337,7 +866,42 @@ def test_extract_intger():
 
 
 
-def test_extract_slice():
+
+
+def test_extract_intger_reverse():
+    ad.set_mode('reverse')
+# =============================================================================
+#   define the input variablet
+# =============================================================================
+    data=np.random.random(5)
+    x=Variable(data)
+
+# =============================================================================
+#   compute output of operation
+# =============================================================================
+    y_block=x[2]
+    y_block.compute_gradients()
+# =============================================================================
+#   define expected output
+# =============================================================================
+    data_true=data[2]
+    gradient_true=np.array([0,0,1,0,0])
+
+# =============================================================================
+#   assert data pass
+# =============================================================================
+    assert np.equal(data_true, y_block.data).all(), 'wrong sinh data pass. expected {}, given{}'.format(data_true, y_block.data)
+
+# =============================================================================
+#   assert gradient forward pass
+# =============================================================================
+    assert np.equal(gradient_true, y_block.gradient).all(), 'wrong sinh gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+
+
+
+
+def test_extract_slice_forward():
+    ad.set_mode('forward')
 # =============================================================================
 #   define the input variablet
 # =============================================================================
@@ -348,7 +912,39 @@ def test_extract_slice():
 #   compute output of operation
 # =============================================================================
     y_block=x[1:3]
+    y_block.compute_gradients()
+# =============================================================================
+#   define expected output
+# =============================================================================
+    data_true=data[1:3]
+    gradient_true=np.array([[0,1,0,0,0],
+                            [0,0,1,0,0]])
 
+# =============================================================================
+#   assert data pass
+# =============================================================================
+    assert np.equal(data_true, y_block.data).all(), 'wrong sinh data pass. expected {}, given{}'.format(data_true, y_block.data)
+
+# =============================================================================
+#   assert gradient forward pass
+# =============================================================================
+    assert np.equal(gradient_true, y_block.gradient).all(), 'wrong sinh gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+
+
+
+def test_extract_slice_reverse():
+    ad.set_mode('reverse')
+# =============================================================================
+#   define the input variablet
+# =============================================================================
+    data=np.random.random(5)
+    x=Variable(data)
+
+# =============================================================================
+#   compute output of operation
+# =============================================================================
+    y_block=x[1:3]
+    y_block.compute_gradients()
 # =============================================================================
 #   define expected output
 # =============================================================================

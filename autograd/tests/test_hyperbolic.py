@@ -24,7 +24,7 @@ def test_sinh_forward():
 #   compute output of custom block
 # =============================================================================
     y_block=sinh_block(x)
-
+    y_block.compute_gradients()
 # =============================================================================
 #   define expected output
 # =============================================================================
@@ -59,7 +59,7 @@ def test_sinh_reverse():
 #   compute output of custom block
 # =============================================================================
     y_block=sinh_block(x)
-    y_block.backward()
+    y_block.compute_gradients()
 # =============================================================================
 #   define expected output
 # =============================================================================
@@ -95,7 +95,7 @@ def test_cosh_forward():
 #   compute output of custom block
 # =============================================================================
     y_block=cosh_block(x)
-
+    y_block.compute_gradients()
 # =============================================================================
 #   define expected output
 # =============================================================================
@@ -111,6 +111,8 @@ def test_cosh_forward():
 #   assert gradient forward pass
 # =============================================================================
     assert np.equal(gradient_true, y_block.gradient).all(), 'wrong cosh gradient forward pass. expected {}, given{}'.format(gradient_true,y_block.gradient)
+
+
 
 def test_cosh_reverse():
     ad.set_mode('reverse')
@@ -129,7 +131,7 @@ def test_cosh_reverse():
 #   compute output of custom block
 # =============================================================================
     y_block=cosh_block(x)
-    y_block.backward()
+    y_block.compute_gradients()
 
 # =============================================================================
 #   define expected output
@@ -166,7 +168,7 @@ def test_tanh_forward():
 #   compute output of custom block
 # =============================================================================
     y_block=tanh_block(x)
-
+    y_block.compute_gradients()
 # =============================================================================
 #   define expected output
 # =============================================================================
@@ -200,7 +202,7 @@ def test_tanh_reverse():
 #   compute output of custom block
 # =============================================================================
     y_block=tanh_block(x)
-    y_block.backward()
+    y_block.compute_gradients()
 
 # =============================================================================
 #   define expected output

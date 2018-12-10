@@ -33,15 +33,19 @@ class Variable():
         z.gradient is the square matrix with diagonal elements of (2*cos(1)*1, 2*cos(2)*1, 2*cos(-12)*1)
         the *1 term corresponds to the gradient of the variable x
     """
-    def __init__(self,data, gradient=None, constant=False):
+    def __init__(self,data, gradient=None, constant=False, input_node=True):
         
     
              
         #converts list or float to numpy array
         self.data=utils.data_2_numpy(data)
         
+        #indicate if  this variable an input node in the computational graph
+        self.input_node=input_node
+        
         #get the shape of the data provided, is it a float or a vector
         data_shape=utils.get_shape(data)
+        
         
         
         
@@ -71,6 +75,13 @@ class Variable():
                 #vectorial functions
                 
                 self.gradient = np.eye(lenght)
+            
+            if input_node==True:
+                #in forward mode, the input shape is used in the compute_gradients
+                #we need to know how many inputs in forwad mode we have
+                
+                ad.c_graph.input_shapes=[self.data.shape[0]]
+            
               
         #reverse mode, the gradients are stored in the nodes
         else:
@@ -90,10 +101,102 @@ class Variable():
                 #this is used to clean the computational graph after backward()
                 #print('before', config.list_of_vars)
                 config.list_of_nodes+=[self.node]
+                
+                if input_node==True:
+                    ad.c_graph.input_node=[self.node]
                 #print('after', config.list_of_vars)
      
         
     
+    @classmethod
+    def multi_variables(self, *args, input_node=True):
+        """
+        embed all the data in the *args into one big variable, and then output the small variables 
+        corresponding to each data provided
+        
+        EX : 
+            data1=[1,2,3]
+            data2=3
+            data3=[5,6,76,7,7,8]
+            
+            we will have
+            var1, var2, var3 = multi_variables(data1, data2, data3)
+            
+            who will be variables with var1.data=data1, etc. 
+        """
+        ad.c_graph.input_shapes=[]
+        big_data=None
+        
+        for data in args:
+            processed_data = utils.data_2_numpy(data)
+            assert len(processed_data.shape)==1 or processed_data.shape[1]==1, 'can only deal with vector inputs'
+            ad.c_graph.input_shapes+=[processed_data.shape[0]]
+            if big_data is None:
+                big_data=processed_data
+            else:
+                big_data=np.concatenate([big_data, processed_data], axis=0)
+                
+        big_variable=self(big_data, input_node=False)
+        
+        output_variables=[]
+        current_index=0
+        
+        
+        #print(big_data)
+        #print(ad.c_graph.input_shapes)
+        for shape in ad.c_graph.input_shapes:
+            #print(shape)
+            output_variables+=[big_variable[current_index:current_index+shape]]
+            
+            current_index+=shape
+        
+        if ad.mode=='reverse':
+            if input_node==True:
+                ad.c_graph.input_node=[var.node for var in output_variables]
+        
+        return(output_variables)
+            
+    
+    def compute_gradients(self):
+        """
+        in forward mode: 
+            if the comp. graph has only one input node return the gradient w.r to this node
+            otherwise, return the list of gradients with respect to all the input nodes
+            
+        in the reverse mode:
+            same thing
+        """
+        if ad.mode=='forward':
+            if len(ad.c_graph.input_shapes)==1:
+                return(self.gradient)
+            
+            else:                
+                output=[]
+                current_index=0
+                for shape in ad.c_graph.input_shapes:
+                    output+=[self.gradient[:,current_index:current_index+shape]]
+                    current_index+=shape
+                    
+                self.gradient=output
+                return(output)
+        
+        else:
+            self.backward()
+            output_gradients = [inp_node.gradient for inp_node in ad.c_graph.input_node]
+            
+            if len(output_gradients)==1:
+                #only one input node
+                self.gradient=output_gradients[0]
+                return(self.gradient)
+                
+            else:
+                self.gradient=output_gradients
+                return(self.gradient)
+                
+        
+            
+            
+        
         
     def set_data(self, data):
         """
@@ -150,8 +253,8 @@ class Variable():
         ad.c_graph.define_path(self.node)
         
         self.node.backward()
-        self.gradient=ad.c_graph.input_node.gradient
-        return(self.gradient)
+        #self.gradient=[inp_node.gradient for inp_node in ad.c_graph.input_node]
+        #return(self.gradient)
                 
         
    
@@ -208,6 +311,7 @@ class Variable():
             
         if not isinstance(other, Variable):
             other=self.__scalar_to_variable(other)
+            
         return subtract(other, self)
 
     def __mul__(self, other):
@@ -297,65 +401,54 @@ class Variable():
 
     def __eq__(self,other):
         """
-        overload equals dunder method
+        overload equals dunder method, only on the data
         """
-        if self.data == other.data and self.gradient == other.gradient:
-            return True
-        else:
-            return False
+        assert type(self)==type(other), 'trying to compare two different objects {} and {}'.format(type(self), type(other))
+        
+    
+        return(np.equal(self.data, other.data))
+       
 
     def __ne__(self,other):
         """
         overload not equal dunder method
         """
-        if self.data != other.data or self.gradient != other.gradient:
-            return True
-        else:
-            return False
+        return( self.data!=other.data)
 
     def __lt__(self,other):
         """
-        overload less than dunder method
+        overload less than dunder method, only on the data
         """
-        if self.data < other.data and self.gradient < other.gradient:
-            return True
-        else:
-            return False
+        return(self.data<other.data)
 
     def __le__(self,other):
         """
-        overload less than or equal dunder method
+        overload less than or equal dunder method, only on the data
         """
-        if self.data <= other.data and self.gradient <= other.gradient:
-            return True
-        else:
-            return False
+        return(self.data<=other.data)
 
     def __gt__(self, other):
         """
-        overload greater than dunder method
+        overload greater than dunder method, only on the data
         """
-        if self.data > other.data and self.gradient > other.gradient:
-            return True
-        else:
-            return False
+        return(self.data>other.data)
 
     def __ge__(self, other):
         """
-        overload greater than or equal dunder method
+        overload greater than or equal dunder method, only on the data
         """
-        if self.data >= other.data and self.gradient >= other.gradient:
-            return True
-        else:
-            return False
+        return(self.data>=other.data)
 
 
 class Constant(Variable):
     """
     clean way to embed scalar values, or constants.
     """
-    def __init__(self,data, gradient=None, constant=True):
-        super().__init__(data, gradient, constant)
+    def __init__(self,data, gradient=None, constant=True, input_node=False):
+
+        super().__init__(data=data, gradient=gradient, constant=constant, input_node=input_node)
+        
+
 
         
 if __name__=='__main__':

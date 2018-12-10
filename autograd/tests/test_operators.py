@@ -1,8 +1,10 @@
 from autograd.blocks.trigo import sin
 from autograd.variable import Variable
 import numpy as np
+import autograd as ad
 
-def test_eq():
+def test_eq_forward():
+    ad.set_mode('forward')
     # =============================================================================
     #   define the input variable
     # =============================================================================
@@ -13,14 +15,30 @@ def test_eq():
     # =============================================================================
     #   assert data pass
     # =============================================================================
-    assert np.equal(x.data, y.data).all(),'Data failed'
+    assert (x==y).all(),'equqlity forward failed'
+
+   
+    
+    
+def test_eq_reverse():
+    ad.set_mode('reverse')
+    # =============================================================================
+    #   define the input variable
+    # =============================================================================
+    data = np.random.random(5)
+    x = Variable(data)
+    y = x
 
     # =============================================================================
-    #   assert gradient forward pass
+    #   assert data pass
     # =============================================================================
-    assert np.equal(x.gradient,y.gradient).all(),'Gradient failed'
+    assert (x==y).all() ,'equality reverse failed'
 
-def test_neq():
+    
+
+
+def test_neq_forward():
+    ad.set_mode('forward')
     # =============================================================================
     #   define the input variable
     # =============================================================================
@@ -31,76 +49,139 @@ def test_neq():
     # =============================================================================
     #   assert data pass
     # =============================================================================
-    assert np.not_equal(x.data, y.data).all(),'Data failed'
-
-def test_lt():
+    assert (x!=y).all,'inequality forward failed'
+    
+    
+def test_neq_reverse():
+    ad.set_mode('reverse')
     # =============================================================================
     #   define the input variable
     # =============================================================================
     data = np.random.random(5)
     x = Variable(data)
     y = Variable(data+1)
-    y.gradient = x.gradient + 1
+
     # =============================================================================
     #   assert data pass
     # =============================================================================
-    assert np.less(x.data, y.data).all(),'Data failed'
+    assert (x!=y).all(),'ineq reverse failed'
 
-    # =============================================================================
-    #   assert gradient forward pass
-    # =============================================================================
-    assert np.less(x.gradient,y.gradient).all(),'Gradient failed'
 
-def test_le():
+
+
+def test_lt_forward():
+    ad.set_mode('forward')
     # =============================================================================
     #   define the input variable
     # =============================================================================
     data = np.random.random(5)
     x = Variable(data)
     y = Variable(data+1)
-    y.gradient = x.gradient + 1
     # =============================================================================
     #   assert data pass
     # =============================================================================
-    assert np.less_equal(x.data, y.data).all(),'Data failed'
+    assert (x<y).all(),'lt failed'
+
+
+def test_le_forward():
+    ad.set_mode('forward')
+    # =============================================================================
+    #   define the input variable
+    # =============================================================================
+    data = np.random.random(5)
+    x = Variable(data)
+    y = Variable(data+1)
 
     # =============================================================================
-    #   assert gradient forward pass
+    #   assert data pass
     # =============================================================================
-    assert np.less_equal(x.gradient,y.gradient).all(),'Gradient failed'
+    assert (x<=y).all(),'le failed'
 
-def test_gt():
+   
+
+def test_gt_forward():
+    ad.set_mode('forward')
     # =============================================================================
     #   define the input variable
     # =============================================================================
     data = np.random.random(5)
     x = Variable(data+1)
     y = Variable(data)
-    x.gradient = y.gradient + 1
     # =============================================================================
     #   assert data pass
     # =============================================================================
-    assert np.greater(x.data, y.data).all(),'Data failed'
+    assert (x>y).all(),'Data failed'
 
-    # =============================================================================
-    #   assert gradient forward pass
-    # =============================================================================
-    assert np.greater(x.gradient,y.gradient).all(),'Gradient failed'
-
-def test_ge():
+   
+def test_ge_forward():
+    ad.set_mode('forward')
     # =============================================================================
     #   define the input variable
     # =============================================================================
     data = np.random.random(5)
     x = Variable(data+1)
     y = Variable(data)
-    x.gradient = y.gradient + 1
     # =============================================================================
     #   assert data pass
     # =============================================================================
-    assert np.greater_equal(x.data, y.data).all(),'Data failed'
+    assert (x>=y).all(),'Data failed'
+    
+    
+def test_lt_reverse():
+    ad.set_mode('reverse')
+    # =============================================================================
+    #   define the input variable
+    # =============================================================================
+    data = np.random.random(5)
+    x = Variable(data)
+    y = Variable(data+1)
+    # =============================================================================
+    #   assert data pass
+    # =============================================================================
+    assert (x<y).all(),'lt failed'
 
+
+def test_le_reverse():
+    ad.set_mode('reverse')
     # =============================================================================
-    #   assert gradient forward pass
+    #   define the input variable
     # =============================================================================
-    assert np.greater_equal(x.gradient,y.gradient).all(),'Gradient failed'
+    data = np.random.random(5)
+    x = Variable(data)
+    y = Variable(data+1)
+    # =============================================================================
+    #   assert data pass
+    # =============================================================================
+    assert (x<=y).all(),'le failed'
+
+   
+
+def test_gt_reverse():
+    ad.set_mode('reverse')
+    # =============================================================================
+    #   define the input variable
+    # =============================================================================
+    data = np.random.random(5)
+    x = Variable(data+1)
+    y = Variable(data)
+    # =============================================================================
+    #   assert data pass
+    # =============================================================================
+    assert (x>y).all(),'Data failed'
+
+   
+def test_ge_reverse():
+    ad.set_mode('reverse')
+    # =============================================================================
+    #   define the input variable
+    # =============================================================================
+    data = np.random.random(5)
+    x = Variable(data+1)
+    y = Variable(data)
+    # =============================================================================
+    #   assert data pass
+    # =============================================================================
+    assert (x>=y).all(),'Data failed'
+
+
+   

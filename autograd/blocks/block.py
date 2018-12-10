@@ -98,42 +98,50 @@ class Block():
 
 
         new_data=self.data_fn(*args, **kwargs)
+        
+        #print(ad.mode)
 
         #in forward mode, we force the flow of gradients with the dats
         if ad.mode=='forward':
             new_grad=self.gradient_forward(*args, **kwargs)
 
             #in forward mode, we return a full Variable, with gradients
-            return(Variable(new_data, new_grad))
+            return(Variable(new_data, new_grad, input_node=False))
 
 
 
-        else:
+        elif ad.mode=='reverse':
             #reverse mode, we will make a forward pass on the data but will store the jacobians
             # we pay attention not to include the Constants in the computational graph
             input_variables =[]
             variables_indexes=[]
             for index, arg in enumerate(args):
                 if type(arg)==Variable:
+                    #print('data arg inside : ', arg.data)
+                    #print('type ',type(arg))
                     input_variables+=[arg]
                     variables_indexes+=[index]
 
             children_nodes = [var.node for var in input_variables]
             children_jacs = self.get_jacobians(*args, **kwargs)
 
+            #print('children nodes',children_nodes)
+            #print('children jacs ',children_jacs)
+            #print('variables_indexes', variables_indexes)
             #in reverse mode, the Variable does not store the gradients
-            outputVariable = Variable(new_data)
+            outputVariable = Variable(new_data, input_node=False)
 
 
-            for i in variables_indexes:
-                outputVariable.node.childrens+=[{'node':children_nodes[i], 'jacobian':children_jacs[i]}]
+            for index,i in enumerate(variables_indexes):
+                outputVariable.node.childrens+=[{'node':children_nodes[index], 'jacobian':children_jacs[i]}]
 
                 #increase the counter
                 #children_nodes[i].times_used +=1
 
             return(outputVariable)
 
-
+        else:
+            print('unknown mode : ', ad.mode)
 
 
 
