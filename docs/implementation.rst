@@ -41,7 +41,7 @@ Meaning, if we assume that Var0.data is an array of shape n and Var3.data is an 
 
 The basic initializer for that class is :
 
-`def __init__(self,data, gradient=None, constant=False, input_node=True): `
+``def __init__(self,data, gradient=None, constant=False, input_node=True):``
  
 The `data` argument is either a scalar or a list/np.array that refers to the point we wish to evaluate the function. 
 
@@ -49,10 +49,11 @@ The `gradient` argument is used to set the gradient of this variable when we ini
 
 The `constant` argument allows to indicate if we are dealing with an actual `Variable` or if this is just a `Constant`. See the Constant section for more explanation
 
-The `input_node` argument is used to specify if the Variable created is the input of a complex function. Meaning, when the user want to define a new function, he will define it as :
- def f(x):
-     y=stuff(x)
-     return(y)
+The `input_node` argument is used to specify if the Variable created is the input of a complex function. Meaning, when the user want to define a new function, he will define it as ::
+
+ def function(x):
+  y=do_stuff(X)
+  return(y)
 
 
 thus, the `input_node` for this function is the input variable x. Note that when a user creates a new input node, it overwrites the older : you cannot have several input nodes defined with several `Variable(*args)` calls. To manage several inputs, check the following sections.
