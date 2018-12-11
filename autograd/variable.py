@@ -156,7 +156,11 @@ class Variable():
         
         if ad.mode=='reverse':
             if input_node==True:
+                #specify these nodes as input nodes
                 ad.c_graph.input_node=[var.node for var in output_variables]
+                
+                #reset the node buffer
+                config.list_of_nodes=[var.node for var in output_variables]
         
         return(output_variables)
             
