@@ -2,8 +2,7 @@
 Implementation
 ==============
 
-Recalling the 'background section'__ 
-.. _'background section' ": https://autograd.readthedocs.io/en/latest/background.html
+Recalling the 'background section'__ : https://autograd.readthedocs.io/en/latest/background.html
 
 
 , we saw that the automatic differentiation framework splits a complex function into several atomic functions which derivative is easy to compute. Then, the results are aggregated using the chaing rule.
