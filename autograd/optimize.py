@@ -6,7 +6,6 @@ import numpy as np
 
 class Optimizer():
     """
-
     Optimizer Base Class
 
     == Args ==
