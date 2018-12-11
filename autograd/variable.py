@@ -103,7 +103,11 @@ class Variable():
                 config.list_of_nodes+=[self.node]
                 
                 if input_node==True:
+                    #we specify this new Variable as the input node of the graph
                     ad.c_graph.input_node=[self.node]
+                    
+                    #we flush all the previously stored nodes
+                    config.list_of_nodes=[self.node]
                 #print('after', config.list_of_vars)
      
         
