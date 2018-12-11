@@ -64,7 +64,8 @@ If nothing is indicated by the user, the default value of ``Variable.gradient`` 
 The constants are managed as Variables with a initial ``gradient`` as a matrix of 0's. See below.
 
 
-**Constant**
+Constant
+-----------
 
 A `Constant` object is just meant to embed the notion of constants in the operations we encounter. For instance, if you want to compute the gradient of ``f(x)=7*x+3``. We will not compute derivatives with respect to `7` or `3` which would not make sense. Rather, we embed the constants in the function within this class. 
 
@@ -73,8 +74,10 @@ A `Constant` is a subclass of `Variable` but it is always initialized with a `gr
 The reason why we decided to embed these constants as variables, is because it allows to have a unified API for these two objects. The difference is that constants are used in the data flow but not in the gradient flow. Also, a `Constant` cannot be the input node of the computational graph, obviously.
 
 
+
+
 Block
----------
+-----
 
 
 The second core data structure is the ``Block``. It is an atomic operation performed on ``Variable``. For instance, sin, exp, addition or multiplication.
