@@ -1,24 +1,19 @@
 # CS207 Group 4: Final Project Repo
 
+[![Build Status](https://travis-ci.com/cs207-project-group4/cs207-FinalProject.svg?branch=master)](https://travis-ci.com/cs207-project-group4/cs207-FinalProject)
+[![Coverage Status](https://img.shields.io/coveralls/github/cs207-project-group4/cs207-FinalProject/master.svg)](https://img.shields.io/coveralls/github/cs207-project-group4/cs207-FinalProject/master.svg)
+[![Docs](https://readthedocs.org/projects/autograd/badge/?version=latest)](https://autograd.readthedocs.org/en/latest/?badge=latest)
 
-## *`autograd` (subject to change)*
-
+## `autograd`
 
 ![display](docs/img/display.png)
 
-# image generated with `autograd` 
+Image generated with `autograd`.
 
-
-
-[![Build Status](https://travis-ci.com/cs207-project-group4/cs207-FinalProject.svg?branch=master)](https://travis-ci.com/cs207-project-group4/cs207-FinalProject) 
-
-[![Coverage Status](https://coveralls.io/repos/github/cs207-project-group4/cs207-FinalProject/badge.svg?branch=master)](https://coveralls.io/github/cs207-project-group4/cs207-FinalProject?branch=master)
-
-## Members (alphabetical by last name)
+## Members
 * Paxton Maeder-York
 * Adam Nitido
 * Dylan Randle
 * Simon Sebbagh
 
-
-*Please see `docs` for useful information!*
+For useful information, please see autograd [docs](https://autograd.readthedocs.io/en/latest/)

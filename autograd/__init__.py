@@ -22,34 +22,20 @@ from autograd import config
 #default mode for computing gradients
 mode='forward'
 
-
 #computational graph for reverse mode
 c_graph=C_graph()
 
 def reset_graph():
     c_graph.reset_graph()
-    
+
 
 
 def set_mode(new_mode):
     global mode, c_graph
     mode=new_mode
-    
+
     if new_mode=='reverse':
         reset_graph()
-    
-    
-
-
-        
-    
-
-
-
-
-
-
-
 
 # =============================================================================
 # shortcuts for better user interface

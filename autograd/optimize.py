@@ -6,7 +6,6 @@ import numpy as np
 
 class Optimizer():
     """
-
     Optimizer Base Class
 
     == Args ==
@@ -64,16 +63,6 @@ class GD(Optimizer):
     >>> import autograd as ad
     >>> from autograd.variable import Variable
     >>> from autograd.optimize import GD
-    >>> def loss(params):
-    >>>     var = Variable(params)
-    >>>     x = var[0]
-    >>>     y = var[1]
-    >>>     l = (x+5)**2 + (y+3)**2
-    >>>     return (l.data, l.gradient)
-    >>> x_init = [10, 4]
-    >>> optimize_GD = GD(loss, x_init, lr=0.01, max_iter=100000, tol=1e-18)
-    >>> optimize_GD.solve()
-    >>> array([-5. -3.])
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
