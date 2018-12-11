@@ -34,14 +34,46 @@ Samely, Var2.gradient will contain the gradient of the function x-->Block2(Block
 
 ** Initialization **
 
-This package handles vector functions, meaning that it can compute gradients of function from :math:`R^{n}` to :math:`R^{p}`
+This package handles vector functions, meaning that it can compute gradients of function from Rn to Rp. Hence, the .gradient attribute is not a gradient, but rather a Jacobian matrix.
+
+Meaning, if we assume that Var0.data is an array of shape n and Var3.data is an array of shape p, then Var3.gradient will be a matrix of shape p*n
 
 
-Note that because our package deals with vector functions, the ``gradient`` attribute is actually a ``Jacobian`` matrix.
+The basic initializer for that class is :
 
-If nothing is indicated by the user, the default value of ``Variable.gradient`` is an Identity matrix, meaning we are at the beginning of the computational graph.
+```
+ def __init__(self,data, gradient=None, constant=False, input_node=True): 
+ ```
+ 
+The `data` argument is either a scalar or a list/np.array that refers to the point we wish to evaluate the function. 
 
-For now, the constants are managed as Variables with a initial ``Jacobian`` as a matrix of 0. It is not efficient in the way that we still use this matrix of 0 for the gradient flow, we will probably optimize it at the next iteration.
+The `gradient` argument is used to set the gradient of this variable when we initialize it, it is used later with the `Blocks`.
+
+The `constant` argument allows to indicate if we are dealing with an actual `Variable` or if this is just a `Constant`. See the Constant section for more explanation
+
+The `input_node` argument is used to specify if the Variable created is the input of a complex function. Meaning, when the user want to define a new function, he will define it as 
+```
+def f(x):
+    ***
+    return(y)
+```
+thus, the `input_node` for this function is the input variable x. Note that when a user creates a new input node, it overwrites the older : you cannot have several input nodes defined with several `Variable(*args)` calls. To manage several inputs, check the following sections.
+
+
+If nothing is indicated by the user, the default value of ``Variable.gradient`` is an Identity matrix, meaning we are at the beginning of the computational graph : the jacobian of a variable with respect to itself is the Identity matrix, with corresponding dimensions.
+
+The constants are managed as Variables with a initial ``gradient`` as a matrix of 0's. See below.
+
+
+Constant
+--------
+
+A `Constant` object is just meant to embed the notion of constants in the operations we encounter. For instance, if you want to compute the gradient of `f(x)=7*x+3`. We will not compute derivatives with respect to `7` or `3` which would not make sense. Rather, we embed the constants in the function within this class. 
+
+A `Constant` is a subclass of `Variable` but it is always initialized with a `gradient` attribute as a Jacobian of 0's. This way, we ensure that this constant does not participate in the gradient computation.
+
+The reason why we decided to embed these constants as variables, is because it allows to have a unified API for these two objects. The difference is that constants are used in the data flow but not in the gradient flow. Also, a `Constant` cannot be the input node of the computational graph, obviously.
+
 
 **Block**
 
