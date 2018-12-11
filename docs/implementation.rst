@@ -8,7 +8,6 @@ This package has been designed so that it is easy for a new user to define his o
 
 **Important :** The functionment of the package is slightly different depending on wether you use the forward or the reverse mode. In this optic, we will first present the forward mode and then highlight the differences happening in the reverse mode.
 
-
 ************
 Forward Mode
 ************
