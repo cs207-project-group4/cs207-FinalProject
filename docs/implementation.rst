@@ -23,13 +23,13 @@ Variable
 
 The first core data structure is `Variable`. This object will flow through several `Blocks`, storing the new values of the functions computed, as well as the gradient computed so far.
 
-.. image:: img/Variable.pn
+.. image:: img/Variable.png
 
 It contains two main attributes : ``data`` and ``gradient``. In each block, the input ``Variable`` brings the information from the previous data and gradients computed and propagates the data and gradient flow forward.
 
-For exemple, taking the previous example : Var2.data will be the numpy array resulting from the sequence of operations ```Block2(Block1(Var.data))```
+For exemple, taking the previous example : Var2.data will be the numpy array resulting from the sequence of operations ``Block2(Block1(Var.data))``
 
-Samely, Var2.gradient will contain the gradient of the function ```x-->Block2(Block1(x))``` evaluated at the point x=Var0.data
+Samely, Var2.gradient will contain the gradient of the function ``x-->Block2(Block1(x))`` evaluated at the point x=Var0.data
 
 
 **Initialization**
@@ -41,9 +41,7 @@ Meaning, if we assume that Var0.data is an array of shape n and Var3.data is an 
 
 The basic initializer for that class is :
 
-```
- def __init__(self,data, gradient=None, constant=False, input_node=True): 
- ```
+``def __init__(self,data, gradient=None, constant=False, input_node=True): ``
  
 The `data` argument is either a scalar or a list/np.array that refers to the point we wish to evaluate the function. 
 
@@ -53,11 +51,11 @@ The `constant` argument allows to indicate if we are dealing with an actual `Var
 
 The `input_node` argument is used to specify if the Variable created is the input of a complex function. Meaning, when the user want to define a new function, he will define it as 
 
-```
+``
 def f(x):
-    ***
+    y=stuff(x)
     return(y)
-```
+``
 
 thus, the `input_node` for this function is the input variable x. Note that when a user creates a new input node, it overwrites the older : you cannot have several input nodes defined with several `Variable(*args)` calls. To manage several inputs, check the following sections.
 
