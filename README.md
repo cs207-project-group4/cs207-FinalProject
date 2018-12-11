@@ -16,4 +16,7 @@ Image generated with `autograd`.
 * Dylan Randle
 * Simon Sebbagh
 
+## Install:
+`pip install dragongrad`
+
 For useful information, please see autograd [docs](https://autograd.readthedocs.io/en/latest/)
