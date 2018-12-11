@@ -4,10 +4,10 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="AutoGrad",
+    name="dragongrad",
     version="1.0",
     author="cs207-project-group4",
-    author_email="N/A",
+    author_email="Post on Github",
     description="Automatic Differentiation Library",
     long_description=long_description,
     url="https://github.com/cs207-project-group4/cs207-FinalProject",
