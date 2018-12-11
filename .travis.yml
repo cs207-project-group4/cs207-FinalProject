@@ -4,10 +4,9 @@ python:
 before_install:
     - pip install pytest pytest-cov
     - pip install coveralls
-
 install:
     - python setup.py install
 script:
-    - py.test
+    - py.test autograd/tests --doctest-modules --cov-report term-missing --cov autograd
 after_success:
     - coveralls
