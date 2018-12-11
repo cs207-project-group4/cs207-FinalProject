@@ -10,7 +10,7 @@ This package has been designed so that it is easy for a new user to define his o
 
 
 Forward Mode
-------------
+============
 
 The core data structures in this package are ``Variables`` and ``Blocks``.
 
