@@ -9,9 +9,9 @@ This package has been designed so that it is easy for a new user to define his o
 **Important :** The functionment of the package is slightly different depending on wether you use the forward or the reverse mode. In this optic, we will first present the forward mode and then highlight the differences happening in the reverse mode.
 
 
+************
 Forward Mode
-============
-
+************
 The core data structures in this package are ``Variables`` and ``Blocks``.
 
 We are going to consider that every function can be split into core atomic functions, each of which we will call a `Block`. Thus, the application of a function is a mere composition of `Block` operations to `Variable`s. 
