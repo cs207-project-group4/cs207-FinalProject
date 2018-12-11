@@ -2,7 +2,7 @@
 Implementation
 ==============
 
-Recalling the 'background section'_ 
+Recalling the 'background section'__ 
 .. _'background section' ": https://autograd.readthedocs.io/en/latest/background.html
 
 
