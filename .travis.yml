@@ -7,6 +7,6 @@ before_install:
 install:
     - python setup.py install
 script:
-    - py.test autograd/tests --doctest-modules --cov-report term-missing --cov autograd
+    - pytest --cov=autograd --cov-report term-missing --doctest-modules
 after_success:
     - coveralls
