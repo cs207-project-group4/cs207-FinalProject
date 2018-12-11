@@ -11,7 +11,7 @@ Pypi installation
 
 Pypi installation::
 
-    pip install autograd
+    pip install dragongrad
 
 GitHub Installation
 -------------------
