@@ -15,4 +15,4 @@ Image generated with `autograd`.
 * Dylan Randle
 * Simon Sebbagh
 
-Please see `docs` for useful information.
+For useful information, please see autograd [docs](https://autograd.readthedocs.io/en/latest/)
