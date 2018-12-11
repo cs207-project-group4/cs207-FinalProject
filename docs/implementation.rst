@@ -2,10 +2,7 @@
 Implementation
 ==============
 
-Recalling the `background section <https://autograd.readthedocs.io/en/latest/background/>`_
-
-
-, we saw that the automatic differentiation framework splits a complex function into several atomic functions which derivative is easy to compute. Then, the results are aggregated using the chaing rule.
+Recalling the `background section <https://autograd.readthedocs.io/en/latest/background>`_, we saw that the automatic differentiation framework splits a complex function into several atomic functions which derivative is easy to compute. Then, the results are aggregated using the chaing rule.
 This package has been designed so that it is easy for a new user to define his own new atomic function. For instance, we did not implement convolution operations over vectors, but a new user could easily define it, following the API we will describe.
 
 
