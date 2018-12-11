@@ -18,7 +18,9 @@ We are going to consider that every function can be split into core atomic funct
 
 .. image:: img/basic_function.png
 
-**Variable**
+
+Variable
+--------
 
 The first core data structure is `Variable`. This object will flow through several `Blocks`, storing the new values of the functions computed, as well as the gradient computed so far.
 
