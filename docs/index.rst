@@ -9,7 +9,7 @@ Autograd is a forward and reverse mode **Automatic Differentiation** (**AD**) so
 
 To install the latest release, type::
 
-    pip install autograd
+    pip install dragongrad
 
 See the :ref:`Installation notes <installation>` for details.
 
@@ -27,7 +27,7 @@ Contents
    implementation.rst
    notebooks.rst
    license.rst
-  
+
 
 
 
