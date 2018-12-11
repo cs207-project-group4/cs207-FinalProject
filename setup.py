@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="dragongrad",
-    version="1.0",
+    version="1.1",
     author="cs207-project-group4",
     author_email="dylanrandle@gmail.com",
     description="Automatic Differentiation Library",
