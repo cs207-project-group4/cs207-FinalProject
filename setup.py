@@ -7,7 +7,7 @@ setuptools.setup(
     name="dragongrad",
     version="1.0",
     author="cs207-project-group4",
-    author_email="Post on Github",
+    author_email="dylanrandle@gmail.com",
     description="Automatic Differentiation Library",
     long_description=long_description,
     url="https://github.com/cs207-project-group4/cs207-FinalProject",
