@@ -25,7 +25,19 @@ The first core data structure is `Variable`. This object will flow through sever
 
 .. image:: img/Variable.png
 
-It contains two main attributes : ``data`` and ``gradient``. In each block, the input ``Variable`` brings the information from the previous functions and gradients computed and propagates the data and gradient flow forward. Note that because our package deals with vector functions, the ``gradient`` attribute is actually a ``Jacobian`` matrix.
+It contains two main attributes : ``data`` and ``gradient``. In each block, the input ``Variable`` brings the information from the previous data and gradients computed and propagates the data and gradient flow forward.
+
+For exemple, taking the previous example : Var2.data will be the numpy array resulting from the sequence of operations Block2(Block1(Var.data))
+
+Samely, Var2.gradient will contain the gradient of the function x-->Block2(Block1(x)) evaluated at the point x=Var0.data
+
+
+** Initialization **
+
+This package handles vector functions, meaning that it can compute gradients of function from $${R}^{n}$$ to $${R}^{p}$$
+
+
+Note that because our package deals with vector functions, the ``gradient`` attribute is actually a ``Jacobian`` matrix.
 
 If nothing is indicated by the user, the default value of ``Variable.gradient`` is an Identity matrix, meaning we are at the beginning of the computational graph.
 
