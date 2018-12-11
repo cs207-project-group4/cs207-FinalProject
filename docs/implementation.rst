@@ -15,7 +15,7 @@ The core data structures in this package are ``Variables`` and ``Blocks``.
 
 We are going to consider that every function can be split into core atomic functions, each of which we will call a `Block`. Thus, the application of a function is a mere composition of `Block` operations to `Variable`s. 
 
-.. image:: img/basic_function.png
+.. image:: img/easy_function.png
 
 
 Variable
