@@ -2,6 +2,17 @@
 Implementation
 ==============
 
+Recalling the [background section](https://autograd.readthedocs.io/en/latest/background.html), we saw that the automatic differentiation framework splits a complex function into several atomic functions which derivative is easy to compute. Then, the results are aggregated using the chaing rule.
+This package has been designed so that it is easy for a new user to define his own new atomic function. For instance, we did not implement convolution operations over vectors, but a new user could easily define it, following the API we will describe.
+
+
+*Important :* The functionment of the package is slightly different depending on wether you use the forward or the reverse mode. In this optic, we will first present the forward mode and then highlight the differences happening in the reverse mode.
+
+
+Forward Mode
+------------
+
+
 The core data structures are ``Variables`` and ``Blocks``.
 
 We are going to consider that every function can be split into core components, each of which we will call a `Block`. Thus, the application of a function is a mere composition of `Block` operations. The function
