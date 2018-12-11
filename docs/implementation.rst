@@ -12,10 +12,9 @@ This package has been designed so that it is easy for a new user to define his o
 Forward Mode
 ------------
 
+The core data structures in this package are ``Variables`` and ``Blocks``.
 
-The core data structures are ``Variables`` and ``Blocks``.
-
-We are going to consider that every function can be split into core components, each of which we will call a `Block`. Thus, the application of a function is a mere composition of `Block` operations. The function
+We are going to consider that every function can be split into core atomic functions, each of which we will call a `Block`. Thus, the application of a function is a mere composition of `Block` operations to `Variable`s. The function
 .. image:: img/basic_function.png
 
 **Variable**
