@@ -34,7 +34,7 @@ Samely, Var2.gradient will contain the gradient of the function x-->Block2(Block
 
 ** Initialization **
 
-This package handles vector functions, meaning that it can compute gradients of function from $${R}^{n}$$ to $${R}^{p}$$
+This package handles vector functions, meaning that it can compute gradients of function from :math:`R^{n}` to :math:`R^{p}`
 
 
 Note that because our package deals with vector functions, the ``gradient`` attribute is actually a ``Jacobian`` matrix.
