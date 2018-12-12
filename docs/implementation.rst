@@ -340,7 +340,7 @@ Thus, for this class we overwrite the `.get_jacobians()` as follows :
 This is a method generic for all the simple blocks
 
 
-We thus implement a `data_fn` as previously, but now, instead of defining a `get_jacobians()` method, we only need to define the derivative of the simple function, in a new method `gradient_fn()`. For example for the `SinBlock` :
+We thus implement a `data_fn` as previously, but now, instead of defining a `get_jacobians()` method, we only need to define the derivative of the simple function, in a new method `gradient_fn()`. For example for the `SinBlock` ::
 
  class sin(SimpleBlock):
      """
