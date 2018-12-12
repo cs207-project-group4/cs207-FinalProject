@@ -476,7 +476,7 @@ For example, in the case ::
  y=sin(x)
  output_variable=x+x
  
-The define path will assess the several numbers : 
+The define path will assess the several numbers :: 
 
  x.node.times_used = 2
  y.node.times_used = 0 
