@@ -11,6 +11,7 @@ This package has been designed so that it is easy for a new user to define his o
 ************
 Forward Mode
 ************
+
 The core data structures in this package are ``Variables`` and ``Blocks``.
 
 We are going to consider that every function can be split into core atomic functions, each of which we will call a `Block`. Thus, the application of a function is a mere composition of `Block` operations to `Variable`s. 
@@ -261,14 +262,14 @@ This method is common to all the blocks
 
 Explanation :
 
-Let's consider a computational graph which transforms : x = x_0 --SINBLOCK--> x_1 --COSBLOCK--> x_2 --EXPBLOCK--> x_3 = f(x)
+Let's consider a computational graph which transforms : ``x = x_0 --SINBLOCK--> x_1 --COSBLOCK--> x_2 --EXPBLOCK--> x_3 = f(x)``
 
 
 As previously stated, the variable x_0 has the default value for ``gradient``, which is the identity matrix. with gradient_forward, the SINBOCK will output a variable which has a data of ``sin(x_0.data)`` and a gradient of ``cos(x_0.data) * x_0.gradient``. 
 
 Then, COSBLOCK will output a variable with data = ``cos(x_1.data) = cos(sin(x_0.data))`` and gradient = ``-sin(x_1.data) * x_1.gradient``, and we will have 
 
-``x_2.gradient = jac_COSBLOCK * jac_SINBLOCK * x_0.gradient ``
+``x_2.gradient = jac_COSBLOCK * jac_SINBLOCK * x_0.gradient``
 
 This is how the gradients flow in the forward mode.
 
@@ -314,4 +315,198 @@ However sometimes, the block we want to implement is just a vectorized simple fu
 
 
 Simple Block
-^^^^^^^^^^^
+^^^^^^^^^^^^
+
+The simple block allows to represent simple functions : in the context of vector mapping, we usually have some functions that apply the same operations to all the elements. They are called vectorized functions.
+
+For example, ``sin(x) = [sin(elt) for elt in x.data]``
+
+For these functions, which have only one input, the jacobian is easy to compute, it is equal to the diagonal matrix with the derivative of the block evaluated at the input points. In other words ::
+
+``jacobian = np.diag(block.gradient_fn(input_variable))``
+
+Thus, for this class we overwrite the `.get_jacobians()` as follows : 
+
+  def get_jacobians(self, *args, **kwargs):
+         """
+         get the Jacobian matrix of the simple block. It is a diagonal matrix easy to build from the
+         derivative function of the simpleBlock
+         """
+         #get the elements of the diagonal
+         elts = self.gradient_fn(*args, **kwargs)
+         jacobian = np.diag(elts)
+         return([jacobian])
+         
+This is a method generic for all the simple blocks
+
+
+We thus implement a `data_fn` as previously, but now, instead of defining a `get_jacobians()` method, we only need to define the derivative of the simple function, in a new method `gradient_fn()`. For example for the `SinBlock` :
+
+ class sin(SimpleBlock):
+     """
+     vectorized sinus function on vectors
+     """
+     def data_fn(self, args):
+         new_data = np.sin(args.data)
+         return(new_data)
+
+     def gradient_fn(self, args):
+         grad = np.cos(args.data)
+         return(grad)
+         
+
+The `gradient_fn()` method is specific to each block. 
+
+
+
+This elegant way to represent functions allows an easy definition of new blocks, but more : it allows the implementation of the **reverse mode of automatic diffefrentiation without efforts** : 
+
+
+
+************
+Reverse Mode
+************
+
+In the reverse mode, the gradients are not computed from the input nodes to the output nodes in the computational graph. Instead, they are computed from the output node to the input nodes.
+
+The reverse mode applies a forward mode on the data, stores relevant information, and applies a reverse pass on the gradients.
+
+To do this, we need to store all the intermediate values that have been used to compute the output variable. 
+
+We achieve this by doing the following modifications on the classes :
+
+Variable
+--------
+
+- gradient 
+ This attribute is no more accessible to all the variables. The only variable that as a non`None` gradient attribute is the output variable **after** having called ``output_variable.compute_gradients()`` 
+  
+- .compute_gradients()
+ This method now applies the reverse pass to compute the gradients, it also allows to have access to the output_variable.gradient attribute
+ 
+- node
+ We also introduce a new class for the reverse mode, the `Node`. We will describe it in the next section
+ 
+ 
+Node
+-----
+
+Previously, we were talking without distinction of nodes and variables. Now however, we will be very careful not to mix these two concepts. 
+
+A `Node` is a new separate class used in the reverse mode, that allows to store relevant information from the forward pass. Everytime a new Variable is created, a node is created, stored in a global buffer (`config` file), and is associated to the variable. A node has two main attributes : `gradient`and `childrens` : 
+
+- gradient
+
+It is used to store the gradient of the output variable w.r. this node's variable. Meaning that ``output_variable.node.gradient = Identity`` and ``input_variable.node.gradient`` is actually the gradients we are looking to compute : it is the gradient of the function w.r. the input variables.
+
+- childrens 
+
+list that store the nodes of the variables that have been used to compute this new node's variable, and their respective gradient. Namely ::
+
+x=Variable(2)
+y=sin(x)
+z=x+y
+
+`x` is the input_node, his node's children dictionnary is empty. 
+
+`y`'s node has one children : `x`'s node. Moreover, the transformation x-->y is associated with a ``jacobian = cos(x.data)``. Thus, we will have ``y.node.childrens=[{'node':x.node, 'jacobian':cos(x.data)}]`` 
+
+`z`'s node has two childrens : `x`'s node and `y`'s node. Moreover, the transformation x,y-->z is associated with two jacobians
+
+``jacobian_x = identity``
+
+``jacobian_y = identity``
+
+Thus, we will have ``z.node.childrens=[{'node':x.node, 'jacobian':identity}, {'node':y.node, 'jacobian':identity}]``
+
+
+
+The main method of `Node` is the `backward()` method : 
+
+It is used to compute **recursively** the gradients of the ouput variable w.r. to the input node.
+
+To do this, it sets the gradient of the output node to the identity, and propagate backwards the gradients using the children's jacobians : 
+
+For each children node, it computes the contribution of this node to the output gradient, and updates the `gradient` of the children node ::
+
+ for child in self.childrens:
+   node,jacobian=child['node'], child['jacobian']
+   new_grad = np.dot(self.gradient, jacobian)
+   node.update_gradient(new_grad)
+   
+This process is repeated until we computed the gradients of all the input nodes, they are the nodes for which ``childrens=[]``.
+
+At the end of this function call, all the nodes involved in the computational graph have a `gradient` attribute set.
+
+
+Computational Graph
+---------------------
+
+Main class that stores the information of the computational graph. It is defined in the ``__init__.py`` of `Autograd` so that we can access it anytime with ``ad.c_graph``
+
+Should be noted that as we store the dependencies among the nodes in the nodes themselves, we don't need to store them again in the computational graph. Meaning : every node define a tree with the `childrens` attribute, we only need to store the global informations about the computational graph : 
+
+- input_nodes
+
+List that store the input nodes of the computational graph
+
+- output_node
+
+Store the output node of the computational graph
+
+- input_shapes
+
+List that store the shapes of the input variables. For example with ``x, L, y, Z = Variable.multi_variables(x, L, y, z)``
+
+we will have ``ad.c_graph.input_shapes = [dim(x), dim(L), dim(y), dim(Z)]`` (with dim(x) the dimension of the scalar/vector of x). This attribute is important only when dealing with several distinct inputs, when we need to reconstruct the several distinct gradients in the `compute_gradients()` call
+
+
+
+Given these informations, we can compute the reverse pass on the gradients. Here is the event flow :  
+
+1. User calls ``output_variable.compute_gradients()``
+
+2. his function will first define the output node of the computational graph as the output_variable.node
+
+3. given this output node, we make a first reverse pass to see which nodes have been used to compute this output_variable, and how many times.
+
+For example, in the case ::
+
+ x=Variable(3)
+ y=sin(x)
+ output_variable=x+x
+ 
+The define path will assess the several numbers : 
+
+ x.node.times_used = 2
+ y.node.times_used = 0 
+ output_variable.node.times_used = 0
+ 
+As the variable `y` did not contribute to the computation of the output node, and the output node has not been used to compute anyting.
+
+
+4. We call `backward()` on the output variable node. This function will set the node's gradient of all the nodes selected in the `define_path()` call
+ 
+5. If the computational graph has one input node, we return the gradient of this vector mapping. Is is a jacobian matrix. The       `output_variable.gradient` attribute is set to this matrix, as in the forward mode.
+
+6. If we have several input nodes (defined with multi_variables), we return the list of the jacobians defining the contribution of each of the input nodes. The `output_variable.gradient` attribute is set to this list of matrices, as in the forward mode.
+
+
+
+
+- reset_graph
+
+Eventually, when we want to re-run the function, we need to reset the graph : we zero the gradients, as well as the number of times the nodes have been used.
+
+**Note** that when the user define a new Variable, it automatically sets this variable as input node of the graph. Thus, we can remove all the previously created nodes and restart from scratch : the buffer that store the nodes created is flushed. Thus, we cannot use the previously created variables, we need to recompute them.
+
+
+
+ 
+
+
+Block
+------
+
+
+
