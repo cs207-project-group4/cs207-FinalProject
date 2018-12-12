@@ -27,7 +27,7 @@ Contents
    implementation.rst
    notebooks.rst
    license.rst
-   future_work.rst
+   future.rst
 
 
 
