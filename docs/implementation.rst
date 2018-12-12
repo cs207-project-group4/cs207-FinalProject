@@ -25,7 +25,9 @@ The first core data structure is `Variable`. This object will flow through sever
 
 .. image:: img/Variable.png
 
-It contains two main attributes : ``data`` and ``gradient``. In each block, the input ``Variable`` brings the information from the previous data and gradients computed and propagates the data and gradient flow forward.
+It contains two main attributes : ``data`` and ``gradient``. The `data` attribute stores the value of the function computed so far. The `gradient` attribute contains **the value of the derivative of this node with respect to the input node**. It is defined for every variable but note that in the reverse mode, the `gradient` attribute is only accessible on the output node, we'll develop this further.
+
+In each block, the input ``Variable`` brings the information from the previous data and gradients computed and propagates the data and gradient flow forward.
 
 For exemple, taking the previous example : Var2.data will be the numpy array resulting from the sequence of operations ``Block2(Block1(Var.data))``
 
@@ -72,6 +74,39 @@ A `Constant` object is just meant to embed the notion of constants in the operat
 A `Constant` is a subclass of `Variable` but it is always initialized with a `gradient` attribute as a Jacobian of 0's. This way, we ensure that this constant does not participate in the gradient computation.
 
 The reason why we decided to embed these constants as variables, is because it allows to have a unified API for these two objects. The difference is that constants are used in the data flow but not in the gradient flow. Also, a `Constant` cannot be the input node of the computational graph, obviously.
+
+
+Multiple Variables
+-------------------
+
+As this package handles vector to vector mapping, we can theoretically consider every function of several variables as a function of vector input. For exemple, we can see the function ``f(x,y,z)`` as a function of 3 variables which are scalar, but also as a function of one variable, which is a vector of R3.
+
+Thus, if you want to opt for the vector approach, you will have to process as follows : 
+
+def f(x,y,z):
+ vector_variable=Variable([x,y,z])  #create the vector variable with the data of x,y and z
+ 
+ #extract the relevant variables
+ #the [] operator extracts both data and gradient and create a new corresponding variable 
+ x_var, y_var, z_var = vector_variable[0], vector_variable[1], vector_variable[1] 
+ 
+ output=do_stuff(x_var, y_var, z_var)
+ return(outpput)
+
+Let's assume that the output of this function is a scalal, this way you will compute the gradient of f as a function from R3 in R and the gradient of `output` will be a Jacobian matrix of shape 1*3.
+
+Then, if you are in an optimization framework, you will have to extract the gradients of `output` with respect to each input respectively. Namely, you will want to perform the update : 
+
+x <--x + lr* \frac{\partial output}{\partial x} 
+y <--y + lr* \frac{\partial output}{\partial y} 
+z <--z + lr* \frac{\partial output}{\partial z} 
+
+
+
+
+
+
+
 
 
 
