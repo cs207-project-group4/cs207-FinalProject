@@ -3,7 +3,7 @@
 Installation
 =============
 
-autograd can be install though pypi and from our GitHub repository. The recommended way to install autograd is through pypi.
+Autograd can be install though `pypi <https://pypi.org/project/dragongrad/>`_ and from our `GitHub repository <https://github.com/cs207-project-group4/cs207-FinalProject>`_. The recommended way to install autograd is through pypi.
 
 
 Pypi installation

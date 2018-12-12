@@ -23,7 +23,7 @@ Autograd will nearly always give you a result. However, in order to ensure that 
 
 
 
-Additional resources are available in Demo_Notebook.ipynb - make sure to have matplotlib installed if you want to run the Demo_Notebook
+Additional resources are available in the `Demo_Notebook <https://github.com/cs207-project-group4/cs207-FinalProject/blob/master/notebooks/Demo_Notebook.ipynb>`_ - make sure to have matplotlib installed if you want to run the Demo_Notebook
 
 Simple Differentiation Case
 -----------------------------
@@ -158,7 +158,7 @@ This method is quite straightforward and intuitive, not as what we would have ha
     gradient_b5_L = b5.gradient[:,1:dim(L)+1]
     gradient_b5_N = b5.gradient[:,dim(L)+1:]
 
-with even more complicated gradient extractions when you have more input vectors of different sizes...
+with even more complicated gradient extractions when you have more input vectors of different sizes.
 
 
 The performance of these two methods is identical.
