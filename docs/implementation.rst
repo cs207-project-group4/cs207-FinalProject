@@ -89,9 +89,11 @@ In this approach, you define one big input node that embbeds all your input vari
 
  def f(x,y,z):
   vector_variable=Variable([x,y,z])  #create the vector variable with the data of x,y and z 
+  
   #extract the relevant variables
   #the [] operator extracts both data and gradient and create a new corresponding variable 
   x_var, y_var, z_var = vector_variable[0], vector_variable[1], vector_variable[1]  
+  
   output=do_stuff(x_var, y_var, z_var)
   return(outpput)
 
@@ -142,17 +144,22 @@ In this exemple, I took x, y and z as scalars, but you could totally define a fu
   x_var, L_var = Variable.multi_variables(x,L)
   ...
   
- with x a scalar and L a list of size n.
+With x a scalar and L a list of size n.
  
  
 
 
-
+*******
 Block
------
+*******
+
+The second core data structure is the ``Block``. It is an atomic operation performed on ``Variable``. For instance, sin, exp, addition or multiplication. for flexibility of the code, we implemented a generic `Block` type as well as a more specific one : the `SimpleBlock`.
+
+Main Block
+----------
 
 
-The second core data structure is the ``Block``. It is an atomic operation performed on ``Variable``. For instance, sin, exp, addition or multiplication.
+The second core data structure is the ``Block``. It is an atomic operation performed on ``Variable``. For instance, sin, exp, addition or multiplication. 
 
 .. image:: img/Block.png
 
