@@ -1,6 +1,28 @@
 Autograd Usage
 ==============
 
+`Autograd` comes with an user-friendly API, for both forward and reverse mode.
+
+General rules
+-------------
+
+Autograd will nearly always give you a result. However, in order to ensure that you compute what you exactly think you are computing, please make sure to read carefully these points : 
+
+1. When you define a Variable, it is automatically set as the input node of the computational graph
+
+2. Thus, if you define two variables like ``x=Variable(3)`` and then ``y=Variable(4)``, the input node of the graph will be y only, and you will not compute gradients with respect to x. Never.
+
+3. If you want to work on function of several inputs, please refer to the section `Multiple Inputs`
+
+4. Before you try to access the ``variable.gradient`` attribute, you should run ``variable.compute_gradients().
+
+5. When you are in reverse mode, don't forget to reset the computational graph when you are running a new function call. You can do it with ``ad.reset_graph()``
+
+6. Enjoy! :)
+
+
+
+
 Additional resources are available in Demo_Notebook.ipynb - make sure to have matplotlib installed if you want to run the Demo_Notebook
 
 Simple Differentiation Case
@@ -70,7 +92,33 @@ This function can be used to loop and differentiate values::
 Multiple Inputs
 ----------------
 
-Many applications of automatic differentiation require the use of multiple inputs. In order to add multiple input variables, use the ``multi_variables`` method of the ``Variable`` class::
+
+
+As this package handles vector to vector mapping, we can theoretically consider every function of several variables as a function of vector input. For exemple, we can see the function f(x,y,z) as a function of 3 variables which are scalar, but also as a function of one variable, which is a vector of R3. We refer to these methods to the Multiple Variables Mode and Vector Mode, respectively.
+
+
+Vector Mode
+^^^^^^^^^^^^
+
+Before performing any operations, you should embbed the inputs of your function in one big variable ::
+
+    def vector_function(x,y):
+        big_variable = Variable([x,y])   
+        x,y=big_variable[0], big_variable[1]
+
+        b1 = ad.exp(-0.1*((x**2)+(y**2)))
+        b2 = ad.cos(0.5*(x+y))
+        b3 = b1*b2+0.1*(x+y)+ad.exp(0.1*(3-(x+y)))
+
+
+        b3.compute_gradients()
+        return(b3.data,b3.gradient)
+         
+In that case, you will have `b3.gradient` as a matrix of shape 1*3, because you considered the function as a vector function mapping from R3 to R.
+
+
+Multiple Variables
+^^^^^^^^^^^^^^^^
 
     def vector_function(x,y):
          x,y=av.Variable.multi_variables(x,y)
@@ -84,9 +132,35 @@ Many applications of automatic differentiation require the use of multiple input
          return(b3.data,b3.gradient)
 
 
-In case of multiple inputs, the ``.gradient()`` method returns the gradients of the output node with respect to each of the inputs
+In that case, we have ``b3.gradient = [grad(b3, x), grad(b3, y)]``  with ``grad(b3,x)`` refers to the gradient of the function ``x-->b3`` evaluated at x.
 
 
+The choice of which mode is up to you, the multi_variables is useful when you deal with several inputs with different shapes : 
+
+def vector_function(x,L,N):
+         x, L, N = av.Variable.multi_variables(x,L, N)
+
+         b1 = ad.sum_elts(L)
+         b2=x*L
+         b3=x+b2
+         b4=N*L
+         b5=b3+b4[0]
+         
+         b5.compute_gradients()
+         return(b5.data,b5.gradient)
+      
+We will then have ``b5.gradient = [grad(b5,x), grad(b5,L), grad(b5,L)]`` with ``grad(b5, L)`` a matrix of shape 1*dim(L), etc...
+
+This method is quite straightforward and intuitive, not as what we would have had to do in the vector mode to get the gradients of x and L separately :: 
+
+    gradient_b5_x = b5.gradient[:,0:1]
+    gradient_b5_L = b5.gradient[:,1:dim(L)+1]
+    gradient_b5_N = b5.gradient[:,dim(L)+1:]
+    
+with even more complicated gradient extractions when you have more input vectors of different sizes...
+
+
+The performance of these two methods is identical.
 
 Forward or Reverse Mode
 -----------------------
