@@ -56,7 +56,7 @@ def test_adam_forward():
     x_init = [10, 4]
     adam = Adam(loss, x_init, lr=0.1, max_iter=1000, tol=1e-13)
     sol = adam.solve()
-    assert round(sol[0]) == -5 and round(sol[1]) == -3
+    assert round(sol[0]) == -5 and round(sol[1]) == -3, 'expected -5, -3  received {}, {}'.format(sol[0], sol[1])
 
 
 def test_adam_reverse():

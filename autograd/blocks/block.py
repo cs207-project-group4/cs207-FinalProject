@@ -87,6 +87,7 @@ class Block():
         if not 'Variable' in dir():
             from autograd.variable import Variable
 
+       
 
         new_data=self.data_fn(*args, **kwargs)
         

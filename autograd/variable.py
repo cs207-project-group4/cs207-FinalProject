@@ -238,7 +238,7 @@ class Variable():
         """        
         return('data : {} \ngrad : {}'.format(self.data, self.gradient))
        
-    def __scalar_to_variable(self, other):
+    def scalar_to_variable(self, other):
         const_vec = [other]*self.data.shape[0]
         
         if ad.mode=='forward':
@@ -276,7 +276,7 @@ class Variable():
             add=add()
         
         if not isinstance(other, Variable):
-            other=self.__scalar_to_variable(other)
+            other=self.scalar_to_variable(other)
         return add(self, other)
 
     def __radd__(self, other):
@@ -290,7 +290,7 @@ class Variable():
             
             
         if not isinstance(other, Variable):
-            other=self.__scalar_to_variable(other)
+            other=self.scalar_to_variable(other)
         return add(self, other)
 
     def __sub__(self, other):
@@ -304,7 +304,7 @@ class Variable():
             
             
         if not isinstance(other, Variable):
-            other=self.__scalar_to_variable(other)
+            other=self.scalar_to_variable(other)
         return subtract(self, other)
 
     def __rsub__(self, other):
@@ -318,7 +318,7 @@ class Variable():
             
             
         if not isinstance(other, Variable):
-            other=self.__scalar_to_variable(other)
+            other=self.scalar_to_variable(other)
             
         return subtract(other, self)
 
@@ -333,7 +333,7 @@ class Variable():
             
             
         if not isinstance(other, Variable):
-            other=self.__scalar_to_variable(other)
+            other=self.scalar_to_variable(other)
         return multiply(self, other)
 
     def __rmul__(self, other):
@@ -345,7 +345,7 @@ class Variable():
             multiply=multiply()
             
         if not isinstance(other, Variable):
-            other=self.__scalar_to_variable(other)
+            other=self.scalar_to_variable(other)
         return multiply(self, other)
 
     def __truediv__(self, other):
@@ -359,7 +359,7 @@ class Variable():
             
             
         if not isinstance(other, Variable):
-            other=self.__scalar_to_variable(other)
+            other=self.scalar_to_variable(other)
         return divide(self, other)
 
     def __rtruediv__(self, other):
@@ -371,7 +371,7 @@ class Variable():
             divide=divide()
             
         if not isinstance(other, Variable):
-            other=self.__scalar_to_variable(other)
+            other=self.scalar_to_variable(other)
         return divide(other, self)
 
     def __pow__(self, other):
@@ -379,15 +379,34 @@ class Variable():
         overload power
         """
         
+        if not 'power_const_exponent' in dir():
+            from autograd.blocks.operations import power_const_exponent
+            power_const_exponent=power_const_exponent()
+            
         if not 'power' in dir():
             from autograd.blocks.operations import power
             power=power()
             
+        if type(other)==int or type(other)==float:
+            return(power_const_exponent(self, power_exponent=other))
             
-        if isinstance(other, Variable):
-            raise ValueError('Power is not supported for type Variable')
+        else:
+            return(power(self, other))
+    
+    
+    def __rpow__(self, other):        
+        if not 'power_const_base' in dir():
+            from autograd.blocks.operations import power_const_base
+            power_const_base=power_const_base()
+            
        
-        return(power(self, power_exponent=other))
+        return(power_const_base(self, base=other))
+            
+       
+        
+        
+        
+    
         
     def __neg__(self):
         """

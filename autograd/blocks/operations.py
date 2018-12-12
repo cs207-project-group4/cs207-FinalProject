@@ -95,20 +95,84 @@ class divide(Block):
 
 
 
-class power(SimpleBlock):
+
+
+
+
+
+class power(Block):
+    """
+    element-wise power. second argument is value of power
+    (int, float or variable) to apply to first argument
+    """
+    def __init__(self):
+        self.int_exponent=False
+        
+    
+    def __call__(self, base, exponents):
+        
+        assert (base.data>0).all(), 'negative base, function not defined'
+        return(super().__call__(base, exponents))
+
+        
+    
+    def data_fn(self, *args):
+        base, power_exponent= args[0], args[1]
+        #python circular import fix        
+        new_data = np.float_power(base.data, power_exponent.data)          
+        return(new_data)
+        
+        
+    def get_jacobians(self, *args):
+        base, power_exponent= args[0], args[1]
+        
+        
+        first_term = np.diag(power_exponent.data*np.float_power(base.data,power_exponent.data-1))
+        second_term = np.diag(np.log(base.data)*np.float_power(base.data,power_exponent.data))
+
+        return([first_term, second_term])
+
+    
+
+
+
+class power_const_exponent(SimpleBlock):
     """
     element-wise power. second argument is value of power
     (int, float, vector) to apply to first argument
     """
-    def data_fn(self, input_var, power_exponent):
+    def data_fn(self, input_var, power_exponent=None):
         new_data = np.float_power(input_var.data, power_exponent)
         return(new_data)
 
-    def gradient_fn(self, input_var, power_exponent):
+    def gradient_fn(self, input_var, power_exponent=None):
         new_grad = power_exponent*input_var.data**(power_exponent-1)
 
         return(new_grad)
 
+
+
+class power_const_base(SimpleBlock):
+    """
+    element-wise power. second argument is value of power
+    (int, float, vector) to apply to first argument
+    """
+    
+    def __call__(self, exponents, base):
+        
+        assert base>0, 'negative base, function not defined'
+        return(super().__call__(exponents, base=base))
+        
+    def data_fn(self, exponents, base):
+        new_data = np.float_power(float(base), exponents.data)
+        return(new_data)
+
+    def gradient_fn(self, exponents, base):
+        new_grad = np.log(base)*np.float_power(float(base), exponents.data)
+
+        return(new_grad)
+        
+        
 
 class sum_elts(Block):
     """
