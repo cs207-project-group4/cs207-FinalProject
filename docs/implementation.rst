@@ -511,5 +511,10 @@ Eventually, when we want to re-run the function, we need to reset the graph : we
 Block
 ------
 
+In the reverse mode, the only method modified is the `__call__` : 
+
+- The forward data pass is not modified, we create a new variable with corresponding updated data attribute
+
+- The ouput variable is created with a node. We set this node's `childrens` using the jacobians of the block and the input variables` nodes
 
 
