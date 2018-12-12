@@ -87,13 +87,13 @@ Thus, if you want to opt for the vector approach, you will have to process as fo
 
 In this approach, you define one big input node that embbeds all your input variables ::
 
-def f(x,y,z):
- vector_variable=Variable([x,y,z])  #create the vector variable with the data of x,y and z 
- #extract the relevant variables
- #the [] operator extracts both data and gradient and create a new corresponding variable 
- x_var, y_var, z_var = vector_variable[0], vector_variable[1], vector_variable[1]  
- output=do_stuff(x_var, y_var, z_var)
- return(outpput)
+ def f(x,y,z):
+  vector_variable=Variable([x,y,z])  #create the vector variable with the data of x,y and z 
+  #extract the relevant variables
+  #the [] operator extracts both data and gradient and create a new corresponding variable 
+  x_var, y_var, z_var = vector_variable[0], vector_variable[1], vector_variable[1]  
+  output=do_stuff(x_var, y_var, z_var)
+  return(outpput)
 
 Let's assume that the output of this function is a scalal, this way you will compute the gradient of f as a function from R3 in R and the gradient of `output` will be a Jacobian matrix of shape 1*3.
 
