@@ -18,13 +18,15 @@ The `autograd` package organized into various modules. Our basic directory struc
                 test_basic.py
                 test_autograd.py
                 ...
+            config.py
+            node.py
             utils.py
             variable.py
             optimize.py
-            node.py
         docs/
-            milestone1.md
-            milestone2.md
+            dev_milestones/
+                milestone1.md
+                milestone2.md
             ...
         README.md
         requirements.txt
@@ -40,6 +42,14 @@ The autograd package is organized into a few key modules:
 
 - ``variable.py``: data structure containing the function value and gradient value
 
-- ``utils.py``: general utility functions that are reused throughout the project ``tests`` will contain all the tests of our codes and ``docs`` that contains useful information about the project.
+- ``utils.py``: general utility functions that are reused throughout the project
 
-- ``optimize.py``: contains the optimizer functions
+- ``optimize.py``: contains the optimizer classes and functions
+
+- ``node.py``: contains the node class and computational graph class for reverse mode
+
+- ``config.py`` : Stores all the nodes for reverse mode
+
+- ``tests``: contain all the tests, divided by which module is being tested
+
+- ``docs``: contains development milestones in a sub directory, also contains useful information about the project, hosted on `read the docs <https://autograd.readthedocs.io/en/latest/#>`_.
