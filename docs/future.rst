@@ -3,50 +3,9 @@
 Future Work
 =============
 
-autograd can be install though pypi and from our GitHub repository. The recommended way to install autograd is through pypi.
+The next step in this project is feed forward neural networks implementation. 
 
+In fact, we have developped all the tools required to train a neural net, we only need to specify the weights of the model as input nodes and implement new blocks : convolution and several other layers.
 
-Pypi installation
-------------------
+In terms of applications, we think about medical image processing : using convolutional neural networks, we can detect and segment some regions on a medical X-ray. This tool can help the doctors to better cure the patients, as it will have access to an unbiased ML algorithm to perform segmentations.
 
-Pypi installation::
-
-    pip install dragongrad
-
-GitHub Installation
--------------------
-
-1. Create a virtual environment::
-
-    cd my_directory
-    virtualenv my_env
-
-2. Activate the virtual environment::
-
-    source my_env/bin/activate
-
-3. Download Package from GutHub (or clone) and Unzip::
-
-    unzip cs207-FinalProject-master.zip
-
-4. Install Dependencies using Pip::
-
-    pip install -r cs207-FinalProject-master/requirements.txt
-
-5. Install autograd -- this step is **Very Important**::
-
-    cd cs207-FinalProject-master
-    python3 setup.py install
-
-
-Requirements
-------------
-
-autograd works with `Python3
-<https://docs.python.org/3/>`_.
-
-Both installation methods will install the correct version of Numpy, It is recommended install this software in a virtual environment.
-
-Dependencies
-- `Numpy
-<http://www.numpy.org/>`_.
