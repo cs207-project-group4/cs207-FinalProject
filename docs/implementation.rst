@@ -34,6 +34,12 @@ For exemple, taking the previous example : Var2.data will be the numpy array res
 Samely, Var2.gradient will contain the gradient of the function ``x-->Block2(Block1(x))`` evaluated at the point x=Var0.data
 
 
+
+The main method of a variable is ``.compute_gradients()`` : it allows the `gradient` attribute of a variable to be propperly defined. In reverse mode, it triggers the reverse gradient flow, as we will see.
+
+In forward mode, even if the gradients are computed on the fly, we need to call the compute_gradients() method, as it allows to handle the case where you have several input nodes. See below.
+
+
 **Initialization**
 
 This package handles vector functions, meaning that it can compute gradients of function from Rn to Rp. Hence, the .gradient attribute is not a gradient, but rather a Jacobian matrix.
@@ -48,6 +54,8 @@ The basic initializer for that class is :
 The `data` argument is either a scalar or a list/np.array that refers to the point we wish to evaluate the function. 
 
 The `gradient` argument is used to set the gradient of this variable when we initialize it, it is used later with the `Blocks`.
+
+**Attention** : before tring to access the `.gradient` of a Variable, you should always call ``my_var.compute_gradients()``
 
 The `constant` argument allows to indicate if we are dealing with an actual `Variable` or if this is just a `Constant`. See the Constant section for more explanation
 
@@ -106,7 +114,8 @@ Then, if you are in an optimization framework, you will have to extract the grad
  z <--z + lr* grad(output, z)
 
 but you have to extract the gradients from the jacobian matrix :: 
-
+ #never forget to compute_gradients() before trying to access to the gradient of a variable
+ output.compute_gradients()
  grad(output, x) = output.gradient[0,0]
  grad(output, x) = output.gradient[0,1]
  grad(output, x) = output.gradient[0,2]
@@ -132,11 +141,12 @@ To tackle this, you will use the **classmethod** of Variable :
 
 This function defines several input variables, and set them as input nodes of the graph. Then the program runs as usual, with one difference : still with the previous example, the function f will have 3 inputs and not one big vector input
 
-Hence, `output.gradient` will be equal to the **list** of the gradients of f with respect to all the variable **in the same order they have been defined**. Namely : 
+Hence, `output.gradient` will be equal to the **list** of the gradients of f with respect to all the variable **in the same order they have been defined**. Namely ::
 
-``output.gradient = [grad(output, x), grad(output, y), grad(output, z)]`` 
+ output.compute_gradients()
+ # we have : output.gradient = [grad(output, x), grad(output, y), grad(output, z)]
 
-with ``grad(output, x)`` an array of shape 1*1. If f had an output dimension of p, we would have ``grad(output, x)`` as a matric of shape p*1.
+with ``grad(output, x)`` an array of shape 1*1. If f had an output dimension of p, we would have ``grad(output, x)`` as a matrix of shape p*1.
 
 In this exemple, I took x, y and z as scalars, but you could totally define a function like :: 
 
@@ -145,7 +155,13 @@ In this exemple, I took x, y and z as scalars, but you could totally define a fu
   ...
   
 With x a scalar and L a list of size n.
- 
+
+
+**In this context of multi_variables**, we basically create one big variable that aggregates all the individual inputs and then extract them as variables, it also sets these variabales as the input nodes of the computational graph . This process allows to define one single input variable while defininig several input nodes. 
+
+In forward mode, it is useful as when we call `compute_gradients`, we will return the list of the gradients of the output node w.r. all the single input variables. We thus need to know which are the input nodes and in which order they have been defined. This `multi_variables` function allows to do this.
+
+In reverse mode, it is also useful to define the input nodes of the computational graph.
  
 
 
@@ -156,34 +172,90 @@ Block
 
 The second core data structure is the ``Block``. It is an atomic operation performed on ``Variable``. For instance, sin, exp, addition or multiplication. for flexibility of the code, we implemented a generic `Block` type as well as a more specific one : the `SimpleBlock`.
 
+In `Autograd`, all the blocks stand for functions : we have the sinBlock, the cosBlock, ..., and also the extractBlock that overrides the [] method...
+
+Thus, before calling a function on a variable, we need to instantiate the corresponding block and then call it ::
+
+ from autograd.blocks.trigo import sin
+ from autograd.variable import Variable
+
+ x= Variable(3)
+ sinBlock=sin()
+ y=sinBlock(x)
+ 
+However, in order to have a better user experience, we instantiate all the blocks in the `__init__.py` of `Autograd` so that the user can directly have access to these blocks ::
+
+ from autograd.variable import Variable
+
+  x= Variable(3)
+  y=sinBlock(x)
+
+
+We will describe the different blocks we have but all of them work as follows : It takes one or several input variables and then tt outputs a new Variable with updated data and gradient.
+
 Main Block
 ^^^^^^^^^^^
 
+.. image:: img/main_block.png
 
-The second core data structure is the ``Block``. It is an atomic operation performed on ``Variable``. For instance, sin, exp, addition or multiplication. 
+In forward mode, the ``Block`` contains four major methods that we will describe : 
 
-.. image:: img/Block.png
+- data_fn
 
-The ``Block`` contains two major methods : ```data_fn ``` and ```gradient_fn ```.
+It is used to define the function evaluation for that block. For example in the `additionBlock`, we coded ::
 
-```data_fn ``` is used to compute the function evaluation for that block. For example we can use::
+ class add(Block):
+   """
+   addition of two vector inputs
+   """
+   def data_fn(self, *args):
+     #returns the data of the output variable of this block
+     new_data = np.add(args[0].data, args[1].data)
+     return(new_data)
 
-    import autograd as ad
-    from autograd.variable import Variable
+This method is specific to each block
 
-    #instantiate a block
-    x= Variable(3)
-    y= ad.sin(x)
+- get_jacobians
 
-and the new ``Variable`` y, will have its ``data`` attribute set to ``av.trig.sin.data_fn(3)`` = ``sin(3)``
+Every block defines an atomic function. The `get_jacobian` method returns the jacobian of this atomic function w.r to all its inputs separately. For example, still in the `additionBlock` :: 
 
-``gradient_fn`` is used to compute the gradient evaluation for that block. Keeping the same example, we have::
+ class add(Block):
+     """
+     addition of two vector inputs
+     """
+     def data_fn(self, *args):
+         new_data = np.add(args[0].data, args[1].data)
+         return(new_data)
 
-    import autograd as ad
-    from autograd.variable import Variable
-    #instantiate a block
-    x= Variable(3)
-    y= ad.sin(x)
+     def get_jacobians(self, *args):
+         shape=args[0].data.shape[0]
+         first_term = np.eye(shape)
+         second_term = np.eye(shape)
+
+         return([first_term, second_term])
+         
+In fact, when we have ``z=x+y`` we have grad(z, x) as the Identity matrix with corresponding shape. Samely for grad(z, y)
+ 
+This method is specific to each block
+
+- gradient_forward 
+
+Is used to propagate the gradient flow forward : it takes the gradients of the input variables of the block, multiply them with the jacobians of this bloc, thanks to the `.get_jacobians()` method. And then it outputs the gradient of the output variable ::
+
+class Block():
+  def gradient_forward(self, *args, **kwargs):
+    #concatenate the input gradients
+    input_grad = np.concatenate([var.gradient for var in args], axis=0)
+
+    #concatenate the jacobians of the block
+    jacobians = self.get_jacobians(*args, **kwargs)
+    jacobian = np.concatenate([jacob for jacob in jacobians], axis=1)
+
+    #combine the gradients of the input variables with the jacobians of the block
+    new_grad = np.matmul(jacobian, input_grad)
+
+    return(new_grad)
+
 
 As previously stated, the variable x has the default value for ``gradient``, which is an array of ones. Then, the block sin will create a new variable y, which ``data`` attribute has already been explained above. The ``gradient`` attribute is set to ``ad.block.sin.gradient_fn(3) * x.gradient = cos(3) * 1``
 
