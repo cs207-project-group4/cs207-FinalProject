@@ -379,13 +379,16 @@ Variable
 --------
 
 - gradient 
- This attribute is no more accessible to all the variables. The only variable that as a non`None` gradient attribute is the output variable **after** having called ``output_variable.compute_gradients()`` 
+
+This attribute is no more accessible to all the variables. The only variable that as a non`None` gradient attribute is the output variable **after** having called ``output_variable.compute_gradients()`` 
   
 - .compute_gradients()
- This method now applies the reverse pass to compute the gradients, it also allows to have access to the output_variable.gradient attribute
+
+This method now applies the reverse pass to compute the gradients, it also allows to have access to the output_variable.gradient attribute
  
 - node
- We also introduce a new class for the reverse mode, the `Node`. We will describe it in the next section
+
+We also introduce a new class for the reverse mode, the `Node`. We will describe it in the next section
  
  
 Node
