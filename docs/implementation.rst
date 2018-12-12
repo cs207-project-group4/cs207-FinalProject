@@ -83,6 +83,10 @@ As this package handles vector to vector mapping, we can theoretically consider 
 
 Thus, if you want to opt for the vector approach, you will have to process as follows : 
 
+- vector approach 
+
+In this approach, you define one big input node that embbeds all your input variables
+
 def f(x,y,z):
  vector_variable=Variable([x,y,z])  #create the vector variable with the data of x,y and z
  
@@ -97,17 +101,52 @@ Let's assume that the output of this function is a scalal, this way you will com
 
 Then, if you are in an optimization framework, you will have to extract the gradients of `output` with respect to each input respectively. Namely, you will want to perform the update : 
 
-x <--x + lr* \frac{\partial output}{\partial x} 
-y <--y + lr* \frac{\partial output}{\partial y} 
-z <--z + lr* \frac{\partial output}{\partial z} 
+ x <--x + lr* grad(output, x)
+ y <--y + lr* grad(output, y)
+ z <--z + lr* grad(output, z)
+
+but you have to extract the gradients from the jacobian matrix : 
+
+ grad(output, x) = output.gradient[0,0]
+ grad(output, x) = output.gradient[0,1]
+ grad(output, x) = output.gradient[0,2]
+
+or perform that update in a vectorized fashion  : ``vector_of_inputs += lr * output.gradient[0]``
 
 
+- distinct inputs approach
 
+The other way to look at it is to say, that f has 3 input variables, so in our framework, the computational graph will have 3 input nodes. 
 
+**Disclaimer** : when you define a new `Variable` it overwrites the current input node of the graph, so you should not process like : 
 
+ x_var = Variable(x)
+ y_var = Variable(y)
+ z_var = Variable(z)
 
+If you do this, the input node of the graph will be z_var...
 
+To tackle this, you will use the **classmethod** of Variable : 
 
+``x_var, y_var, z_var = Variable.multi_variables(x,y,z)``
+
+This function defines several input variables, and set them as input nodes of the graph. Then the program runs as usual, with one difference : still with the previous example, the function f will have 3 inputs and not one big vector input
+
+Hence, `output.gradient` will be equal to the **list** of the gradients of f with respect to all the variable **in the same order they have been defined**. Namely : 
+
+``output.gradient = [grad(output, x), grad(output, y), grad(output, z)]`` 
+
+with ``grad(output, x)`` an array of shape 1*1. If f had an output dimension of p, we would have ``grad(output, x)`` as a matric of shape p*1.
+
+In this exemple, I took x, y and z as scalars, but you could totally define a function like : 
+
+ def f(x, L):
+  x_var, L_var = Variable.multi_variables(x,L)
+  ...
+  
+ with x a scalar and L a list of size n.
+ 
+ 
 
 
 
