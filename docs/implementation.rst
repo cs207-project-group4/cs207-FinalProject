@@ -188,7 +188,7 @@ However, in order to have a better user experience, we instantiate all the block
  from autograd.variable import Variable
 
   x= Variable(3)
-  y=sinBlock(x)
+  y=ad.sin(x)
 
 
 We will describe the different blocks we have but all of them work as follows : It takes one or several input variables and then tt outputs a new Variable with updated data and gradient.
@@ -261,35 +261,57 @@ This method is common to all the blocks
 
 Explanation :
 
-Let's consider a computational graph which transforms : x_0 --> x_1 --> x_2 --> x_3 --> y
+Let's consider a computational graph which transforms : x = x_0 --SINBLOCK--> x_1 --COSBLOCK--> x_2 --EXPBLOCK--> x_3 = f(x)
 
 
-As previously stated, the variable x_0 has the default value for ``gradient``, which is the identity matrix. 
+As previously stated, the variable x_0 has the default value for ``gradient``, which is the identity matrix. with gradient_forward, the SINBOCK will output a variable which has a data of ``sin(x_0.data)`` and a gradient of ``cos(x_0.data) * x_0.gradient``. 
+
+Then, COSBLOCK will output a variable with data = ``cos(x_1.data) = cos(sin(x_0.data))`` and gradient = ``-sin(x_1.data) * x_1.gradient``, and we will have 
+
+``x_2.gradient = jac_COSBLOCK * jac_SINBLOCK * x_0.gradient ``
+
+This is how the gradients flow in the forward mode.
 
 
 
-Note that for more complex functions, the ``gradient_fn`` is combined with the method ``gradient_forward``. For the multiplication for instance, we will use ``gradient_forward`` to push forward the gradient flow, same for the addition, and other basic operations.
+- __call__
 
-The way to see ``gradient_forward`` is the following :
-Let's consider a computational graph which transforms : x_0 --> x_1 --> x_2 --> x_3 --> y
+take as input one or several variables, perform a forward pass on data and gradient and return a new output variable.
 
-let's call the output of the last block y, then the output of gradient_forward(x_3), will contain the jacobian of the function x_0 --> y. More generally, the output of gradient_forward(x_i) will contain the Jacobian matrix of the function : x_0 --> x_i
+``new_var = block(input_var_1, input_var_2)`` 
 
-this function is in charge of pushing the gradients forward, it will combine the previously computed gradients to the derivative of this block_function
 
-*No storing of the computational graph*
 
-The solution we provided is efficient in that we don't store the computation graph. The values of the variables are computed on the fly, both data and gradient.
 
-*Classes implemented*
+**No storing of the computational graph**
 
-As hinted before, we will have a class for the `Variable` and another class for `Block`.
-Though each elementary function will be assigned a subclass of `Block` : we will have a set of `Block` functions hard-coded from which we expect the user to build his/her complicated combinations.
+The solution we provided is efficient in that we don't store the computation graph in the forward mode. The values of the variables are computed on the fly, both data and gradient.
 
-Example of this set could be: sin, cos, tan, exp, pow, sum, mean, ...
+Usually, the user overwrite its variable so we have a minimal memory usage :: 
 
-Of course, the ``autograd`` package is being built respecting the design patterns for good development, the user will have the possibility to build his own `Block` if he would not find a specific function among the ones we provide. The user would have to follow the `Block` interface and provide a ``data_fn`` as well as a ``grad_fn`` (leveraging *duck typing*).
+ import autograd as ad
+ from autograd.variable import Variable
 
-*External dependencies*
+ x=Variable([34,54,65])
+ y=ad.sin(x)
+ y=ad.cos(y)
+ y=ad.exp(y)
+ for _ in range(12345):
+   y *= 3
+ 
+ output = y+x
+ 
+ 
+the variable y has been overwriten : in this sequence of operations, we have stored only 3 variables : x, y, and output.
 
-The package is highly reliant on ``Numpy``. The Demo_Notebook uses ``matplotlib``, but ``matplotlib`` is not required for the autograd to run. 
+If we were to store naively all the computational graph, we would have stored way more variables....
+
+
+
+Of course, the ``autograd`` package is being built respecting the design patterns for good development, the user will have the possibility to build his own `Block` if he would not find a specific function among the ones we provide. The user would have to follow the `Block` interface and provide a ``data_fn`` as well as a ``get_jacobians``. 
+
+However sometimes, the block we want to implement is just a vectorized simple function. For instance, sin(x) applies sin(.) to all the elements of x.data. This leads to the useful subclass to handle vectorized functioons, the `SimpleBlock`
+
+
+Simple Block
+^^^^^^^^^^^
