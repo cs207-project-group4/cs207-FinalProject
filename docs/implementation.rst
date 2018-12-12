@@ -88,12 +88,10 @@ Thus, if you want to opt for the vector approach, you will have to process as fo
 In this approach, you define one big input node that embbeds all your input variables ::
 
 def f(x,y,z):
- vector_variable=Variable([x,y,z])  #create the vector variable with the data of x,y and z
- 
+ vector_variable=Variable([x,y,z])  #create the vector variable with the data of x,y and z 
  #extract the relevant variables
  #the [] operator extracts both data and gradient and create a new corresponding variable 
- x_var, y_var, z_var = vector_variable[0], vector_variable[1], vector_variable[1] 
- 
+ x_var, y_var, z_var = vector_variable[0], vector_variable[1], vector_variable[1]  
  output=do_stuff(x_var, y_var, z_var)
  return(outpput)
 
@@ -118,7 +116,7 @@ or perform that update in a vectorized fashion  : ``vector_of_inputs += lr * out
 
 The other way to look at it is to say, that f has 3 input variables, so in our framework, the computational graph will have 3 input nodes. 
 
-**Disclaimer** : when you define a new `Variable` it overwrites the current input node of the graph, so you should not process like :: 
+**Disclaimer** : when you define a new `Variable` it overwrites the current input node of the graph, so you should **not** process like :: 
 
  x_var = Variable(x)
  y_var = Variable(y)
