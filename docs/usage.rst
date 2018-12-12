@@ -55,7 +55,7 @@ If a user wants to differentiate multiple values is recommended that users creat
         b3.compute_gradients()
         return(b3.data,b3.gradient)
 
-This function can be used to differentiate an array of values::
+This function can be used to loop and differentiate values::
 
     value = list()
     data = list()
@@ -84,7 +84,7 @@ Many applications of automatic differentiation require the use of multiple input
          return(b3.data,b3.gradient)
 
 
-In case of multiple inputs, the ``.gradient()`` method returns the gradients of the output node with respect to each of the inputs 
+In case of multiple inputs, the ``.gradient()`` method returns the gradients of the output node with respect to each of the inputs
 
 
 
