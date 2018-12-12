@@ -1,6 +1,6 @@
-.. _installation:
+.. _future:
 
-Installation
+Future Work
 =============
 
 autograd can be install though pypi and from our GitHub repository. The recommended way to install autograd is through pypi.
