@@ -242,22 +242,31 @@ This method is specific to each block
 
 Is used to propagate the gradient flow forward : it takes the gradients of the input variables of the block, multiply them with the jacobians of this bloc, thanks to the `.get_jacobians()` method. And then it outputs the gradient of the output variable ::
 
-class Block():
-  def gradient_forward(self, *args, **kwargs):
-    #concatenate the input gradients
-    input_grad = np.concatenate([var.gradient for var in args], axis=0)
+ class Block():
+   def gradient_forward(self, *args, **kwargs):
+     #concatenate the input gradients
+     input_grad = np.concatenate([var.gradient for var in args], axis=0)
 
-    #concatenate the jacobians of the block
-    jacobians = self.get_jacobians(*args, **kwargs)
-    jacobian = np.concatenate([jacob for jacob in jacobians], axis=1)
+     #concatenate the jacobians of the block
+     jacobians = self.get_jacobians(*args, **kwargs)
+     jacobian = np.concatenate([jacob for jacob in jacobians], axis=1)
 
-    #combine the gradients of the input variables with the jacobians of the block
-    new_grad = np.matmul(jacobian, input_grad)
+     #combine the gradients of the input variables with the jacobians of the block
+     new_grad = np.matmul(jacobian, input_grad)
 
-    return(new_grad)
+     return(new_grad)
+     
+This method is common to all the blocks
 
 
-As previously stated, the variable x has the default value for ``gradient``, which is an array of ones. Then, the block sin will create a new variable y, which ``data`` attribute has already been explained above. The ``gradient`` attribute is set to ``ad.block.sin.gradient_fn(3) * x.gradient = cos(3) * 1``
+Explanation :
+
+Let's consider a computational graph which transforms : x_0 --> x_1 --> x_2 --> x_3 --> y
+
+
+As previously stated, the variable x_0 has the default value for ``gradient``, which is the identity matrix. 
+
+
 
 Note that for more complex functions, the ``gradient_fn`` is combined with the method ``gradient_forward``. For the multiplication for instance, we will use ``gradient_forward`` to push forward the gradient flow, same for the addition, and other basic operations.
 
