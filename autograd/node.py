@@ -10,7 +10,6 @@ class C_graph():
     
     def __init__(self, nodes=[]):
         self.ids=[]
-        self.nodes=nodes
         self.input_node=[]
         self.output_node=None
         self.input_shapes=[]

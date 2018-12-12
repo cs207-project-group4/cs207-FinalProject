@@ -11,24 +11,15 @@ import autograd as ad
 class Block():
     """
     main class for the blocks of the AD package. The several blocks will be of several types
-    For now we envision two types of block : simple and double, depending on the number of
-    variables as input.
+    We have two types of block : main and simple
+    the simple blocks will represent vectorized functions
+    
     For instance :
-        sin(.) is a simple block as it has only one input
+        sin(.) is a simple block as it applies sin on all the data of the input variable
 
-        dot(.,.) is a double block as it has two inputs
+        sum_elts(.,.) is a main block as it processes all the data of the input vector in a specific way
 
-
-    NOTE : Maybe we should define the following functions as class methods
-    This way we will not have to instantiate these class to use them.
-    for instance instead of doing :
-        import sin
-        sinBlock = sin()
-        y=sinBlock(x)
-
-    we could have an implementation like :
-        import sin
-        y=sin(x)
+    
     """
 
 

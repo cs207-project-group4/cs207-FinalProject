@@ -150,6 +150,7 @@ def test_multiple_reverse():
     for _ in range(5):
         
         ad.reset_graph()
+        print('reverse ', len(config.list_of_nodes))
         y_block=sin_block(exp_block(x))
         y_block.compute_gradients()
         assert np.equal(data_true, y_block.data).all(), 'wrong exp data pass. expected {}, given{}'.format(data_true, y_block.data)
@@ -161,6 +162,7 @@ def test_multiple_reverse():
     for _ in range(5):
         
         ad.reset_graph()
+        print('reverse ', len(config.list_of_nodes))
         data=np.random.random(5)
         x=Variable(data)
 
