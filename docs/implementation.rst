@@ -196,7 +196,7 @@ We will describe the different blocks we have but all of them work as follows : 
 Main Block
 ^^^^^^^^^^^
 
-.. image:: img/main_block.png
+.. image:: img/forward_main_block.png
 
 In forward mode, the ``Block`` contains four major methods that we will describe : 
 
