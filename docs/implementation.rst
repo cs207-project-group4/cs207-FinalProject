@@ -325,7 +325,7 @@ For these functions, which have only one input, the jacobian is easy to compute,
 
 ``jacobian = np.diag(block.gradient_fn(input_variable))``
 
-Thus, for this class we overwrite the `.get_jacobians()` as follows : 
+Thus, for this class we overwrite the `.get_jacobians()` as follows :: 
 
   def get_jacobians(self, *args, **kwargs):
          """
