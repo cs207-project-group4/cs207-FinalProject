@@ -469,7 +469,7 @@ Given these informations, we can compute the reverse pass on the gradients. Here
 
 1. User calls ``output_variable.compute_gradients()``
 
-2. his function will first define the output node of the computational graph as the output_variable.node
+2. This function will first define the output node of the computational graph as the output_variable.node
 
 3. given this output node, we make a first reverse pass to see which nodes have been used to compute this output_variable, and how many times.
 
