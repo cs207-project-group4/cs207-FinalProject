@@ -11,4 +11,4 @@ The `demo notebook <https://github.com/cs207-project-group4/cs207-FinalProject/b
 Converge Notebook
 -----------------
 
-The `convergence test notebook <https://github.com/cs207-project-group4/cs207-FinalProject/blob/master/notebooks/Convergence_Results.ipynb>`_ is hosted on our GitHub repository.
+The `convergence test notebook <https://github.com/cs207-project-group4/cs207-FinalProject/blob/master/notebooks/Convergence_Results-Final.ipynb>`_ is hosted on our GitHub repository.
