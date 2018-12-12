@@ -149,14 +149,15 @@ With x a scalar and L a list of size n.
  
 
 
-*******
+
 Block
-*******
+----------
+
 
 The second core data structure is the ``Block``. It is an atomic operation performed on ``Variable``. For instance, sin, exp, addition or multiplication. for flexibility of the code, we implemented a generic `Block` type as well as a more specific one : the `SimpleBlock`.
 
 Main Block
-----------
+^^^^^^^^^^^
 
 
 The second core data structure is the ``Block``. It is an atomic operation performed on ``Variable``. For instance, sin, exp, addition or multiplication. 
