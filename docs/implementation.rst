@@ -359,7 +359,7 @@ The `gradient_fn()` method is specific to each block.
 
 
 
-This elegant way to represent functions allows an easy definition of new blocks, but more : it allows the implementation of the **reverse mode of automatic diffefrentiation without efforts** : 
+This elegant way to represent functions allows an easy definition of new blocks, but more : it allows the implementation of the reverse mode in an elegant fasion.
 
 
 
