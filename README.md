@@ -4,6 +4,8 @@
 [![Coverage Status](https://img.shields.io/coveralls/github/cs207-project-group4/cs207-FinalProject/master.svg)](https://img.shields.io/coveralls/github/cs207-project-group4/cs207-FinalProject/master.svg)
 [![Docs](https://readthedocs.org/projects/autograd/badge/?version=latest)](https://autograd.readthedocs.org/en/latest/?badge=latest)
 
+[![Downloads](https://pepy.tech/badge/dragongrad)](https://pepy.tech/project/dragongrad)
+
 ## `autograd`
 
 ![display](docs/img/display.png)
